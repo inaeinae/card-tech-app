@@ -1,0 +1,16 @@
+# 설계/문서/로컬 메모 — 추적 제외
+design/
+docs/
+CLAUDE.md
+TODO.md
+.claude/
+
+# Supabase
+supabase/.branches/
+supabase/.temp/
+supabase/.env
+
+# Node / Expo
+node_modules/
+.expo/
+.DS_Store
