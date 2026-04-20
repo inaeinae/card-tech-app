@@ -14,3 +14,4 @@ supabase/.env
 node_modules/
 .expo/
 .DS_Store
+.vscode/
