@@ -8,11 +8,28 @@ function withMockedFetch(
 ) {
   return async () => {
     const orig = globalThis.fetch;
+
+    // env 설정
+    const origUrl = Deno.env.get("SUPABASE_URL");
+    const origKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    Deno.env.set("SUPABASE_URL", "http://localhost:54321");
+    Deno.env.set("SUPABASE_SERVICE_ROLE_KEY", "test-service-role-key");
+
     globalThis.fetch = ((input: Request | string | URL, init?: RequestInit) => {
       const req = input instanceof Request ? input : new Request(input, init);
       return mock(req);
     }) as typeof fetch;
-    try { await fn(); } finally { globalThis.fetch = orig; }
+
+    try {
+      await fn();
+    } finally {
+      globalThis.fetch = orig;
+      // env 복구
+      if (origUrl) Deno.env.set("SUPABASE_URL", origUrl);
+      else Deno.env.delete("SUPABASE_URL");
+      if (origKey) Deno.env.set("SUPABASE_SERVICE_ROLE_KEY", origKey);
+      else Deno.env.delete("SUPABASE_SERVICE_ROLE_KEY");
+    }
   };
 }
 

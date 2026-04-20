@@ -18,3 +18,18 @@ deno test supabase/functions/kakao-oauth/     # Edge Function 테스트
 ## 환경변수
 
 `supabase/.env.example`를 복사해 `supabase/.env`를 만들고 채운다.
+
+## Edge Function 배포
+
+```bash
+supabase functions deploy kakao-oauth
+supabase secrets set KAKAO_REST_API_KEY=xxxx
+# SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY는 플랫폼이 자동 주입
+```
+
+## 마이그레이션 순서
+
+1. `20260420000001_init_schema.sql` — Enum/테이블/기본 인덱스
+2. `20260420000002_rls_policies.sql` — RLS 전면 적용
+3. `20260420000003_storage_policies.sql` — card-images 버킷
+4. `20260420000004_indexes.sql` — 리포트 인덱스

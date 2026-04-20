@@ -1,15 +1,15 @@
 import { createClient } from "npm:@supabase/supabase-js@2.45.0";
 import { fetchKakaoUser } from "./kakao.ts";
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
-const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-
 // 내부용 가상 이메일 — 카카오 id를 로컬 네임스페이스에 매핑
 function kakaoEmail(kakaoId: number): string {
   return `kakao_${kakaoId}@kakao.local`;
 }
 
 export async function handleRequest(req: Request): Promise<Response> {
+  // 동적으로 환경변수 읽기 (테스트 시 env.set 사용 가능)
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
+  const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
   if (req.method !== "POST") {
     return new Response("method_not_allowed", { status: 405 });
   }
