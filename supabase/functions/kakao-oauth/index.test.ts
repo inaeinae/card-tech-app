@@ -1,4 +1,4 @@
-import { assertEquals, assertExists } from "std/assert/mod.ts";
+import { assertEquals, assertExists } from "jsr:@std/assert";
 import { handleRequest } from "./index.ts";
 
 // fetch stub — 카카오 API 응답 mock
