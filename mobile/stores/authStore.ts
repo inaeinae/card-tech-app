@@ -27,8 +27,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ session: data.session, user: data.session?.user ?? null, initializing: false });
 
     // 세션 변화 감지 → 스토어 동기화
-    supabase.auth.onAuthStateChange((_event, session) => {
+    supabase.auth.onAuthStateChange((event, session) => {
       set({ session, user: session?.user ?? null });
+      // TOKEN_REFRESHED 실패로 세션이 null 이 되면 AuthGate 가 (auth) 로 밀어냄
+      if (event === 'SIGNED_OUT') {
+        set({ session: null, user: null });
+      }
     });
   },
 
