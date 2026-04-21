@@ -1,14 +1,24 @@
 // 로그인 진입 화면 — 카카오 메인 + __DEV__ 백도어
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, Alert, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import { KakaoLoginButton } from '@/components/auth/KakaoLoginButton';
 import { useAuthStore } from '@/stores/authStore';
+import { ONBOARDING_KEY } from './onboarding';
 
 export default function LoginScreen() {
   const router = useRouter();
   const signInWithKakaoNative = useAuthStore((s) => s.signInWithKakaoNative);
   const [loading, setLoading] = useState(false);
+
+  // 최초 실행 시 온보딩으로 리다이렉트
+  useEffect(() => {
+    (async () => {
+      const seen = await SecureStore.getItemAsync(ONBOARDING_KEY);
+      if (!seen) router.replace('/(auth)/onboarding');
+    })();
+  }, [router]);
 
   const handleKakao = async () => {
     setLoading(true);
