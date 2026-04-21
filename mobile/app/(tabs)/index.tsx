@@ -31,6 +31,15 @@ export default function HomeScreen() {
         >
           <Text style={styles.devButtonText}>로그아웃 (임시)</Text>
         </Pressable>
+        {__DEV__ && (
+          <Pressable
+            onPress={() => useAuthStore.getState().deleteAccount()}
+            accessibilityRole="button"
+            style={[styles.devButton, styles.devButtonDanger]}
+          >
+            <Text style={styles.devButtonText}>탈퇴 (개발)</Text>
+          </Pressable>
+        )}
       </View>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
@@ -116,6 +125,9 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 6,
     backgroundColor: '#64748B',
+  },
+  devButtonDanger: {
+    backgroundColor: '#DC2626',
   },
   devButtonText: {
     color: '#FFFFFF',

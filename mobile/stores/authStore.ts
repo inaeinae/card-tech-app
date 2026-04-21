@@ -13,6 +13,8 @@ type AuthState = {
   // 카카오 네이티브 SDK 로그인 → signInWithKakao 재사용
   signInWithKakaoNative: () => Promise<void>;
   signOut: () => Promise<void>;
+  // 계정 완전 탈퇴 — Edge Function 호출 후 세션 파기
+  deleteAccount: () => Promise<void>;
   // 앱 시작 시 SecureStore 에서 세션 복원
   bootstrap: () => Promise<void>;
 };
@@ -67,5 +69,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   signOut: async () => {
     await supabase.auth.signOut();
     set({ user: null, session: null });
+  },
+
+  deleteAccount: async () => {
+    const { error } = await supabase.functions.invoke('delete-account', { method: 'POST' });
+    if (error) throw error;
+    await supabase.auth.signOut();
+    set({ session: null, user: null });
   },
 }));
