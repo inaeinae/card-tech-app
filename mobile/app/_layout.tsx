@@ -16,17 +16,20 @@ import {
 } from '@expo-google-fonts/noto-sans-kr';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { AuthGate } from '@/components/auth/AuthGate';
+import { useAuthStore } from '@/stores/authStore';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-// 앱 초기화 중 스플래시 유지
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  // 카카오/한국어 우선 기본 폰트 로드
+  const bootstrap = useAuthStore((s) => s.bootstrap);
+  const initializing = useAuthStore((s) => s.initializing);
+
   const [fontsLoaded] = useFonts({
     NotoSansKR_300Light,
     NotoSansKR_400Regular,
@@ -34,20 +37,28 @@ export default function RootLayout() {
     NotoSansKR_700Bold,
   });
 
+  // 앱 시작 시 세션 복원 + 변경 리스너 등록 (1회)
   useEffect(() => {
-    if (fontsLoaded) {
+    bootstrap();
+  }, [bootstrap]);
+
+  useEffect(() => {
+    if (fontsLoaded && !initializing) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, initializing]);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || initializing) return null;
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
+      <AuthGate>
+        <Stack>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        </Stack>
+      </AuthGate>
       <StatusBar style="auto" />
     </ThemeProvider>
   );
