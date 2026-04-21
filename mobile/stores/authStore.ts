@@ -1,6 +1,7 @@
-// 인증 상태 — Supabase Auth + Kakao 간편 로그인 (Phase 4 에서 signInWithKakao 구현)
+// 인증 상태 — Supabase Auth + Kakao 간편 로그인
 import { create } from 'zustand';
 import type { Session, User } from '@supabase/supabase-js';
+import { login as kakaoNativeLogin } from '@react-native-seoul/kakao-login';
 import { supabase } from '@/lib/supabase';
 
 type AuthState = {
@@ -9,6 +10,8 @@ type AuthState = {
   initializing: boolean;
   // Edge Function /kakao-oauth 로 카카오 access_token 검증 후 세션 주입
   signInWithKakao: (kakaoAccessToken: string) => Promise<void>;
+  // 카카오 네이티브 SDK 로그인 → signInWithKakao 재사용
+  signInWithKakaoNative: () => Promise<void>;
   signOut: () => Promise<void>;
   // 앱 시작 시 SecureStore 에서 세션 복원
   bootstrap: () => Promise<void>;
@@ -48,6 +51,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
 
     if (sessionError) throw sessionError;
+  },
+
+  signInWithKakaoNative: async () => {
+    // 1. 카카오 SDK 로 네이티브 로그인 → access_token 획득
+    const result = await kakaoNativeLogin();
+    // 2. 기존 signInWithKakao 로직 재사용
+    await useAuthStore.getState().signInWithKakao(result.accessToken);
   },
 
   signOut: async () => {

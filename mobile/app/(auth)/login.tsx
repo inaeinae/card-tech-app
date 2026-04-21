@@ -3,18 +3,20 @@ import { useState } from 'react';
 import { View, Text, Alert, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { KakaoLoginButton } from '@/components/auth/KakaoLoginButton';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const signInWithKakaoNative = useAuthStore((s) => s.signInWithKakaoNative);
   const [loading, setLoading] = useState(false);
 
   const handleKakao = async () => {
     setLoading(true);
     try {
-      // Task 8 에서 실제 SDK 연동 — 지금은 명시적 에러
-      throw new Error('카카오 SDK 연결 예정 (Task 8)');
+      await signInWithKakaoNative();
+      // AuthGate 가 자동으로 (tabs) 로 리다이렉트
     } catch (e) {
-      Alert.alert('안내', (e as Error).message);
+      Alert.alert('카카오 로그인 실패', (e as Error).message);
     } finally {
       setLoading(false);
     }
