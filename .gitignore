@@ -15,3 +15,6 @@ node_modules/
 .expo/
 .DS_Store
 .vscode/
+
+# Worktrees
+.worktrees/
