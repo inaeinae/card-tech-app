@@ -1,11 +1,12 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function HomeScreen() {
   return (
@@ -21,6 +22,25 @@ export default function HomeScreen() {
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
+      {/* Phase 4 임시: 로그아웃/탈퇴 — Phase 12 에서 mypage 로 이동 */}
+      <View style={styles.devActions}>
+        <Pressable
+          onPress={() => useAuthStore.getState().signOut()}
+          accessibilityRole="button"
+          style={styles.devButton}
+        >
+          <Text style={styles.devButtonText}>로그아웃 (임시)</Text>
+        </Pressable>
+        {__DEV__ && (
+          <Pressable
+            onPress={() => useAuthStore.getState().deleteAccount()}
+            accessibilityRole="button"
+            style={[styles.devButton, styles.devButtonDanger]}
+          >
+            <Text style={styles.devButtonText}>탈퇴 (개발)</Text>
+          </Pressable>
+        )}
+      </View>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
@@ -94,5 +114,23 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  devActions: {
+    flexDirection: 'row',
+    gap: 8,
+    alignSelf: 'flex-end',
+  },
+  devButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: '#64748B',
+  },
+  devButtonDanger: {
+    backgroundColor: '#DC2626',
+  },
+  devButtonText: {
+    color: '#FFFFFF',
+    fontSize: 12,
   },
 });

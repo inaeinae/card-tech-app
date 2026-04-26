@@ -1,0 +1,3 @@
+{
+  "tasks": { "serve": "deno run --allow-all index.ts" }
+}
