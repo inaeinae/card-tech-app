@@ -51,6 +51,13 @@
           "kotlinVersion": "1.9.0",
           "overrideKakaoSDKVersion": "2.20.6"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "카드 이미지를 등록하기 위해 사진에 접근합니다.",
+          "cameraPermission": "카드 이미지를 촬영하기 위해 카메라에 접근합니다."
+        }
       ]
     ],
     "experiments": {
