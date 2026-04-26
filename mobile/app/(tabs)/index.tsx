@@ -22,6 +22,14 @@ export default function HomeScreen() {
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
+      {/* Phase 5 임시: 카드 진입 — Phase 8 에서 홈 레이아웃으로 이동 */}
+      <View style={styles.devActions}>
+        <Link href="/cards/new" asChild>
+          <Pressable style={styles.devButton} accessibilityRole="button">
+            <Text style={styles.devButtonText}>카드 등록 (임시)</Text>
+          </Pressable>
+        </Link>
+      </View>
       {/* Phase 4 임시: 로그아웃/탈퇴 — Phase 12 에서 mypage 로 이동 */}
       <View style={styles.devActions}>
         <Pressable
