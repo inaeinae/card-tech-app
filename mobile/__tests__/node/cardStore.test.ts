@@ -9,19 +9,20 @@ jest.mock('@/lib/supabase', () => ({
   },
 }));
 
+import { useCardStore } from '@/stores/cardStore';
+
 describe('cardStore 확장', () => {
   beforeEach(() => {
-    jest.resetModules();
     mockUpdate.mockReset();
     mockSelect.mockReset();
     mockFrom.mockReset();
+    useCardStore.setState({ cards: [], benefits: {}, loading: false, error: null });
   });
 
   it('scheduleCancel 은 cancel_scheduled_at 만 set 하고 canceled_at 은 null 유지', async () => {
     mockUpdate.mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) });
     mockFrom.mockReturnValue({ update: mockUpdate });
 
-    const { useCardStore } = await import('@/stores/cardStore');
     useCardStore.setState({
       cards: [
         {
@@ -48,7 +49,6 @@ describe('cardStore 확장', () => {
     mockUpdate.mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) });
     mockFrom.mockReturnValue({ update: mockUpdate });
 
-    const { useCardStore } = await import('@/stores/cardStore');
     useCardStore.setState({
       cards: [
         {
@@ -84,7 +84,6 @@ describe('cardStore 확장', () => {
     mockSelect.mockReturnValue({ eq: jest.fn().mockReturnValue({ order }) });
     mockFrom.mockReturnValue({ select: mockSelect });
 
-    const { useCardStore } = await import('@/stores/cardStore');
     await useCardStore.getState().loadCardBenefits('c1');
 
     expect(useCardStore.getState().benefits.c1).toHaveLength(2);
