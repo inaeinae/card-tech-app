@@ -23,6 +23,7 @@ type EventState = {
   upsertEvent: (payload: EventInsert | (EventUpdate & { id: string })) => Promise<EventRow>;
   // 상태 전이 + 이력 기록 — Phase 7 에서 완성
   changeStatus: (eventId: string, to: EventStatus, isAuto: boolean) => Promise<void>;
+  deleteEvent: (id: string) => Promise<void>;
 };
 
 export const useEventStore = create<EventState>((set, get) => ({
@@ -95,5 +96,12 @@ export const useEventStore = create<EventState>((set, get) => ({
       e.id === eventId ? { ...e, status: to, status_updated_at: new Date().toISOString() } : e,
     );
     set({ events: next });
+  },
+
+  // 이벤트 삭제 — cascade 로 benefits / event_status_history 자동 정리
+  deleteEvent: async (id) => {
+    const { error } = await supabase.from('events').delete().eq('id', id);
+    if (error) throw error;
+    set({ events: get().events.filter((e) => e.id !== id) });
   },
 }));

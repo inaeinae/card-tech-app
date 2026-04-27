@@ -1,3 +1,11 @@
+// supabase 임포트 차단 — wizardStore 가 supabase 를 모듈 최상단에서 import 하므로 env 검증 회피
+jest.mock('@/lib/supabase', () => ({
+  supabase: {
+    auth: { getUser: jest.fn() },
+    from: jest.fn(),
+  },
+}));
+
 import { useWizardStore } from '@/stores/wizardStore';
 
 describe('useWizardStore', () => {
