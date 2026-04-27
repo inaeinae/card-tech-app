@@ -5,10 +5,12 @@ import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useAuthStore } from '@/stores/authStore';
+import { useWizardStore } from '@/stores/wizardStore';
 
 export default function HomeScreen() {
+  const router = useRouter();
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -29,6 +31,19 @@ export default function HomeScreen() {
             <Text style={styles.devButtonText}>카드 등록 (임시)</Text>
           </Pressable>
         </Link>
+      </View>
+      {/* Phase 6 임시: 이벤트 위저드 진입 — Phase 8 에서 FAB 로 교체 */}
+      <View style={styles.devActions}>
+        <Pressable
+          style={styles.devButton}
+          accessibilityRole="button"
+          onPress={() => {
+            useWizardStore.getState().reset();
+            router.push('/wizard/step-card');
+          }}
+        >
+          <Text style={styles.devButtonText}>이벤트 등록 (임시)</Text>
+        </Pressable>
       </View>
       {/* Phase 4 임시: 로그아웃/탈퇴 — Phase 12 에서 mypage 로 이동 */}
       <View style={styles.devActions}>
