@@ -9,7 +9,7 @@ import { useRouter } from 'expo-router';
 import { Plus, Trash2 } from 'lucide-react-native';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { CardImagePicker } from '@/components/cards/CardImagePicker';
+import { IssuerSelect } from '@/components/ui/IssuerSelect';
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
 import { validateCardForm, normalizeCardForm, type CardFormErrors } from '@/lib/cardForm';
@@ -88,15 +88,7 @@ export default function NewCardScreen() {
   return (
     <ScrollView className="flex-1 bg-background dark:bg-background-dark">
       <View className="p-4 gap-4">
-        <CardImagePicker value={imageUri} onChange={setImageUri} />
-        <Input
-          label="카드사"
-          required
-          value={issuer}
-          onChangeText={setIssuer}
-          placeholder="예: 비씨카드"
-          errorText={errors.issuer}
-        />
+        <IssuerSelect value={issuer} onChange={setIssuer} errorText={errors.issuer} />
         <Input
           label="카드명"
           required

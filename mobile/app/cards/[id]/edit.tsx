@@ -6,7 +6,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Plus, Trash2 } from 'lucide-react-native';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { CardImagePicker } from '@/components/cards/CardImagePicker';
+import { IssuerSelect } from '@/components/ui/IssuerSelect';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
@@ -97,20 +97,7 @@ export default function EditCardScreen() {
   return (
     <ScrollView className="flex-1 bg-background dark:bg-background-dark">
       <View className="p-4 gap-4">
-        <CardImagePicker
-          value={imageUri}
-          onChange={(uri) => {
-            setImageUri(uri);
-            setImageDirty(true);
-          }}
-        />
-        <Input
-          label="카드사"
-          required
-          value={issuer}
-          onChangeText={setIssuer}
-          errorText={errors.issuer}
-        />
+        <IssuerSelect value={issuer} onChange={setIssuer} errorText={errors.issuer} />
         <Input
           label="카드명"
           required
