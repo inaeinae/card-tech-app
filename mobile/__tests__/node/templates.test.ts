@@ -23,4 +23,14 @@ describe('BENEFIT_TEMPLATES', () => {
     expect(getTemplateById('cashback')?.id).toBe('cashback');
     expect(getTemplateById('does-not-exist')).toBeNull();
   });
+
+  it('context=card 필터 시 autopay(isEventOnly) 제외됨', () => {
+    const cardTemplates = BENEFIT_TEMPLATES.filter((t) => !t.isEventOnly);
+    expect(cardTemplates.find((t) => t.id === 'autopay')).toBeUndefined();
+    expect(cardTemplates.length).toBeLessThan(BENEFIT_TEMPLATES.length);
+  });
+
+  it('context=event 는 autopay 포함', () => {
+    expect(BENEFIT_TEMPLATES.find((t) => t.id === 'autopay')).toBeDefined();
+  });
 });

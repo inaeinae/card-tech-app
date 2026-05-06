@@ -1,35 +1,60 @@
-// 카테크 디자인 토큰 — design-system/카테크/MASTER.md 와 동기화 유지
-// NativeWind(tailwind.config.js) 와 동일 값 사용. 런타임 JS에서 토큰이 필요할 때 참조.
-
+// 카테크 디자인 토큰 — Pencil 목업(design.pen) $변수와 1:1 매핑
 import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    primary: '#1E40AF',
-    accent: '#059669',
+    // Pencil $primary
+    primary: '#3182F6',
+    primaryPressed: '#1B64DA',
+    primarySoft: '#E8F2FE',
+    // Pencil $accent
+    accent: '#19D294',
+    accentSoft: '#E5FAF3',
+    // 배경/표면
+    bg: '#FFFFFF',
+    surface: '#F9FAFB',
+    surface2: '#F2F4F6',
+    // 텍스트
+    ink: '#191F28',
+    ink2: '#4E5968',
+    ink3: '#8B95A1',
+    ink4: '#B0B8C1',
+    // 보더
+    border: '#F2F4F6',
+    borderStrong: '#E5E8EB',
+    // 위험/경고
+    danger: '#FF4D4F',
+    dangerSoft: '#FFF1F0',
+    warning: '#F59E0B',
+    warningSoft: '#FEF3C7',
+    // React Navigation 호환 별칭
     background: '#FFFFFF',
-    surface: '#F8FAFC',
-    foreground: '#0F172A',
-    muted: '#64748B',
-    border: '#E2E8F0',
-    destructive: '#DC2626',
-    // React Navigation 호환용 별칭
-    text: '#0F172A',
-    tint: '#1E40AF',
-    icon: '#64748B',
-    tabIconDefault: '#64748B',
-    tabIconSelected: '#1E40AF',
+    text: '#191F28',
+    tint: '#3182F6',
+    icon: '#8B95A1',
+    tabIconDefault: '#8B95A1',
+    tabIconSelected: '#3182F6',
   },
   dark: {
     primary: '#3B82F6',
+    primaryPressed: '#2563EB',
+    primarySoft: '#1E3A5F',
     accent: '#10B981',
-    background: '#0F172A',
+    accentSoft: '#064E3B',
+    bg: '#0F172A',
     surface: '#1E293B',
-    foreground: '#F8FAFC',
-    muted: '#94A3B8',
-    border: 'rgba(255,255,255,0.08)',
-    destructive: '#EF4444',
-    // React Navigation 호환용 별칭
+    surface2: '#334155',
+    ink: '#F8FAFC',
+    ink2: '#CBD5E1',
+    ink3: '#94A3B8',
+    ink4: '#64748B',
+    border: 'rgba(255,255,255,0.06)',
+    borderStrong: 'rgba(255,255,255,0.12)',
+    danger: '#EF4444',
+    dangerSoft: '#450A0A',
+    warning: '#F59E0B',
+    warningSoft: '#451A03',
+    background: '#0F172A',
     text: '#F8FAFC',
     tint: '#3B82F6',
     icon: '#94A3B8',
@@ -38,14 +63,11 @@ export const Colors = {
   },
 } as const;
 
-// 폰트 패밀리 토큰 — 기본 Noto Sans KR. rounded/mono 는 기본 템플릿 호환용 별칭 (Phase 5 에서 정리)
-const fontFamilies = {
+export const Fonts = {
   sans: 'NotoSansKR_400Regular',
   medium: 'NotoSansKR_500Medium',
+  semibold: 'NotoSansKR_600SemiBold',
   bold: 'NotoSansKR_700Bold',
   light: 'NotoSansKR_300Light',
-  rounded: 'NotoSansKR_400Regular',
   mono: Platform.select({ ios: 'Menlo', android: 'monospace', default: 'monospace' }),
-};
-
-export const Fonts = fontFamilies;
+} as const;

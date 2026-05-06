@@ -13,7 +13,7 @@ type Row = { label: string; eligible: boolean; amount: number };
 
 export default function SubItemPicker() {
   const router = useRouter();
-  const { templateId } = useLocalSearchParams<{ templateId: string }>();
+  const { templateId, context } = useLocalSearchParams<{ templateId: string; context?: string }>();
   const template = useMemo(() => getTemplateById(templateId ?? ''), [templateId]);
   const addBenefit = useWizardStore((s) => s.addBenefit);
 
@@ -61,7 +61,12 @@ export default function SubItemPicker() {
       expectedAmount: rows.reduce((acc, r) => acc + (r.eligible ? r.amount : 0), 0),
       conditions: { items: rows },
     });
-    router.replace('/wizard/step-benefits');
+    // context=card 이면 카드 폼으로 복귀, 아니면 위저드 혜택 스텝으로
+    if (context === 'card') {
+      router.back();
+    } else {
+      router.replace('/wizard/step-benefits');
+    }
   }
 
   return (

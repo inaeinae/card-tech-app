@@ -1,33 +1,53 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
-
+import { Home, CalendarDays, BarChart3, User } from 'lucide-react-native';
 import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const scheme = useColorScheme() ?? 'light';
+  const active = Colors[scheme].tint;
+  const inactive = Colors[scheme].tabIconDefault;
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: active,
+        tabBarInactiveTintColor: inactive,
         headerShown: false,
         tabBarButton: HapticTab,
-      }}>
+        tabBarStyle: {
+          backgroundColor: Colors[scheme].bg,
+          borderTopColor: Colors[scheme].borderStrong,
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: '홈',
+          tabBarIcon: ({ color }) => <Home size={24} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="calendar"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: '캘린더',
+          tabBarIcon: ({ color }) => <CalendarDays size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="report"
+        options={{
+          title: '리포트',
+          tabBarIcon: ({ color }) => <BarChart3 size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="mypage"
+        options={{
+          title: '마이',
+          tabBarIcon: ({ color }) => <User size={24} color={color} />,
         }}
       />
     </Tabs>

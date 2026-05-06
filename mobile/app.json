@@ -49,7 +49,7 @@
         {
           "kakaoAppKey": "KAKAO_NATIVE_APP_KEY_PLACEHOLDER",
           "kotlinVersion": "1.9.0",
-          "overrideKakaoSDKVersion": "2.20.6"
+          "overrideKakaoSDKVersion": "2.22.7"
         }
       ],
       [

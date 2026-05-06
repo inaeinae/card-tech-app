@@ -14,6 +14,7 @@ export type BenefitTemplate = {
   defaultExpectedAmount?: number;
   supportsSubItems: boolean;
   presetSubItems?: SubItemPreset[];
+  isEventOnly?: boolean; // true이면 context=card 에서 숨김
 };
 
 export const BENEFIT_TEMPLATES: readonly BenefitTemplate[] = [
@@ -44,6 +45,7 @@ export const BENEFIT_TEMPLATES: readonly BenefitTemplate[] = [
     type: 'discount',
     defaultTitle: '생활비 자동납부 할인',
     supportsSubItems: true,
+    isEventOnly: true, // 기간·이벤트 기반 — 카드 상시혜택 컨텍스트에서 숨김
     presetSubItems: [
       { label: '아파트 관리비', defaultAmount: 5000 },
       { label: '도시가스', defaultAmount: 5000 },

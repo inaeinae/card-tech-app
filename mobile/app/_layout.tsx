@@ -57,6 +57,7 @@ export default function RootLayout() {
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+          <Stack.Screen name="modals/status-change" options={{ presentation: 'transparentModal', animation: 'slide_from_bottom', headerShown: false }} />
         </Stack>
       </AuthGate>
       <StatusBar style="auto" />
