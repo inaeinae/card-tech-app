@@ -1,8 +1,7 @@
-// 카드 등록 — 카드사/이름/메모 + 이미지 업로드 + 상시혜택 draft
-// 1) upsertCard 로 row 생성(이미지 경로 없이) → 반환된 card.id 확보
-// 2) 이미지가 있으면 uploadCardImage(userId, card.id) 후 image_path 로 재 upsert
-// 3) draftBenefits 일괄 upsertCardBenefit
-// 4) router.back() 으로 이전 화면 복귀
+// 카드 등록 — 카드사(셀렉트)/이름/메모 + 상시혜택 draft
+// 1) upsertCard 로 row 생성 → 반환된 card.id 확보
+// 2) draftBenefits 일괄 upsertCardBenefit
+// 3) router.back() 으로 이전 화면 복귀
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -13,7 +12,6 @@ import { IssuerSelect } from '@/components/ui/IssuerSelect';
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
 import { validateCardForm, normalizeCardForm, type CardFormErrors } from '@/lib/cardForm';
-import { uploadCardImage } from '@/lib/cardImage';
 
 type DraftBenefit = { localId: string; title: string; details?: string };
 
@@ -25,7 +23,6 @@ export default function NewCardScreen() {
   const [issuer, setIssuer] = useState('');
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
-  const [imageUri, setImageUri] = useState<string | null>(null);
   const [errors, setErrors] = useState<CardFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [draftBenefits, setDraftBenefits] = useState<DraftBenefit[]>([]);
@@ -50,17 +47,6 @@ export default function NewCardScreen() {
         notes: normalized.notes,
       });
 
-      if (imageUri) {
-        const { path } = await uploadCardImage({
-          userId: user.id,
-          cardId: card.id,
-          fileUri: imageUri,
-          extension: 'jpg',
-        });
-        await upsertCard({ id: card.id, image_path: path });
-      }
-
-      // 상시혜택 일괄 저장
       for (const b of draftBenefits) {
         await useCardStore.getState().upsertCardBenefit(card.id, { title: b.title, details: b.details });
       }

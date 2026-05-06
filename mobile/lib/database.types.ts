@@ -137,7 +137,6 @@ export type Database = {
           canceled_at: string | null
           created_at: string
           id: string
-          image_path: string | null
           issuer: string
           last_event_at: string | null
           name: string
@@ -150,7 +149,6 @@ export type Database = {
           canceled_at?: string | null
           created_at?: string
           id?: string
-          image_path?: string | null
           issuer: string
           last_event_at?: string | null
           name: string
@@ -163,7 +161,6 @@ export type Database = {
           canceled_at?: string | null
           created_at?: string
           id?: string
-          image_path?: string | null
           issuer?: string
           last_event_at?: string | null
           name?: string
