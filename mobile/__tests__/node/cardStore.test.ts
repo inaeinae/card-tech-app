@@ -89,3 +89,14 @@ describe('cardStore 확장', () => {
     expect(useCardStore.getState().benefits.c1).toHaveLength(2);
   });
 });
+
+describe('cardBenefit actions exist', () => {
+  it('upsertCardBenefit 액션이 스토어에 존재한다', () => {
+    const store = useCardStore.getState();
+    expect(typeof store.upsertCardBenefit).toBe('function');
+  });
+  it('deleteCardBenefit 액션이 스토어에 존재한다', () => {
+    const store = useCardStore.getState();
+    expect(typeof store.deleteCardBenefit).toBe('function');
+  });
+});

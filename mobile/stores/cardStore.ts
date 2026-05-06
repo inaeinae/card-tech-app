@@ -15,6 +15,12 @@ type CardState = {
   loadCards: () => Promise<void>;
   upsertCard: (payload: CardInsert | (CardUpdate & { id: string })) => Promise<Card>;
   loadCardBenefits: (cardId: string) => Promise<void>;
+  upsertCardBenefit: (
+    cardId: string,
+    payload: { title: string; details?: string | null },
+    existingId?: string,
+  ) => Promise<CardBenefit>;
+  deleteCardBenefit: (benefitId: string, cardId: string) => Promise<void>;
   scheduleCancel: (cardId: string, scheduledAt: string) => Promise<void>;
   confirmCancel: (cardId: string, canceledAt: string) => Promise<void>;
   restoreCancel: (cardId: string) => Promise<void>;
@@ -59,6 +65,40 @@ export const useCardStore = create<CardState>((set, get) => ({
       .order('created_at', { ascending: true });
     if (error) throw error;
     set({ benefits: { ...get().benefits, [cardId]: data ?? [] } });
+  },
+
+  upsertCardBenefit: async (cardId, payload, existingId) => {
+    const { data: authData } = await supabase.auth.getUser();
+    if (!authData.user) throw new Error('세션 없음');
+
+    const row = {
+      ...(existingId ? { id: existingId } : {}),
+      card_id: cardId,
+      user_id: authData.user.id,
+      title: payload.title,
+      details: payload.details ?? null,
+    };
+
+    const { data, error } = await supabase
+      .from('card_benefits')
+      .upsert(row)
+      .select()
+      .single();
+    if (error || !data) throw error ?? new Error('혜택 저장 실패');
+
+    const current = get().benefits[cardId] ?? [];
+    const next = existingId
+      ? current.map((b) => (b.id === existingId ? data : b))
+      : [...current, data];
+    set({ benefits: { ...get().benefits, [cardId]: next } });
+    return data;
+  },
+
+  deleteCardBenefit: async (benefitId, cardId) => {
+    const { error } = await supabase.from('card_benefits').delete().eq('id', benefitId);
+    if (error) throw error;
+    const current = get().benefits[cardId] ?? [];
+    set({ benefits: { ...get().benefits, [cardId]: current.filter((b) => b.id !== benefitId) } });
   },
 
   scheduleCancel: async (cardId, scheduledAt) => {

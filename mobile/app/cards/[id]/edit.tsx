@@ -1,8 +1,9 @@
 // 카드 수정 — 기존 값 로드 후 new 와 동일한 폼 재사용
 // imageDirty 플래그로 이미지 변경 여부 구분 (변경 없으면 image_path 그대로 유지)
 import { useEffect, useState } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Plus, Trash2 } from 'lucide-react-native';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { CardImagePicker } from '@/components/cards/CardImagePicker';
@@ -18,6 +19,10 @@ export default function EditCardScreen() {
   const user = useAuthStore((s) => s.user);
   const card = useCardStore((s) => s.cards.find((c) => c.id === id));
   const upsertCard = useCardStore((s) => s.upsertCard);
+  const benefits = useCardStore((s) => s.benefits[id ?? ''] ?? []);
+  const loadCardBenefits = useCardStore((s) => s.loadCardBenefits);
+  const upsertCardBenefit = useCardStore((s) => s.upsertCardBenefit);
+  const deleteCardBenefit = useCardStore((s) => s.deleteCardBenefit);
 
   const [issuer, setIssuer] = useState('');
   const [name, setName] = useState('');
@@ -38,6 +43,10 @@ export default function EditCardScreen() {
         .catch(() => setImageUri(null));
     }
   }, [card]);
+
+  useEffect(() => {
+    if (id) loadCardBenefits(id);
+  }, [id, loadCardBenefits]);
 
   if (!card) return <EmptyState title="카드를 찾을 수 없습니다" />;
 
@@ -79,6 +88,12 @@ export default function EditCardScreen() {
     }
   }
 
+  function addBenefit() {
+    Alert.prompt('혜택 추가', '혜택 이름을 입력하세요', async (title) => {
+      if (title?.trim() && id) await upsertCardBenefit(id, { title: title.trim() });
+    });
+  }
+
   return (
     <ScrollView className="flex-1 bg-background dark:bg-background-dark">
       <View className="p-4 gap-4">
@@ -104,6 +119,49 @@ export default function EditCardScreen() {
           errorText={errors.name}
         />
         <Input label="메모" value={notes} onChangeText={setNotes} multiline />
+
+        {/* 상시 혜택 섹션 */}
+        <View style={{ gap: 8 }}>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: '#191F28' }}>상시 혜택</Text>
+          {benefits.map((b) => (
+            <View
+              key={b.id}
+              style={{
+                flexDirection: 'row', alignItems: 'center', gap: 8,
+                padding: 12, borderRadius: 12,
+                borderWidth: 1, borderColor: '#E5E8EB',
+              }}
+            >
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: '#191F28' }}>{b.title}</Text>
+                {b.details ? <Text style={{ fontSize: 13, color: '#8B95A1' }}>{String(b.details)}</Text> : null}
+              </View>
+              <Pressable
+                onPress={() => {
+                  Alert.alert('혜택 삭제', '삭제하시겠습니까?', [
+                    { text: '취소', style: 'cancel' },
+                    { text: '삭제', style: 'destructive', onPress: () => id && deleteCardBenefit(b.id, id) },
+                  ]);
+                }}
+                accessibilityLabel="혜택 삭제"
+              >
+                <Trash2 size={18} color="#FF4D4F" />
+              </Pressable>
+            </View>
+          ))}
+          <Pressable
+            onPress={addBenefit}
+            style={{
+              flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+              padding: 12, borderRadius: 12, borderWidth: 1, borderStyle: 'dashed',
+              borderColor: '#3182F6',
+            }}
+          >
+            <Plus size={16} color="#3182F6" />
+            <Text style={{ fontSize: 14, fontWeight: '600', color: '#3182F6' }}>+ 혜택 추가</Text>
+          </Pressable>
+        </View>
+
         <Button label="저장" onPress={onSubmit} loading={submitting} />
       </View>
     </ScrollView>
