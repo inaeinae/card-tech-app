@@ -146,7 +146,7 @@ export default function NewCardScreen() {
             }}
           >
             <Plus size={16} color="#3182F6" />
-            <Text style={{ fontSize: 14, fontWeight: '600', color: '#3182F6' }}>+ 혜택 추가</Text>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: '#3182F6' }}>혜택 추가</Text>
           </Pressable>
         </View>
 
