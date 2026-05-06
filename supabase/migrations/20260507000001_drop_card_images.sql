@@ -11,5 +11,5 @@ drop policy if exists "card_images_insert" on storage.objects;
 drop policy if exists "card_images_update" on storage.objects;
 drop policy if exists "card_images_delete" on storage.objects;
 
--- 3. 버킷 제거 (데이터가 없을 때만 안전 — 기존 이미지 파일이 있다면 수동 삭제 후 진행)
-delete from storage.buckets where id = 'card-images';
+-- 3. 버킷 제거: Storage API 트리거로 직접 SQL 삭제 불가
+--    Supabase 대시보드 Storage 탭에서 'card-images' 버킷 수동 삭제 필요
