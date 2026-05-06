@@ -1,159 +1,114 @@
-import { Image } from 'expo-image';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link, useRouter } from 'expo-router';
-import { useAuthStore } from '@/stores/authStore';
+import { useCallback, useEffect } from 'react';
+import { FlatList, Pressable, RefreshControl, SafeAreaView, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Plus } from 'lucide-react-native';
+import SummaryCard from '@/components/home/SummaryCard';
+import EventListItem from '@/components/home/EventListItem';
+import EmptyHome from '@/components/home/EmptyHome';
+import { useEventStore } from '@/stores/eventStore';
+import { useCardStore } from '@/stores/cardStore';
 import { useWizardStore } from '@/stores/wizardStore';
+import type { EventRow } from '@/types/models';
+
+// paid / canceled 제외 — active 이벤트만
+const ACTIVE_STATUSES = new Set([
+  'registered', 'applied', 'in_progress', 'performance_done', 'pending_payout', 'cancelable',
+]);
 
 export default function HomeScreen() {
   const router = useRouter();
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      {/* Phase 5 임시: 카드 진입 — Phase 8 에서 홈 레이아웃으로 이동 */}
-      <View style={styles.devActions}>
-        <Link href="/cards/new" asChild>
-          <Pressable style={styles.devButton} accessibilityRole="button">
-            <Text style={styles.devButtonText}>카드 등록 (임시)</Text>
-          </Pressable>
-        </Link>
-      </View>
-      {/* Phase 6 임시: 이벤트 위저드 진입 — Phase 8 에서 FAB 로 교체 */}
-      <View style={styles.devActions}>
-        <Pressable
-          style={styles.devButton}
-          accessibilityRole="button"
-          onPress={() => {
-            useWizardStore.getState().reset();
-            router.push('/wizard/step-card');
-          }}
-        >
-          <Text style={styles.devButtonText}>이벤트 등록 (임시)</Text>
-        </Pressable>
-      </View>
-      {/* Phase 4 임시: 로그아웃/탈퇴 — Phase 12 에서 mypage 로 이동 */}
-      <View style={styles.devActions}>
-        <Pressable
-          onPress={() => useAuthStore.getState().signOut()}
-          accessibilityRole="button"
-          style={styles.devButton}
-        >
-          <Text style={styles.devButtonText}>로그아웃 (임시)</Text>
-        </Pressable>
-        {__DEV__ && (
-          <Pressable
-            onPress={() => useAuthStore.getState().deleteAccount()}
-            accessibilityRole="button"
-            style={[styles.devButton, styles.devButtonDanger]}
-          >
-            <Text style={styles.devButtonText}>탈퇴 (개발)</Text>
-          </Pressable>
-        )}
-      </View>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const events = useEventStore((s) => s.events);
+  const loading = useEventStore((s) => s.loading);
+  const loadEvents = useEventStore((s) => s.loadEvents);
+  const cards = useCardStore((s) => s.cards);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  useEffect(() => {
+    loadEvents();
+  }, [loadEvents]);
+
+  const activeEvents = events.filter((e) => ACTIVE_STATUSES.has(e.status));
+
+  // Phase 10 Edge Function 연동 전: 금액 집계 미지원
+  const confirmedAmount = 0;
+  const expectedAmount = 0;
+
+  function startWizard() {
+    useWizardStore.getState().reset();
+    router.push('/wizard/step-card');
+  }
+
+  const renderItem = useCallback(
+    ({ item }: { item: EventRow }) => {
+      const card = cards.find((c) => c.id === item.card_id);
+      return (
+        <EventListItem
+          id={item.id}
+          title={item.title}
+          issuer={card?.issuer ?? ''}
+          status={item.status}
+          expectedAmount={0}
+          onPress={() => router.push(`/events/${item.id}`)}
+        />
+      );
+    },
+    [cards, router],
+  );
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      {activeEvents.length === 0 && !loading ? (
+        <EmptyHome onRegister={startWizard} />
+      ) : (
+        <FlatList
+          data={activeEvents}
+          keyExtractor={(e) => e.id}
+          renderItem={renderItem}
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={loadEvents} tintColor="#3182F6" />
+          }
+          ListHeaderComponent={
+            <SummaryCard confirmedAmount={confirmedAmount} expectedAmount={expectedAmount} />
+          }
+          ListFooterComponent={
+            <Pressable
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onPress={() => router.push('/events' as any)}
+              style={{ alignItems: 'center', padding: 16 }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '600', color: '#3182F6' }}>
+                전체 이벤트 보기 →
+              </Text>
+            </Pressable>
+          }
+          contentContainerStyle={{ paddingTop: 8, paddingBottom: 100 }}
+        />
+      )}
+
+      {/* FAB */}
+      {activeEvents.length > 0 && (
+        <Pressable
+          onPress={startWizard}
+          style={({ pressed }) => ({
+            position: 'absolute',
+            bottom: 24,
+            right: 24,
+            width: 56,
+            height: 56,
+            borderRadius: 28,
+            backgroundColor: pressed ? '#1B64DA' : '#3182F6',
+            alignItems: 'center',
+            justifyContent: 'center',
+            shadowColor: '#3182F6',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.4,
+            shadowRadius: 8,
+            elevation: 6,
+          })}
+          accessibilityLabel="이벤트 등록"
+        >
+          <Plus size={28} color="#FFFFFF" />
+        </Pressable>
+      )}
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-  devActions: {
-    flexDirection: 'row',
-    gap: 8,
-    alignSelf: 'flex-end',
-  },
-  devButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-    backgroundColor: '#64748B',
-  },
-  devButtonDanger: {
-    backgroundColor: '#DC2626',
-  },
-  devButtonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-  },
-});
