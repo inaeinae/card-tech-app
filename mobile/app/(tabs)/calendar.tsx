@@ -100,10 +100,12 @@ export default function CalendarScreen() {
             theme={{
               todayTextColor: '#3182F6',
               selectedDayBackgroundColor: '#3182F6',
+              selectedDayTextColor: '#FFFFFF',
               arrowColor: '#3182F6',
               textDayFontFamily: 'NotoSansKR_400Regular',
               textMonthFontFamily: 'NotoSansKR_700Bold',
               textDayHeaderFontFamily: 'NotoSansKR_500Medium',
+              textDayStyle: { marginTop: 0, textAlignVertical: 'center' },
             }}
           />
         )}
