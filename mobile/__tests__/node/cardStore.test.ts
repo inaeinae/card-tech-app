@@ -100,3 +100,36 @@ describe('cardBenefit actions exist', () => {
     expect(typeof store.deleteCardBenefit).toBe('function');
   });
 });
+
+describe('cardStore.draftBenefits', () => {
+  beforeEach(() => {
+    useCardStore.setState({ draftBenefits: [] } as never);
+  });
+
+  it('addDraftBenefit 은 localId 가 부여된 항목을 끝에 추가한다', () => {
+    useCardStore.getState().addDraftBenefit({ title: '커피 10% 할인' });
+    useCardStore.getState().addDraftBenefit({ title: '해외 적립', details: { rate: 1.5 } });
+    const list = useCardStore.getState().draftBenefits;
+    expect(list).toHaveLength(2);
+    expect(list[0].title).toBe('커피 10% 할인');
+    expect(list[0].localId).toBeTruthy();
+    expect(list[1].details).toEqual({ rate: 1.5 });
+    expect(list[0].localId).not.toBe(list[1].localId);
+  });
+
+  it('removeDraftBenefit 은 해당 localId 항목만 제거한다', () => {
+    useCardStore.getState().addDraftBenefit({ title: 'A' });
+    useCardStore.getState().addDraftBenefit({ title: 'B' });
+    const [first] = useCardStore.getState().draftBenefits;
+    useCardStore.getState().removeDraftBenefit(first.localId);
+    const list = useCardStore.getState().draftBenefits;
+    expect(list).toHaveLength(1);
+    expect(list[0].title).toBe('B');
+  });
+
+  it('clearDraftBenefits 는 빈 배열로 리셋한다', () => {
+    useCardStore.getState().addDraftBenefit({ title: 'A' });
+    useCardStore.getState().clearDraftBenefits();
+    expect(useCardStore.getState().draftBenefits).toEqual([]);
+  });
+});

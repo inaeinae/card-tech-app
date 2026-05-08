@@ -1,5 +1,5 @@
 // 자동납부 등 하위 항목 멀티 선택 + 직접 추가 + 금액 인풋.
-// 확인 시 wizardStore.addBenefit 으로 즉시 등록 후 step-benefits 로 복귀.
+// context=card 일 때는 cardStore 경유 저장, 아닌 경우 wizardStore.addBenefit 으로 즉시 등록 후 step-benefits 로 복귀.
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -7,15 +7,24 @@ import { CheckSquare, Plus, Square } from 'lucide-react-native';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { getTemplateById } from '@/lib/templates';
+import { useCardStore } from '@/stores/cardStore';
 import { useWizardStore } from '@/stores/wizardStore';
 
 type Row = { label: string; eligible: boolean; amount: number };
 
 export default function SubItemPicker() {
   const router = useRouter();
-  const { templateId, context } = useLocalSearchParams<{ templateId: string; context?: string }>();
+  const { templateId, context, cardId } = useLocalSearchParams<{
+    templateId: string;
+    context?: string;
+    cardId?: string;
+  }>();
+  const isCardContext = context === 'card';
   const template = useMemo(() => getTemplateById(templateId ?? ''), [templateId]);
   const addBenefit = useWizardStore((s) => s.addBenefit);
+  // cardStore 셀렉터 — context=card 일 때 사용
+  const addDraftBenefit = useCardStore((s) => s.addDraftBenefit);
+  const upsertCardBenefit = useCardStore((s) => s.upsertCardBenefit);
 
   const [rows, setRows] = useState<Row[]>(
     (template?.presetSubItems ?? []).map((s) => ({
@@ -53,20 +62,32 @@ export default function SubItemPicker() {
     setNewAmount('');
   }
 
-  function onSave() {
+  async function onSave() {
+    const totalAmount = rows.reduce((acc, r) => acc + (r.eligible ? r.amount : 0), 0);
+    const title = template!.defaultTitle ?? template!.label;
+    const detailsPayload = { items: rows, expectedAmount: totalAmount };
+
+    if (isCardContext) {
+      if (cardId) {
+        // 기존 카드에 혜택 upsert (DB 저장)
+        await upsertCardBenefit(cardId, { title, details: detailsPayload });
+      } else {
+        // 새 카드 생성 중 — 임시 드래프트에 추가
+        addDraftBenefit({ title, details: detailsPayload });
+      }
+      router.back();
+      return;
+    }
+
+    // 이벤트 위저드 컨텍스트 (기존 동작)
     addBenefit({
       templateId: template!.id,
       type: template!.type,
-      label: template!.defaultTitle ?? template!.label,
-      expectedAmount: rows.reduce((acc, r) => acc + (r.eligible ? r.amount : 0), 0),
+      label: title,
+      expectedAmount: totalAmount,
       conditions: { items: rows },
     });
-    // context=card 이면 카드 폼으로 복귀, 아니면 위저드 혜택 스텝으로
-    if (context === 'card') {
-      router.back();
-    } else {
-      router.replace('/wizard/step-benefits');
-    }
+    router.replace('/wizard/step-benefits');
   }
 
   return (

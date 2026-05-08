@@ -1,12 +1,13 @@
-// 카드 수정 — 기존 값 로드 후 new 와 동일한 폼 재사용
+// 카드 수정 — 기존 값 로드 후 new 와 동일한 폼 재사용. 혜택은 즉시 반영(template-picker 경유).
 import { useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Plus, Trash2 } from 'lucide-react-native';
+import { Plus } from 'lucide-react-native';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { IssuerSelect } from '@/components/ui/IssuerSelect';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { CardBenefitItem } from '@/components/cards/CardBenefitItem';
 import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
 import { validateCardForm, normalizeCardForm, type CardFormErrors } from '@/lib/cardForm';
@@ -19,7 +20,6 @@ export default function EditCardScreen() {
   const upsertCard = useCardStore((s) => s.upsertCard);
   const benefits = useCardStore((s) => s.benefits[id ?? ''] ?? []);
   const loadCardBenefits = useCardStore((s) => s.loadCardBenefits);
-  const upsertCardBenefit = useCardStore((s) => s.upsertCardBenefit);
   const deleteCardBenefit = useCardStore((s) => s.deleteCardBenefit);
 
   const [issuer, setIssuer] = useState('');
@@ -65,10 +65,20 @@ export default function EditCardScreen() {
     }
   }
 
-  function addBenefit() {
-    Alert.prompt('혜택 추가', '혜택 이름을 입력하세요', async (title) => {
-      if (title?.trim() && id) await upsertCardBenefit(id, { title: title.trim() });
-    });
+  function goAddBenefit() {
+    if (!id) return;
+    router.push(`/wizard/template-picker?context=card&cardId=${id}`);
+  }
+
+  function confirmDelete(benefitId: string) {
+    Alert.alert('혜택 삭제', '삭제하시겠습니까?', [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '삭제',
+        style: 'destructive',
+        onPress: () => id && deleteCardBenefit(benefitId, id),
+      },
+    ]);
   }
 
   return (
@@ -84,37 +94,20 @@ export default function EditCardScreen() {
         />
         <Input label="메모" value={notes} onChangeText={setNotes} multiline />
 
-        {/* 상시 혜택 섹션 */}
         <View style={{ gap: 8 }}>
           <Text style={{ fontSize: 16, fontWeight: '700', color: '#191F28' }}>상시 혜택</Text>
           {benefits.map((b) => (
-            <View
+            <CardBenefitItem
               key={b.id}
-              style={{
-                flexDirection: 'row', alignItems: 'center', gap: 8,
-                padding: 12, borderRadius: 12,
-                borderWidth: 1, borderColor: '#E5E8EB',
-              }}
-            >
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 14, fontWeight: '600', color: '#191F28' }}>{b.title}</Text>
-                {b.details ? <Text style={{ fontSize: 13, color: '#8B95A1' }}>{String(b.details)}</Text> : null}
-              </View>
-              <Pressable
-                onPress={() => {
-                  Alert.alert('혜택 삭제', '삭제하시겠습니까?', [
-                    { text: '취소', style: 'cancel' },
-                    { text: '삭제', style: 'destructive', onPress: () => id && deleteCardBenefit(b.id, id) },
-                  ]);
-                }}
-                accessibilityLabel="혜택 삭제"
-              >
-                <Trash2 size={18} color="#FF4D4F" />
-              </Pressable>
-            </View>
+              title={b.title}
+              details={b.details as Record<string, unknown> | null}
+              onDelete={() => confirmDelete(b.id)}
+            />
           ))}
           <Pressable
-            onPress={addBenefit}
+            onPress={goAddBenefit}
+            accessibilityRole="button"
+            accessibilityLabel="혜택 추가"
             style={{
               flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
               padding: 12, borderRadius: 12, borderWidth: 1, borderStyle: 'dashed',

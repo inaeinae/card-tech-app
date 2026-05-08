@@ -256,7 +256,13 @@ export default function CardDetailScreen() {
           benefits.length === 0 ? (
             <EmptyState title="등록된 상시 혜택이 없습니다" />
           ) : (
-            benefits.map((b) => <CardBenefitItem key={b.id} benefit={b} />)
+            benefits.map((b) => (
+              <CardBenefitItem
+                key={b.id}
+                title={b.title}
+                details={b.details as Record<string, unknown> | null}
+              />
+            ))
           )
         ) : events.length === 0 ? (
           <EmptyState title="이 카드로 등록된 이벤트가 없습니다" />
