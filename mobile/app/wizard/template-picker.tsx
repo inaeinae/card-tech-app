@@ -8,7 +8,7 @@ import { BENEFIT_TEMPLATES } from '@/lib/templates';
 
 export default function TemplatePicker() {
   const router = useRouter();
-  const { context } = useLocalSearchParams<{ context?: string }>();
+  const { context, cardId } = useLocalSearchParams<{ context?: string; cardId?: string }>();
   const isCardContext = context === 'card';
 
   const templates = useMemo(
@@ -16,7 +16,11 @@ export default function TemplatePicker() {
     [isCardContext],
   );
 
-  const contextParam = isCardContext ? '&context=card' : '';
+  const extraParams = (() => {
+    if (!isCardContext) return '';
+    const cardIdPart = cardId ? `&cardId=${cardId}` : '';
+    return `&context=card${cardIdPart}`;
+  })();
 
   return (
     <ScrollView className="flex-1 bg-background dark:bg-background-dark">
@@ -26,9 +30,9 @@ export default function TemplatePicker() {
             key={t.id}
             onPress={() => {
               if (t.supportsSubItems) {
-                router.replace(`/wizard/sub-item-picker?templateId=${t.id}${contextParam}`);
+                router.replace(`/wizard/sub-item-picker?templateId=${t.id}${extraParams}`);
               } else {
-                router.replace(`/wizard/benefit-form?templateId=${t.id}${contextParam}`);
+                router.replace(`/wizard/benefit-form?templateId=${t.id}${extraParams}`);
               }
             }}
             accessibilityRole="button"
