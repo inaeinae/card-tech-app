@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { supabase } from '@/lib/supabase';
 import type { Card, CardBenefit } from '@/types/models';
-import type { Database } from '@/lib/database.types';
+import type { Database, Json } from '@/lib/database.types';
 
 type CardInsert = Database['public']['Tables']['cards']['Insert'];
 type CardUpdate = Database['public']['Tables']['cards']['Update'];
@@ -24,7 +24,7 @@ type CardState = {
   loadCardBenefits: (cardId: string) => Promise<void>;
   upsertCardBenefit: (
     cardId: string,
-    payload: { title: string; details?: string | null },
+    payload: { title: string; details?: Record<string, unknown> | null },
     existingId?: string,
   ) => Promise<CardBenefit>;
   deleteCardBenefit: (benefitId: string, cardId: string) => Promise<void>;
@@ -87,7 +87,8 @@ export const useCardStore = create<CardState>((set, get) => ({
       card_id: cardId,
       user_id: authData.user.id,
       title: payload.title,
-      details: payload.details ?? null,
+      // Supabase jsonb 컬럼은 Json 타입을 요구하므로 캐스트
+      details: (payload.details ?? null) as Json | null,
     };
 
     const { data, error } = await supabase

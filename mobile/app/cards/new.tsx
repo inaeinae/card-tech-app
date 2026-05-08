@@ -13,7 +13,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCardStore } from '@/stores/cardStore';
 import { validateCardForm, normalizeCardForm, type CardFormErrors } from '@/lib/cardForm';
 
-type DraftBenefit = { localId: string; title: string; details?: string };
+type DraftBenefit = { localId: string; title: string; details?: Record<string, unknown> | null };
 
 export default function NewCardScreen() {
   const router = useRouter();
@@ -105,7 +105,7 @@ export default function NewCardScreen() {
             >
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: 14, fontWeight: '600', color: '#191F28' }}>{b.title}</Text>
-                {b.details ? <Text style={{ fontSize: 13, color: '#8B95A1' }}>{b.details}</Text> : null}
+                {b.details ? <Text style={{ fontSize: 13, color: '#8B95A1' }}>{JSON.stringify(b.details)}</Text> : null}
               </View>
               <Pressable
                 onPress={() => setDraftBenefits((prev) => prev.filter((x) => x.localId !== b.localId))}
