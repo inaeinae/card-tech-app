@@ -23,6 +23,9 @@ type Props = {
 export function AutoSuggestionBanner({ suggested, onConfirm }: Props) {
   const [busy, setBusy] = useState(false);
 
+  // canceled는 종단 상태 — 제안 배너 불필요
+  if (suggested === 'canceled') return null;
+
   async function handle() {
     if (busy) return;
     setBusy(true);
@@ -56,11 +59,13 @@ export function AutoSuggestionBanner({ suggested, onConfirm }: Props) {
         onPress={handle}
         disabled={busy}
         style={({ pressed }) => ({
-          paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999,
+          paddingHorizontal: 14, paddingVertical: 8, minHeight: 44, borderRadius: 999,
           backgroundColor: pressed ? '#1B64DA' : '#3182F6',
           opacity: busy ? 0.6 : 1,
         })}
         accessibilityRole="button"
+        accessibilityLabel={`${EVENT_STATUS_LABEL[suggested]} 로 변경 확정`}
+        accessibilityState={{ disabled: busy, busy }}
       >
         <Text style={{ fontSize: 13, fontWeight: '700', color: '#FFFFFF' }}>
           {busy ? '확정 중…' : '확정'}
