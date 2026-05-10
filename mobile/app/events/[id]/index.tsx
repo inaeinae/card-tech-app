@@ -85,8 +85,12 @@ export default function EventDetailScreen() {
 
   async function onConfirmSuggested() {
     if (!event || !suggested) return;
-    await changeStatus(event.id, suggested, true);
-    setEvent({ ...event, status: suggested, status_updated_at: new Date().toISOString() });
+    try {
+      await changeStatus(event.id, suggested, true);
+      setEvent({ ...event, status: suggested, status_updated_at: new Date().toISOString() });
+    } catch (e) {
+      Alert.alert('상태 변경 실패', e instanceof Error ? e.message : '알 수 없는 오류');
+    }
   }
 
   async function onEdit() {
