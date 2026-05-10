@@ -14,6 +14,8 @@ import { useEventStore } from '@/stores/eventStore';
 import { useWizardStore } from '@/stores/wizardStore';
 import { EVENT_STATUS_LABEL } from '@/types/models';
 import type { Benefit, EventRow } from '@/types/models';
+import { AutoSuggestionBanner } from '@/components/events/AutoSuggestionBanner';
+import { suggestNextStatus } from '@/lib/eventStatus';
 
 const STATUS_COLOR: Record<string, string> = {
   registered: '#8B95A1',
@@ -31,6 +33,7 @@ export default function EventDetailScreen() {
   const router = useRouter();
   const eventInState = useEventStore((s) => s.events.find((e) => e.id === id));
   const deleteEvent = useEventStore((s) => s.deleteEvent);
+  const changeStatus = useEventStore((s) => s.changeStatus);
   const card = useCardStore((s) => s.cards.find((c) => c.id === eventInState?.card_id));
   const loadFromEvent = useWizardStore((s) => s.loadFromEvent);
 
@@ -63,6 +66,32 @@ export default function EventDetailScreen() {
     () => benefits.reduce((acc, b) => acc + Number(b.expected_amount ?? 0), 0),
     [benefits],
   );
+
+  const suggested = useMemo(() => {
+    if (!event) return null;
+    const today = new Date().toISOString().slice(0, 10);
+    return suggestNextStatus(
+      {
+        status: event.status,
+        apply_start: event.apply_start,
+        apply_end: event.apply_end,
+        use_start: event.use_start,
+        use_end: event.use_end,
+        payout_expected_at: event.payout_expected_at,
+      },
+      today,
+    );
+  }, [event]);
+
+  async function onConfirmSuggested() {
+    if (!event || !suggested) return;
+    try {
+      await changeStatus(event.id, suggested, true);
+      setEvent({ ...event, status: suggested, status_updated_at: new Date().toISOString() });
+    } catch (e) {
+      Alert.alert('상태 변경 실패', e instanceof Error ? e.message : '알 수 없는 오류');
+    }
+  }
 
   async function onEdit() {
     if (!event) return;
@@ -147,6 +176,10 @@ export default function EventDetailScreen() {
             </Text>
           ) : null}
         </View>
+
+        {suggested && (
+          <AutoSuggestionBanner suggested={suggested} onConfirm={onConfirmSuggested} />
+        )}
 
         {/* 타임라인 섹션 */}
         <View

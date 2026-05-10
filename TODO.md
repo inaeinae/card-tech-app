@@ -142,12 +142,12 @@
 
 ## Phase 7. 상태 머신
 
-- [ ] `lib/eventStatus.ts` — 날짜 기반 상태 계산기
-- [ ] 자동 제안 배지 + 1탭 확정 UX
-- [ ] `modals/status-change.tsx` — 수동 변경 확인
-- [ ] `events/[id]/history.tsx` — 상태 이력 뷰 (auto/manual 구분)
-- [ ] 재수정(이전 상태 복귀) 처리
-- [ ] `event_status_history` insert 훅
+- [x] `lib/eventStatus.ts` — 날짜 기반 상태 계산기 (`calcAutoStatus` + `suggestNextStatus`)
+- [x] 자동 제안 배지 + 1탭 확정 UX (`AutoSuggestionBanner`)
+- [x] `modals/status-change.tsx` — 수동 변경 확인
+- [x] `events/[id]/history.tsx` — 상태 이력 뷰 (auto/manual 구분)
+- [x] 재수정(이전 상태 복귀) 처리 — `ALLOWED_TRANSITIONS` 되감기 매핑
+- [x] `event_status_history` insert 훅 — `upsertEvent` INSERT + `changeStatus`
 
 ## Phase 8. 홈 탭
 
