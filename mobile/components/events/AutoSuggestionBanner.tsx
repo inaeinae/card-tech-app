@@ -52,7 +52,7 @@ export function AutoSuggestionBanner({ suggested, onConfirm }: Props) {
           {COPY[suggested]}
         </Text>
         <Text style={{ fontSize: 14, color: '#191F28', fontWeight: '700', marginTop: 2 }}>
-          '{EVENT_STATUS_LABEL[suggested]}' 로 변경할까요?
+          &apos;{EVENT_STATUS_LABEL[suggested]}&apos; 로 변경할까요?
         </Text>
       </View>
       <Pressable
