@@ -17,8 +17,10 @@ type EventState = {
   activeEvent: EventRow | null;
   loading: boolean;
   error: string | null;
+  benefitsByEvent: Record<string, import('@/types/models').Benefit[]>;
 
   loadEvents: (filter?: EventFilter) => Promise<void>;
+  loadEventBenefits: () => Promise<void>;
   setActive: (eventId: string | null) => void;
   upsertEvent: (payload: EventInsert | (EventUpdate & { id: string })) => Promise<EventRow>;
   // 상태 전이 + 이력 기록 — Phase 7 에서 완성
@@ -31,6 +33,7 @@ export const useEventStore = create<EventState>((set, get) => ({
   activeEvent: null,
   loading: false,
   error: null,
+  benefitsByEvent: {},
 
   loadEvents: async (filter) => {
     set({ loading: true, error: null });
@@ -46,6 +49,32 @@ export const useEventStore = create<EventState>((set, get) => ({
       return;
     }
     set({ events: data ?? [], loading: false });
+  },
+
+  loadEventBenefits: async () => {
+    const ids = get().events.map((e) => e.id);
+    if (ids.length === 0) {
+      set({ benefitsByEvent: {} });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('benefits')
+      .select('*')
+      .in('event_id', ids);
+
+    if (error) {
+      set({ error: error.message });
+      return;
+    }
+
+    const grouped: Record<string, import('@/types/models').Benefit[]> = {};
+    for (const row of data ?? []) {
+      const list = grouped[row.event_id] ?? [];
+      list.push(row);
+      grouped[row.event_id] = list;
+    }
+    set({ benefitsByEvent: grouped });
   },
 
   setActive: (eventId) => {

@@ -133,3 +133,49 @@ it('changeStatus 는 events.update 와 event_status_history.insert 를 모두 �
   );
   expect(useEventStore.getState().events[0].status).toBe('in_progress');
 });
+
+it('loadEventBenefits — events 의 benefits 를 in 쿼리로 일괄 로드해 그룹핑', async () => {
+  useEventStore.setState({
+    events: [
+      { id: 'e1', user_id: 'u1', card_id: 'c1', title: 't1', status: 'applied' } as never,
+      { id: 'e2', user_id: 'u1', card_id: 'c1', title: 't2', status: 'paid' } as never,
+    ],
+    benefitsByEvent: {},
+  });
+
+  const benefitsRows = [
+    { id: 'b1', event_id: 'e1', expected_amount: 5000 },
+    { id: 'b2', event_id: 'e1', expected_amount: 3000 },
+    { id: 'b3', event_id: 'e2', expected_amount: 10000 },
+  ];
+
+  const inMock = jest.fn().mockResolvedValue({ data: benefitsRows, error: null });
+  const selectMock = jest.fn().mockReturnValue({ in: inMock });
+  const benefitsTable = { select: selectMock };
+
+  mockFrom.mockImplementation((table: string) => {
+    if (table === 'benefits') return benefitsTable;
+    throw new Error(`unexpected table ${table}`);
+  });
+
+  await useEventStore.getState().loadEventBenefits();
+
+  expect(selectMock).toHaveBeenCalledWith('*');
+  expect(inMock).toHaveBeenCalledWith('event_id', ['e1', 'e2']);
+  const grouped = useEventStore.getState().benefitsByEvent;
+  expect(grouped.e1).toHaveLength(2);
+  expect(grouped.e2).toHaveLength(1);
+  expect(grouped.e2[0].expected_amount).toBe(10000);
+});
+
+it('loadEventBenefits — events 가 비어 있으면 쿼리 호출 안 함', async () => {
+  useEventStore.setState({ events: [], benefitsByEvent: {} });
+
+  const selectMock = jest.fn();
+  mockFrom.mockImplementation(() => ({ select: selectMock }));
+
+  await useEventStore.getState().loadEventBenefits();
+
+  expect(selectMock).not.toHaveBeenCalled();
+  expect(useEventStore.getState().benefitsByEvent).toEqual({});
+});
