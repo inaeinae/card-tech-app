@@ -71,6 +71,34 @@ it('upsertEvent 수정(id 있음) 시 history insert 호출 안 함', async () =
   expect(historyInsert).not.toHaveBeenCalled();
 });
 
+it('upsertEvent INSERT 시 history insert 실패해도 이벤트 저장은 성공', async () => {
+  const inserted = {
+    id: 'e2', status: 'registered', user_id: 'u1', card_id: 'c1', title: 't',
+  };
+  const eventsTable = {
+    upsert: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        single: jest.fn().mockResolvedValue({ data: inserted, error: null }),
+      }),
+    }),
+  };
+  const historyInsert = jest.fn().mockResolvedValue({ error: { message: 'DB 오류' } });
+
+  mockFrom.mockImplementation((table: string) => {
+    if (table === 'events') return eventsTable;
+    if (table === 'event_status_history') return { insert: historyInsert };
+    throw new Error(`unexpected table ${table}`);
+  });
+
+  // throw 없이 정상 반환돼야 함
+  const result = await useEventStore.getState().upsertEvent({
+    user_id: 'u1', card_id: 'c1', title: 't', status: 'registered',
+  } as never);
+
+  expect(result.id).toBe('e2');
+  expect(useEventStore.getState().events).toHaveLength(1);
+});
+
 it('changeStatus 는 events.update 와 event_status_history.insert 를 모두 호출', async () => {
   useEventStore.setState({
     events: [

@@ -72,7 +72,10 @@ export const useEventStore = create<EventState>((set, get) => ({
         to_status: data.status,
         is_auto: false,
       });
-      if (logError) throw logError;
+      // history 기록 실패는 비치명적 — 이벤트 저장을 롤백하지 않음
+      if (logError) {
+        console.error('event_status_history insert 실패:', logError.message);
+      }
     }
 
     const next = [data, ...get().events.filter((e) => e.id !== data.id)];
