@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from 'react';
-import { FlatList, Pressable, RefreshControl, SafeAreaView, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo } from 'react';
+import { FlatList, Pressable, RefreshControl, SafeAreaView, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import SummaryCard from '@/components/home/SummaryCard';
@@ -9,6 +9,7 @@ import { useEventStore } from '@/stores/eventStore';
 import { useCardStore } from '@/stores/cardStore';
 import { useWizardStore } from '@/stores/wizardStore';
 import type { EventRow } from '@/types/models';
+import { sumEventExpected, summarizeEvents } from '@/lib/eventTotals';
 
 // paid / canceled 제외 — active 이벤트만
 const ACTIVE_STATUSES = new Set([
@@ -20,17 +21,25 @@ export default function HomeScreen() {
   const events = useEventStore((s) => s.events);
   const loading = useEventStore((s) => s.loading);
   const loadEvents = useEventStore((s) => s.loadEvents);
+  const benefitsByEvent = useEventStore((s) => s.benefitsByEvent);
+  const loadEventBenefits = useEventStore((s) => s.loadEventBenefits);
   const cards = useCardStore((s) => s.cards);
 
   useEffect(() => {
-    loadEvents();
-  }, [loadEvents]);
+    (async () => {
+      await loadEvents();
+      await loadEventBenefits();
+    })();
+  }, [loadEvents, loadEventBenefits]);
 
   const activeEvents = events.filter((e) => ACTIVE_STATUSES.has(e.status));
 
-  // Phase 10 Edge Function 연동 전: 금액 집계 미지원
-  const confirmedAmount = 0;
-  const expectedAmount = 0;
+  const summary = useMemo(
+    () => summarizeEvents(events, benefitsByEvent),
+    [events, benefitsByEvent],
+  );
+  const confirmedAmount = summary.confirmed;
+  const expectedAmount = summary.expected;
 
   function startWizard() {
     useWizardStore.getState().reset();
@@ -46,12 +55,12 @@ export default function HomeScreen() {
           title={item.title}
           issuer={card?.issuer ?? ''}
           status={item.status}
-          expectedAmount={0}
+          expectedAmount={sumEventExpected(benefitsByEvent[item.id] ?? [])}
           onPress={() => router.push(`/events/${item.id}`)}
         />
       );
     },
-    [cards, router],
+    [cards, router, benefitsByEvent],
   );
 
   return (
@@ -64,15 +73,21 @@ export default function HomeScreen() {
           keyExtractor={(e) => e.id}
           renderItem={renderItem}
           refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={loadEvents} tintColor="#3182F6" />
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={async () => {
+                await loadEvents();
+                await loadEventBenefits();
+              }}
+              tintColor="#3182F6"
+            />
           }
           ListHeaderComponent={
             <SummaryCard confirmedAmount={confirmedAmount} expectedAmount={expectedAmount} />
           }
           ListFooterComponent={
             <Pressable
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onPress={() => router.push('/events' as any)}
+              onPress={() => router.push('/events')}
               style={{ alignItems: 'center', padding: 16 }}
             >
               <Text style={{ fontSize: 14, fontWeight: '600', color: '#3182F6' }}>
