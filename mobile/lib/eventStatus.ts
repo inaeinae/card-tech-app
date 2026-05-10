@@ -34,7 +34,7 @@ export function calcAutoStatus(dates: EventDates, today: string): EventStatus {
     if (today >= addMonthsISO(use_end, 6)) return 'cancelable';
     return 'performance_done';
   }
-  return 'registered';
+  return 'registered'; // 날짜 미설정(draft) 상태
 }
 
 // 현재 상태와 자동값이 다르고 정상 진행(되감기 아님) 인 경우에만 제안
@@ -45,6 +45,7 @@ export function suggestNextStatus(
   const auto = calcAutoStatus(event, today);
   if (auto === event.status) return null;
 
+  // paid → cancelable 는 정방향 취급 — use_end+6개월 자동 전이 대상이 paid 상태이기 때문
   const order = [
     'registered', 'applied', 'in_progress', 'performance_done',
     'pending_payout', 'paid', 'cancelable', 'canceled',

@@ -1,4 +1,4 @@
-import { calcAutoStatus, canTransition } from '@/lib/eventStatus';
+import { calcAutoStatus, canTransition, suggestNextStatus, ALLOWED_TRANSITIONS } from '@/lib/eventStatus';
 
 const today = '2026-05-01';
 
@@ -45,8 +45,6 @@ it('canTransition: applied → in_progress 허용', () => {
 it('canTransition: paid → canceled 불허', () => {
   expect(canTransition('paid', 'canceled')).toBe(false);
 });
-
-import { suggestNextStatus, ALLOWED_TRANSITIONS } from '@/lib/eventStatus';
 
 it('payout_expected_at 도래 후 pending_payout 제안', () => {
   expect(
