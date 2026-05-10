@@ -53,6 +53,8 @@ export const useEventStore = create<EventState>((set, get) => ({
   },
 
   upsertEvent: async (payload) => {
+    const isInsert = !('id' in payload) || !payload.id;
+
     const { data, error } = await supabase
       .from('events')
       .upsert(payload as EventInsert)
@@ -60,6 +62,18 @@ export const useEventStore = create<EventState>((set, get) => ({
       .single();
 
     if (error || !data) throw error ?? new Error('이벤트 저장 실패');
+
+    if (isInsert) {
+      // 첫 history 기록 — from_status=null, is_auto=false
+      const { error: logError } = await supabase.from('event_status_history').insert({
+        event_id: data.id,
+        user_id: data.user_id,
+        from_status: null,
+        to_status: data.status,
+        is_auto: false,
+      });
+      if (logError) throw logError;
+    }
 
     const next = [data, ...get().events.filter((e) => e.id !== data.id)];
     set({ events: next });
