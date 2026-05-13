@@ -5,7 +5,8 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
-import { StatusBadge } from '@/components/ui/StatusBadge';
+import EventListItem from '@/components/home/EventListItem';
+import { sumEventExpected } from '@/lib/eventTotals';
 import { useCardStore } from '@/stores/cardStore';
 import { useEventStore } from '@/stores/eventStore';
 import type { EventRow, EventStatus } from '@/types/models';
@@ -34,43 +35,38 @@ export default function EventListScreen() {
   const events = useEventStore((s) => s.events);
   const loading = useEventStore((s) => s.loading);
   const loadEvents = useEventStore((s) => s.loadEvents);
+  const benefitsByEvent = useEventStore((s) => s.benefitsByEvent);
+  const loadEventBenefits = useEventStore((s) => s.loadEventBenefits);
   const cards = useCardStore((s) => s.cards);
   const [chip, setChip] = useState<FilterChip>('all');
 
-  useEffect(() => { loadEvents(); }, [loadEvents]);
+  useEffect(() => {
+    (async () => {
+      await loadEvents();
+      await loadEventBenefits();
+    })();
+  }, [loadEvents, loadEventBenefits]);
 
   const filtered = useMemo(() => filterEvents(events, chip), [events, chip]);
+
+  const handleRefresh = useCallback(async () => {
+    await loadEvents();
+    await loadEventBenefits();
+  }, [loadEvents, loadEventBenefits]);
 
   const renderItem = useCallback(({ item }: { item: EventRow }) => {
     const card = cards.find((c) => c.id === item.card_id);
     return (
-      <Pressable
+      <EventListItem
+        id={item.id}
+        title={item.title}
+        issuer={card?.issuer ?? ''}
+        status={item.status}
+        expectedAmount={sumEventExpected(benefitsByEvent[item.id] ?? [])}
         onPress={() => router.push(`/events/${item.id}`)}
-        style={({ pressed }) => ({
-          flexDirection: 'row',
-          alignItems: 'center',
-          padding: 16,
-          backgroundColor: pressed ? '#F9FAFB' : '#FFFFFF',
-          borderRadius: 16,
-          borderWidth: 1,
-          borderColor: '#E5E8EB',
-          marginHorizontal: 16,
-          marginBottom: 8,
-          gap: 12,
-        })}
-      >
-        <View style={{ flex: 1, gap: 4 }}>
-          <Text style={{ fontSize: 15, fontWeight: '700', color: '#191F28' }} numberOfLines={1}>
-            {item.title}
-          </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            {card ? <Text style={{ fontSize: 13, color: '#8B95A1' }}>{card.issuer} · {card.name}</Text> : null}
-            <StatusBadge status={item.status} />
-          </View>
-        </View>
-      </Pressable>
+      />
     );
-  }, [cards, router]);
+  }, [cards, benefitsByEvent, router]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
@@ -111,7 +107,7 @@ export default function EventListScreen() {
         data={filtered}
         keyExtractor={(e) => e.id}
         renderItem={renderItem}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={loadEvents} tintColor="#3182F6" />}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={handleRefresh} tintColor="#3182F6" />}
         contentContainerStyle={{ paddingTop: 4, paddingBottom: 32 }}
         ListEmptyComponent={
           <View style={{ alignItems: 'center', padding: 48 }}>
