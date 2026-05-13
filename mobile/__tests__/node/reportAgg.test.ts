@@ -9,33 +9,41 @@ function ev(id: string, status: EventRow['status']): EventRow {
     card_id: 'c',
     title: id,
     issuer_subject: null,
+    organizer: null,
     status,
     apply_start: null,
     apply_end: null,
     use_start: null,
     use_end: null,
     payout_expected_at: null,
+    payout_actual_at: null,
     payout_expected_period: null,
     cancelable_from: null,
     notes: null,
+    status_updated_at: '2026-03-01T00:00:00Z',
+    warning_dismissed: false,
     created_at: '2026-03-01T00:00:00Z',
     updated_at: '2026-03-01T00:00:00Z',
-  } as EventRow;
+  } as unknown as EventRow;
 }
 
 function ben(eventId: string, amount: number): Benefit {
   return {
     id: `b-${eventId}-${amount}`,
     event_id: eventId,
+    user_id: 'u',
     template_id: null,
-    sub_item_id: null,
-    label: 't',
+    title: 't',
+    type: 'cashback',
     expected_amount: amount,
     actual_amount: null,
+    spend_required: null,
+    spend_actual: null,
+    disqualified: false,
     conditions: null,
     created_at: '2026-03-01T00:00:00Z',
     updated_at: '2026-03-01T00:00:00Z',
-  } as Benefit;
+  } as unknown as Benefit;
 }
 
 it('summarizeEvents — paid 는 confirmed, in_progress 는 expected', () => {
