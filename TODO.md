@@ -30,8 +30,8 @@
 
 - [x] `kakao-oauth` 실패 테스트 스캐폴딩
 - [x] `kakao-oauth` Edge Function 구현 (access_token 검증 → Supabase JWT 반환)
-- [ ] `report-aggregate` 실패 테스트 작성
-- [ ] `report-aggregate` Edge Function 구현 (연/월/이벤트별 집계, 확정·예상 분리 — 카드사별 집계 제거)
+- [ ] `report-aggregate` 실패 테스트 작성 — Phase 10 보류와 동기화 (원격 프로젝트 생성 시 진행)
+- [ ] `report-aggregate` Edge Function 구현 (연/월/이벤트별 집계, 확정·예상 분리 — 카드사별 집계 제거) — Phase 10 보류와 동기화 (원격 프로젝트 생성 시 진행)
 
 ### 1.3 인프라 문서화
 
@@ -175,13 +175,13 @@
 
 ## Phase 10. 리포트 탭
 
-- [ ] `(tabs)/report.tsx` — 연/월/이벤트 계층 구조
+- [x] `(tabs)/report.tsx` — 연/월/이벤트 계층 구조
   - 상단: 기간 필터 칩 (전체 / 연도별)
   - 누적 수령 요약 카드 (확정·예상 분리)
   - 연도 헤더 → 월 카드 (해당 월 이벤트 목록 + 합계) 계층
-- [ ] 확정·예상 분리 표시 (이용금액 표시 금지 — 금융연동 없음)
-- [ ] Edge Function `/report-aggregate` 연동
-- [ ] 빈 상태(데이터 없음) 처리
+- [x] 확정·예상 분리 표시 (이용금액 표시 금지 — 금융연동 없음)
+- [ ] Edge Function `/report-aggregate` 연동 — **보류**: Phase 1.3 Supabase 원격 프로젝트 생성 시점에 같이 진행 (현재 클라이언트 집계 `lib/reportAggregate.ts` + `lib/eventTotals.summarizeEvents` 로 대체)
+- [x] 빈 상태(데이터 없음) 처리
 
 ## Phase 11. 알림
 
