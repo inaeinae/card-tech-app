@@ -151,20 +151,20 @@
 
 ## Phase 8. 홈 탭
 
-- [ ] `(tabs)/index.tsx` — 레이아웃
-- [ ] 상단 요약 카드 — 이번 달 예상 수령 합계 + 확정/예상 분리 표시 (이용금액 표시 금지 — 금융연동 없음)
-- [ ] 진행중 이벤트 목록 (카드+이벤트 세트 단위, `active` 상태만 표시)
+- [x] `(tabs)/index.tsx` — 레이아웃
+- [x] 상단 요약 카드 — 이번 달 예상 수령 합계 + 확정/예상 분리 표시 (이용금액 표시 금지 — 금융연동 없음)
+- [x] 진행중 이벤트 목록 (카드+이벤트 세트 단위, `active` 상태만 표시)
   - 각 행: 카드사 로고 + 이벤트명 + 상태 칩 + 예상 금액
   - `eventStore.events` 에서 `payout_done` / `canceled` 제외 필터링
   - 동일 이벤트 기간에 카드 1개+이벤트 1개 세트 구조 (다중 이벤트사 동시 응모 불가)
-- [ ] "전체 이벤트 보기" 버튼 → EventList 화면 진입
-- [ ] EventList 화면 신규 (`app/events/index.tsx`)
+- [x] "전체 이벤트 보기" 버튼 → EventList 화면 진입
+- [x] EventList 화면 신규 (`app/events/index.tsx`)
   - 상단 필터 칩: 전체 / 진행중 / 완료 / 해지
   - 카드+이벤트 세트 전체 스크롤 목록 (해지·지급완료 포함)
   - 항목 탭 → `events/[id]` 상세 진입
-- [ ] `CardCarousel` 컴포넌트 제거 (`components/cards/CardCarousel.tsx` 삭제) — 이 Phase 설계에서 미사용
-- [ ] FAB(+) → 위저드 진입
-- [ ] Pull-to-refresh
+- [x] `CardCarousel` 컴포넌트 제거 (`components/cards/CardCarousel.tsx` 삭제) — 이 Phase 설계에서 미사용
+- [x] FAB(+) → 위저드 진입
+- [x] Pull-to-refresh
 
 ## Phase 9. 캘린더 탭
 
