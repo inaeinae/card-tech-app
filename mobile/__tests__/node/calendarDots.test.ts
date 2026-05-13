@@ -1,20 +1,4 @@
-import type { EventStatus } from '@/types/models';
-
-const DOT_COLOR: Record<string, string> = {
-  응모: '#3182F6',
-  이용: '#F59E0B',
-  지급: '#19D294',
-  해지: '#8B95A1',
-  경고: '#FF4D4F',
-};
-
-function statusToDotCategory(status: EventStatus): keyof typeof DOT_COLOR {
-  if (['registered', 'applied'].includes(status)) return '응모';
-  if (status === 'in_progress') return '이용';
-  if (['performance_done', 'pending_payout', 'paid'].includes(status)) return '지급';
-  if (status === 'canceled') return '해지';
-  return '경고';
-}
+import { DOT_COLOR, statusToDotCategory } from '@/lib/calendarDots';
 
 it('applied → 응모 dot (파랑)', () => {
   expect(DOT_COLOR[statusToDotCategory('applied')]).toBe('#3182F6');
