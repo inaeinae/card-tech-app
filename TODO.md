@@ -186,7 +186,7 @@
 ## Phase 11. 알림
 
 - [ ] `expo-notifications` 권한 요청 플로우
-- [ ] 스마트 기본값 스케줄러 (응모 마감 -1d, 실적 15/말일, 지급 -7d, 해지 -1d, 자동납부 -1d)
+- [x] 스마트 기본값 스케줄러 순수 함수 (`lib/notifications/scheduler.ts`) — `buildEventNotifications` + `withinWindow` + 테스트 10건
 - [ ] 이벤트 생성/수정 시 스케줄 동기화
 - [ ] 전역 on/off · 종류별 · 이벤트별 override UI
 - [ ] 알림 시간대 전역 설정 (기본 09:00)
