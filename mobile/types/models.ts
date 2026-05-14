@@ -41,3 +41,14 @@ export const EVENT_STATUS_LABEL: Record<EventStatus, string> = {
   cancelable: '해지가능',
   canceled: '해지완료',
 };
+
+// 알림 종류별 on/off — notification_preferences.kinds_enabled JSONB 의 정형 타입
+export type KindsEnabled = Record<NotificationKind, boolean>;
+
+export const DEFAULT_KINDS_ENABLED: KindsEnabled = {
+  apply_deadline: true,
+  performance_check: true,
+  payout_upcoming: true,
+  cancel_available: true,
+  autopay_check: true,
+};
