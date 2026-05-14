@@ -109,6 +109,15 @@ export const useEventStore = create<EventState>((set, get) => ({
 
     const next = [data, ...get().events.filter((e) => e.id !== data.id)];
     set({ events: next });
+
+    // Phase 11: 알림 스케줄 동기화 — 실패는 비치명적
+    try {
+      const { useNotificationStore } = await import('@/stores/notificationStore');
+      await useNotificationStore.getState().syncEventSchedule(data);
+    } catch (e) {
+      console.warn('알림 동기화 실패 (비치명):', e);
+    }
+
     return data;
   },
 
@@ -146,6 +155,14 @@ export const useEventStore = create<EventState>((set, get) => ({
 
   // 이벤트 삭제 — cascade 로 benefits / event_status_history 자동 정리
   deleteEvent: async (id) => {
+    // Phase 11: 삭제 전 알림 정리
+    try {
+      const { useNotificationStore } = await import('@/stores/notificationStore');
+      await useNotificationStore.getState().cancelEventSchedule(id);
+    } catch (e) {
+      console.warn('알림 정리 실패 (비치명):', e);
+    }
+
     const { error } = await supabase.from('events').delete().eq('id', id);
     if (error) throw error;
     set({ events: get().events.filter((e) => e.id !== id) });
