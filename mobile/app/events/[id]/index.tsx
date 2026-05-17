@@ -41,6 +41,8 @@ export default function EventDetailScreen() {
   const scheduled = useNotificationStore((s) => s.scheduled);
   const syncEventSchedule = useNotificationStore((s) => s.syncEventSchedule);
   const cancelEventSchedule = useNotificationStore((s) => s.cancelEventSchedule);
+  const permission = useNotificationStore((s) => s.permission);
+  const requestPermission = useNotificationStore((s) => s.requestPermission);
 
   const [event, setEvent] = useState<EventRow | null>(eventInState ?? null);
   const [benefits, setBenefits] = useState<Benefit[]>([]);
@@ -95,8 +97,19 @@ export default function EventDetailScreen() {
 
   async function onToggleNotify(value: boolean) {
     if (!event) return;
-    if (value) await syncEventSchedule(event);
-    else await cancelEventSchedule(event.id);
+    try {
+      if (value) {
+        if (permission !== 'granted') {
+          const result = await requestPermission();
+          if (result !== 'granted') return;
+        }
+        await syncEventSchedule(event);
+      } else {
+        await cancelEventSchedule(event.id);
+      }
+    } catch (e) {
+      Alert.alert('알림 설정 실패', e instanceof Error ? e.message : '알 수 없는 오류');
+    }
   }
 
   async function onConfirmSuggested() {
