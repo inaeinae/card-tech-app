@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Platform, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Colors, Fonts } from '@/constants/theme';
 import { useNotificationStore } from '@/stores/notificationStore';
 import {
@@ -75,10 +76,10 @@ export default function NotificationSettingsScreen() {
     await commit({ kinds_enabled: { ...kinds, [kind]: value } });
   }
 
-  // 시간대 변경 처리 — Android는 피커 닫기
-  async function onTimeChange(_: unknown, date?: Date) {
+  // 시간대 변경 처리 — Android는 피커 닫기, dismissed 이벤트 무시
+  async function onTimeChange(evt: DateTimePickerEvent, date?: Date) {
     if (Platform.OS !== 'ios') setShowPicker(false);
-    if (!date) return;
+    if (evt.type === 'dismissed' || !date) return;
     await commit({ time_of_day: dateToTimeString(date) });
   }
 
@@ -148,14 +149,30 @@ export default function NotificationSettingsScreen() {
           {time.slice(0, 5)}
         </Text>
       </Pressable>
-      {/* DateTimePicker — iOS: spinner, Android: default dialog */}
+      {/* DateTimePicker — iOS: spinner + 완료 버튼, Android: default dialog */}
       {showPicker && (
-        <DateTimePicker
-          value={timeStringToDate(time)}
-          mode="time"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={onTimeChange}
-        />
+        <>
+          <DateTimePicker
+            value={timeStringToDate(time)}
+            mode="time"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={onTimeChange}
+          />
+          {Platform.OS === 'ios' && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="알림 시간 선택 완료"
+              onPress={() => setShowPicker(false)}
+              style={{
+                alignSelf: 'flex-end',
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+              }}
+            >
+              <Text style={{ fontSize: 14, fontFamily: Fonts.bold, color: C.primary }}>완료</Text>
+            </Pressable>
+          )}
+        </>
       )}
 
       {/* 알림 종류별 개별 토글 */}
