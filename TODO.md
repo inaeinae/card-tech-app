@@ -185,12 +185,12 @@
 
 ## Phase 11. 알림
 
-- [ ] `expo-notifications` 권한 요청 플로우
-- [x] 스마트 기본값 스케줄러 순수 함수 (`lib/notifications/scheduler.ts`) — `buildEventNotifications` + `withinWindow` + 테스트 10건
-- [ ] 이벤트 생성/수정 시 스케줄 동기화
-- [ ] 전역 on/off · 종류별 · 이벤트별 override UI
-- [ ] 알림 시간대 전역 설정 (기본 09:00)
-- [ ] `scheduled_notifications` 동기화 로직
+- [x] `expo-notifications` 권한 요청 플로우
+- [x] 스마트 기본값 스케줄러 (응모 마감 -1d, 실적 15/말일, 지급 -7d, 해지 -1d) — `autopay_check` 는 보류 (전용 입력 필드 부재, v2 에서 활성화)
+- [x] 이벤트 생성/수정/삭제 시 스케줄 동기화 (`eventStore` ↔ `notificationStore` 훅)
+- [x] 전역 on/off · 종류별 · 이벤트별 override UI (`app/settings/notifications.tsx` + 이벤트 상세 토글)
+- [x] 알림 시간대 전역 설정 (기본 09:00, DateTimePicker)
+- [x] `scheduled_notifications` 동기화 로직 — 60일 윈도우 + foreground 재스케줄
 
 ## Phase 12. 마이페이지
 
