@@ -39,4 +39,17 @@ describe('themeStore', () => {
     expect(useThemeStore.getState().mode).toBe('light');
     expect(mockSet).toHaveBeenCalledWith(THEME_MODE_KEY, 'light');
   });
+
+  it('loadMode: SecureStore 에러 시 system 폴백 + hydrated=true', async () => {
+    mockGet.mockRejectedValueOnce(new Error('SecureStore error'));
+    await useThemeStore.getState().loadMode();
+    expect(useThemeStore.getState().mode).toBe('system');
+    expect(useThemeStore.getState().hydrated).toBe(true);
+  });
+
+  it('setMode: SecureStore 저장 실패 시 state 미변경 + throw', async () => {
+    mockSet.mockRejectedValueOnce(new Error('Write failed'));
+    await expect(useThemeStore.getState().setMode('dark')).rejects.toThrow();
+    expect(useThemeStore.getState().mode).toBe('system');
+  });
 });

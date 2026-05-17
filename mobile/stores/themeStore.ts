@@ -21,15 +21,21 @@ export const useThemeStore = create<ThemeState>((set) => ({
   hydrated: false,
 
   loadMode: async () => {
-    const raw = await SecureStore.getItemAsync(THEME_MODE_KEY);
-    set({
-      mode: isThemeMode(raw) ? raw : 'system',
-      hydrated: true,
-    });
+    try {
+      const raw = await SecureStore.getItemAsync(THEME_MODE_KEY);
+      set({
+        mode: isThemeMode(raw) ? raw : 'system',
+        hydrated: true,
+      });
+    } catch {
+      // SecureStore 실패 시 시스템 기본값으로 폴백
+      set({ mode: 'system', hydrated: true });
+    }
   },
 
   setMode: async (mode) => {
-    set({ mode });
+    // SecureStore 먼저 저장 성공 후 state 업데이트 (순서 불일치 방지)
     await SecureStore.setItemAsync(THEME_MODE_KEY, mode);
+    set({ mode });
   },
 }));
