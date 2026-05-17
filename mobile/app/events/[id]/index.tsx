@@ -2,7 +2,7 @@
 // Pencil frame z5SQd 기반 재설계
 import { useEffect, useMemo, useState } from 'react';
 import {
-  Alert, Pressable, SafeAreaView, ScrollView, Text, View,
+  Alert, Pressable, SafeAreaView, ScrollView, Switch, Text, View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Pencil, RefreshCw, Trash2 } from 'lucide-react-native';
@@ -11,6 +11,7 @@ import { LoadingState } from '@/components/ui/LoadingState';
 import { supabase } from '@/lib/supabase';
 import { useCardStore } from '@/stores/cardStore';
 import { useEventStore } from '@/stores/eventStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 import { useWizardStore } from '@/stores/wizardStore';
 import { EVENT_STATUS_LABEL } from '@/types/models';
 import type { Benefit, EventRow } from '@/types/models';
@@ -36,6 +37,10 @@ export default function EventDetailScreen() {
   const changeStatus = useEventStore((s) => s.changeStatus);
   const card = useCardStore((s) => s.cards.find((c) => c.id === eventInState?.card_id));
   const loadFromEvent = useWizardStore((s) => s.loadFromEvent);
+
+  const scheduled = useNotificationStore((s) => s.scheduled);
+  const syncEventSchedule = useNotificationStore((s) => s.syncEventSchedule);
+  const cancelEventSchedule = useNotificationStore((s) => s.cancelEventSchedule);
 
   const [event, setEvent] = useState<EventRow | null>(eventInState ?? null);
   const [benefits, setBenefits] = useState<Benefit[]>([]);
@@ -82,6 +87,17 @@ export default function EventDetailScreen() {
       today,
     );
   }, [event]);
+
+  const notifyEnabled = useMemo(
+    () => scheduled.some((s) => s.event_id === event?.id && !s.canceled),
+    [scheduled, event?.id],
+  );
+
+  async function onToggleNotify(value: boolean) {
+    if (!event) return;
+    if (value) await syncEventSchedule(event);
+    else await cancelEventSchedule(event.id);
+  }
 
   async function onConfirmSuggested() {
     if (!event || !suggested) return;
@@ -241,6 +257,28 @@ export default function EventDetailScreen() {
             </Text>
           </View>
         )}
+
+        {/* 이벤트별 알림 토글 */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingVertical: 12,
+            paddingHorizontal: 16,
+            backgroundColor: '#F9FAFB',
+            borderRadius: 12,
+            marginHorizontal: 16,
+            marginVertical: 8,
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '600', color: '#191F28' }}>이 이벤트 알림</Text>
+          <Switch
+            value={notifyEnabled}
+            onValueChange={onToggleNotify}
+            accessibilityLabel="이 이벤트 알림 토글"
+          />
+        </View>
 
         {/* 상태 이력 링크 */}
         <Pressable
