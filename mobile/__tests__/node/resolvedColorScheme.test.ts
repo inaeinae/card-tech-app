@@ -10,9 +10,10 @@ describe('resolveColorScheme', () => {
     expect(resolveColorScheme('dark', 'light')).toBe('dark');
   });
 
-  it('mode=system 이면 OS scheme 사용, null 이면 light fallback', () => {
+  it('mode=system 이면 OS scheme 사용, null/unspecified 이면 light fallback', () => {
     expect(resolveColorScheme('system', 'dark')).toBe('dark');
     expect(resolveColorScheme('system', 'light')).toBe('light');
     expect(resolveColorScheme('system', null)).toBe('light');
+    expect(resolveColorScheme('system', 'unspecified')).toBe('light');
   });
 });

@@ -6,7 +6,7 @@ export type ResolvedColorScheme = 'light' | 'dark';
 
 export function resolveColorScheme(
   mode: ThemeMode,
-  osScheme: 'light' | 'dark' | null | undefined,
+  osScheme: 'light' | 'dark' | 'unspecified' | null | undefined,
 ): ResolvedColorScheme {
   if (mode === 'light' || mode === 'dark') return mode;
   return osScheme === 'dark' ? 'dark' : 'light';
