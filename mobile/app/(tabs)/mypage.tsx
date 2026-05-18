@@ -125,8 +125,7 @@ export default function MyPageScreen() {
         {
           icon: <Bell size={20} color="#4E5968" />,
           label: '알림 설정',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onPress: () => router.push('/settings/notifications' as any),
+          onPress: () => router.push('/settings/notifications'),
         },
         {
           icon: <Moon size={20} color="#4E5968" />,
@@ -146,20 +145,17 @@ export default function MyPageScreen() {
         {
           icon: <Shield size={20} color="#4E5968" />,
           label: '개인정보처리방침',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onPress: () => router.push('/settings/about' as any),
+          onPress: () => router.push('/settings/about'),
         },
         {
           icon: <FileText size={20} color="#4E5968" />,
           label: '이용약관',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onPress: () => router.push('/settings/about' as any),
+          onPress: () => router.push('/settings/about'),
         },
         {
           icon: <Info size={20} color="#4E5968" />,
           label: '앱 정보',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onPress: () => router.push('/settings/about' as any),
+          onPress: () => router.push('/settings/about'),
         },
       ],
     },
@@ -212,8 +208,7 @@ export default function MyPageScreen() {
             <Text style={{ fontSize: 13, color: '#8B95A1', marginTop: 2 }}>카카오 로그인</Text>
           </View>
           <Pressable
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onPress={() => router.push('/settings/profile' as any)}
+            onPress={() => router.push('/settings/profile')}
             accessibilityRole="button"
             accessibilityLabel="프로필 수정"
             style={{
