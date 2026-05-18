@@ -9,6 +9,8 @@ export default function SettingsLayout() {
       }}
     >
       <Stack.Screen name="notifications" options={{ title: '알림 설정' }} />
+      <Stack.Screen name="profile" options={{ title: '프로필 수정' }} />
+      <Stack.Screen name="about" options={{ title: '앱 정보' }} />
     </Stack>
   );
 }
