@@ -16,7 +16,8 @@ import {
   NotoSansKR_700Bold,
 } from '@expo-google-fonts/noto-sans-kr';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
+import { useThemeStore } from '@/stores/themeStore';
 import { AuthGate } from '@/components/auth/AuthGate';
 import { useAuthStore } from '@/stores/authStore';
 import { useNotificationStore } from '@/stores/notificationStore';
@@ -28,7 +29,8 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useResolvedColorScheme();
+  const loadThemeMode = useThemeStore((s) => s.loadMode);
   const bootstrap = useAuthStore((s) => s.bootstrap);
   const initializing = useAuthStore((s) => s.initializing);
 
@@ -43,6 +45,11 @@ export default function RootLayout() {
   useEffect(() => {
     bootstrap();
   }, [bootstrap]);
+
+  // 테마 prefs 1회 로드 (system/light/dark)
+  useEffect(() => {
+    loadThemeMode();
+  }, [loadThemeMode]);
 
   // Phase 11: 인증 완료 후 알림 prefs / 권한 로드 + foreground 재스케줄
   const loadPrefs = useNotificationStore((s) => s.loadPrefs);
