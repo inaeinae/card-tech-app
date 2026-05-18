@@ -1,6 +1,6 @@
 // 닉네임 수정 화면
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, TextInput } from 'react-native';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '@/constants/theme';
 import { useProfileStore } from '@/stores/profileStore';
@@ -18,7 +18,9 @@ export default function ProfileEditScreen() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    loadProfile();
+    loadProfile().catch((e) => {
+      Alert.alert('프로필 로드 실패', e instanceof Error ? e.message : '알 수 없는 오류');
+    });
   }, [loadProfile]);
 
   // profile 로드 후 초기값 세팅
@@ -30,11 +32,11 @@ export default function ProfileEditScreen() {
     setSaving(true);
     try {
       await upsertNickname(value);
+      setSaving(false);
       router.back();
     } catch (e) {
-      Alert.alert('저장 실패', e instanceof Error ? e.message : '알 수 없는 오류');
-    } finally {
       setSaving(false);
+      Alert.alert('저장 실패', e instanceof Error ? e.message : '알 수 없는 오류');
     }
   }
 
