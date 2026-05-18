@@ -1,5 +1,6 @@
 // 다크모드 tri-state 선택 — system/light/dark
 import { Modal, Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Check } from 'lucide-react-native';
 import { Colors, Fonts } from '@/constants/theme';
 import { useThemeStore, type ThemeMode } from '@/stores/themeStore';
@@ -14,11 +15,16 @@ const OPTIONS: { mode: ThemeMode; label: string; desc: string }[] = [
 export function ThemeModeSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const scheme = useResolvedColorScheme();
   const C = Colors[scheme];
+  const { bottom } = useSafeAreaInsets();
   const mode = useThemeStore((s) => s.mode);
   const setMode = useThemeStore((s) => s.setMode);
 
   async function onPick(next: ThemeMode) {
-    await setMode(next);
+    try {
+      await setMode(next);
+    } catch {
+      // SecureStore 실패해도 시트는 닫음 (메모리 상태는 setMode 내부에서 이미 업데이트)
+    }
     onClose();
   }
 
@@ -38,7 +44,7 @@ export function ThemeModeSheet({ visible, onClose }: { visible: boolean; onClose
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             padding: 16,
-            paddingBottom: 32,
+            paddingBottom: Math.max(32, bottom + 16),
           }}
         >
           <Text
