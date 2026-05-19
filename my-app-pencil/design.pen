@@ -14318,7 +14318,7 @@
               "type": "text",
               "id": "xbYb7",
               "fill": "#191F28",
-              "content": "혜택 셀 (고밀도)",
+              "content": "혜택 셀",
               "fontFamily": "Noto Sans KR",
               "fontSize": 16,
               "fontWeight": "700"
@@ -14958,7 +14958,7 @@
               "type": "text",
               "id": "AuSaw",
               "fill": "#191F28",
-              "content": "Select 컴포넌트",
+              "content": "Select",
               "fontFamily": "Noto Sans KR",
               "fontSize": 16,
               "fontWeight": "700"
@@ -18223,7 +18223,7 @@
               "type": "text",
               "id": "b8Yx87",
               "fill": "#E6EBF0",
-              "content": "혜택 셀 (고밀도)",
+              "content": "혜택 셀",
               "fontFamily": "Noto Sans KR",
               "fontSize": 16,
               "fontWeight": "700"
@@ -18863,7 +18863,7 @@
               "type": "text",
               "id": "k3Qye1",
               "fill": "#E6EBF0",
-              "content": "Select 컴포넌트",
+              "content": "Select",
               "fontFamily": "Noto Sans KR",
               "fontSize": 16,
               "fontWeight": "700"
