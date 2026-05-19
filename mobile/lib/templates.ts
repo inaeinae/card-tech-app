@@ -95,3 +95,21 @@ export const BENEFIT_TEMPLATES: readonly BenefitTemplate[] = [
 export function getTemplateById(id: string): BenefitTemplate | null {
   return BENEFIT_TEMPLATES.find((t) => t.id === id) ?? null;
 }
+
+// Phase 5.3 — 카드 상시혜택 카테고리 (이벤트 BenefitTemplate 와 별개 축)
+export type BenefitCategory = { id: string; label: string };
+
+export const BENEFIT_CATEGORIES: readonly BenefitCategory[] = [
+  { id: 'life', label: '생활' },
+  { id: 'digital_sub', label: '디지털구독' },
+  { id: 'telecom', label: '통신' },
+  { id: 'food', label: '푸드' },
+  { id: 'easy_pay', label: '간편결제' },
+  { id: 'overseas', label: '해외' },
+  { id: 'select', label: '선택형' },
+  { id: 'custom', label: '직접 입력' },
+] as const;
+
+export function getCategoryById(id: string): BenefitCategory | null {
+  return BENEFIT_CATEGORIES.find((c) => c.id === id) ?? null;
+}
