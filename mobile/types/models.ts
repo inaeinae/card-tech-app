@@ -6,8 +6,16 @@ import type { Database } from '@/lib/database.types';
 type Row<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
 
 export type Profile = Row<'profiles'>;
-export type Card = Row<'cards'>;
-export type CardBenefit = Row<'card_benefits'>;
+// Card: 생성된 Row 타입에서 card_type 을 좁힌 union 으로 override (Phase 5.3)
+export type Card = Omit<Row<'cards'>, 'card_type'> & {
+  card_type: CardType | null;
+};
+// CardBenefit: discount_method union override + targets/cap_tiers 관계 (Phase 5.3)
+export type CardBenefit = Omit<Row<'card_benefits'>, 'discount_method'> & {
+  discount_method: DiscountMethod | null;
+  targets: CardBenefitTarget[];
+  cap_tiers: CardBenefitCapTier[];
+};
 export type EventRow = Row<'events'>;
 export type Benefit = Row<'benefits'>;
 export type EventStatusHistory = Row<'event_status_history'>;
@@ -51,4 +59,42 @@ export const DEFAULT_KINDS_ENABLED: KindsEnabled = {
   payout_upcoming: true,
   cancel_available: true,
   autopay_check: true,
+};
+
+// Phase 5.3 — 카드 메타 / 정규화 혜택 모델
+// 카드 사용처 구분 (국내전용 / 해외겸용)
+export type CardType = 'domestic' | 'overseas';
+
+// 혜택 할인 방식 (결제일 할인 / 바로 할인 / 캐시백 / 포인트 적립 / 기타)
+export type DiscountMethod = 'bill_discount' | 'instant_discount' | 'cashback' | 'point' | 'other';
+
+// 할인 방식 한글 라벨 (UI 표기 공통)
+export const DISCOUNT_METHOD_LABEL: Record<DiscountMethod, string> = {
+  bill_discount: '결제일 할인',
+  instant_discount: '바로 할인',
+  cashback: '캐시백',
+  point: '포인트 적립',
+  other: '기타',
+};
+
+// 카드 타입 한글 라벨 (UI 표기 공통)
+export const CARD_TYPE_LABEL: Record<CardType, string> = {
+  domestic: '국내전용',
+  overseas: '해외겸용',
+};
+
+// 혜택 대상 가맹점 그룹 (card_benefit_targets 행)
+export type CardBenefitTarget = {
+  id: string;
+  group_label: string;
+  merchants: string;
+  sort_order: number;
+};
+
+// 혜택 실적 구간별 한도 (card_benefit_cap_tiers 행)
+export type CardBenefitCapTier = {
+  id: string;
+  min_spend_won: number;
+  cap_won: number;
+  sort_order: number;
 };
