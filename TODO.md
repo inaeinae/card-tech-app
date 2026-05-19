@@ -38,7 +38,7 @@
 - [x] `supabase/README.md` — 로컬 개발 워크플로우
 - [x] `docs/supabase/` — 배포/마이그레이션 가이드
 - [ ] Supabase 원격 프로젝트 생성 (무료 티어) — 실기기 테스트 시점에 진행
-- [ ] 환경 변수 템플릿 (`.env.example`) 작성
+- [x] 환경 변수 템플릿 (`.env.example`) 작성 — `mobile/.env.example` (Supabase URL/anon key, Kakao native app key)
 
 ## Phase 2. React Native 프로젝트 초기화
 
