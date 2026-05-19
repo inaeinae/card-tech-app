@@ -86,9 +86,9 @@
 - [x] `Card`, `PressableCard`
 - [x] `EmptyState`, `LoadingState`, `ErrorState`
 - [x] `ThemeToggle` (OS 연동 표시)
-- [ ] `Select` — 사용 시점(Phase 5~6)에 구현 (BottomSheet 기반 예정)
-- [ ] `DatePicker` — `@react-native-community/datetimepicker` 도입 시점에 구현
-- [ ] 바텀시트 모달 래퍼 — `@gorhom/bottom-sheet` 도입 시점에 구현
+- [x] `Select` — `IssuerSelect`(카드사 전용)로 충당, 범용 Select v1 범위 외 (v2 재검토)
+- [x] `DatePicker` — `DatePickerField`(`@react-native-community/datetimepicker`) 도입 완료
+- [ ] 바텀시트 모달 래퍼 — v1 미도입(현행 모달 자체 구성). `@gorhom/bottom-sheet`는 v2 이후 재검토
 
 ## Phase 4. 인증 플로우
 
