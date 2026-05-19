@@ -204,6 +204,8 @@
 
 ## Phase 13. QA · 출시 준비
 
+> **선행 조건:** Phase 1.2(`report-aggregate` 테스트/구현) / Phase 1.3(Supabase 원격 프로젝트 생성) / Phase 10(Edge Function `/report-aggregate` 연동)의 보류 항목은 Phase 13 진입 시 함께 처리한다. (사유: 원격 무료 티어 생성 선행 필요, CLAUDE.md 과금 회피 원칙)
+
 - [ ] 접근성 (VoiceOver 레이블, 최소 터치영역)
 - [ ] i18n 기반 (ko 고정, 구조만)
 - [ ] 에러 바운더리 + Sentry(무료 플랜) 연동 검토
