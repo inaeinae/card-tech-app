@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import {
@@ -6,9 +6,18 @@ import {
   LogOut, Moon, Shield, Trash2, User,
 } from 'lucide-react-native';
 import { useAuthStore } from '@/stores/authStore';
+import { useEventStore } from '@/stores/eventStore';
 import { useProfileStore } from '@/stores/profileStore';
 import { useThemeStore, type ThemeMode } from '@/stores/themeStore';
 import { ThemeModeSheet } from '@/components/mypage/ThemeModeSheet';
+
+// 가입일로부터 경과 개월 계산 — Pencil §5.6 프로필 sub "가입 N개월 · 이벤트 N건" 표기용
+function monthsSince(isoString: string | null | undefined): number {
+  if (!isoString) return 0;
+  const ms = Date.now() - new Date(isoString).getTime();
+  if (Number.isNaN(ms) || ms < 0) return 0;
+  return Math.floor(ms / (30 * 24 * 60 * 60 * 1000));
+}
 
 type SettingItem = {
   icon: React.ReactNode;
@@ -77,15 +86,24 @@ export default function MyPageScreen() {
   const loadProfile = useProfileStore((s) => s.loadProfile);
   const resetProfile = useProfileStore((s) => s.reset);
 
+  const events = useEventStore((s) => s.events);
+  const loadEvents = useEventStore((s) => s.loadEvents);
+
   const themeMode = useThemeStore((s) => s.mode);
 
   const [themeSheetVisible, setThemeSheetVisible] = useState(false);
 
   useEffect(() => {
     loadProfile();
-  }, [loadProfile]);
+    loadEvents();
+  }, [loadProfile, loadEvents]);
 
   const displayName = profile?.nickname?.trim() || user?.email || '사용자';
+  const joinedMonths = useMemo(() => monthsSince(user?.created_at), [user?.created_at]);
+  const statsLabel =
+    joinedMonths > 0
+      ? `가입 ${joinedMonths}개월 · 이벤트 ${events.length}건`
+      : `이벤트 ${events.length}건`;
 
   async function onSignOut() {
     Alert.alert('로그아웃', '로그아웃하시겠습니까?', [
@@ -205,7 +223,7 @@ export default function MyPageScreen() {
             <Text style={{ fontSize: 16, fontWeight: '700', color: '#191F28' }} numberOfLines={1}>
               {displayName}
             </Text>
-            <Text style={{ fontSize: 13, color: '#8B95A1', marginTop: 2 }}>카카오 로그인</Text>
+            <Text style={{ fontSize: 13, color: '#8B95A1', marginTop: 2 }}>{statsLabel}</Text>
           </View>
           <Pressable
             onPress={() => router.push('/settings/profile')}
