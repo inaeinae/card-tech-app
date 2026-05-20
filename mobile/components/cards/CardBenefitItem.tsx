@@ -20,10 +20,9 @@ type Props = {
     | 'cap_tiers'
   >;
   onDelete?: () => void;
-  onPress?: () => void;
 };
 
-export function CardBenefitItem({ benefit, onDelete, onPress }: Props) {
+export function CardBenefitItem({ benefit, onDelete }: Props) {
   const headline = (() => {
     const parts: string[] = [];
     if (benefit.discount_pct !== null && benefit.discount_pct !== undefined) {
@@ -35,7 +34,7 @@ export function CardBenefitItem({ benefit, onDelete, onPress }: Props) {
     return parts.join(' ');
   })();
 
-  const card = (
+  return (
     <View className="rounded-md border border-border dark:border-border-dark bg-surface dark:bg-surface-dark p-4 gap-2">
       {/* 1행: 카테고리 + 제목 + 삭제 */}
       <View className="flex-row items-center gap-2">
@@ -58,6 +57,20 @@ export function CardBenefitItem({ benefit, onDelete, onPress }: Props) {
 
       {headline ? (
         <Text className="text-label text-muted dark:text-muted-dark">{headline}</Text>
+      ) : null}
+
+      {/* 2행: 대상 가맹점 요약 */}
+      {benefit.targets.length > 0 ? (
+        <Text
+          className="text-label text-muted dark:text-muted-dark"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {benefit.targets
+            .map((t) => t.merchants.split(',')[0]?.trim() ?? '')
+            .filter((s) => s.length > 0)
+            .join(' · ')}
+        </Text>
       ) : null}
 
       {/* 대상 구분 */}
@@ -107,13 +120,4 @@ export function CardBenefitItem({ benefit, onDelete, onPress }: Props) {
       ) : null}
     </View>
   );
-
-  if (onPress) {
-    return (
-      <Pressable onPress={onPress} accessibilityRole="button">
-        {card}
-      </Pressable>
-    );
-  }
-  return card;
 }
