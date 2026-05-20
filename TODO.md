@@ -240,14 +240,21 @@
 - [x] 9 파일 `SafeAreaView from 'react-native'` → `SafeAreaScreen` 일괄 교체 (`(tabs)` 4 + `cards/[id]/index` + `events/[id]/history` + `events/index` + `events/[id]/index` + `modals/status-change`)
 - [x] 토큰 일치/래퍼 단위 테스트 (라이트 + 다크 hex)
 
-## Phase B. 화면별 Pencil 1:1 재현 (예정)
+## Phase B1. 마이페이지 Pencil 1:1 (2026-05-21)
 
-- [ ] `(tabs)/mypage` — hex 인라인 18건 정리, Pencil mockup 매칭
-- [ ] `(tabs)/index`, `calendar`, `report` — hex 잔존 정리
-- [ ] `cards/[id]/index` — hex 37건 정리, Pencil 매칭
-- [ ] `events/[id]/index`, `history` — hex 60건 정리
-- [ ] `modals/status-change` — hex 36건 정리, 백드롭 처리 검증
-- [ ] `events/index` — hex 7건 정리
+- [x] mypage.tsx hex 18건 → NativeWind 토큰 + 다크 variant
+- [x] ThemeModeSheet 백드롭 토큰화
+- [x] 시뮬 라이트/다크 동작 확인 (dark:bg-bg-dark 패턴 정상 동작)
+- [ ] Pencil AC4EX 갱신 + MyPageDark 신규 — Pencil 앱 ⌘S 후 commit 별건
+
+## Phase B (예정 sub-phase)
+
+- [ ] B2. 홈 / 캘린더 / 리포트 탭
+- [ ] B3. 카드 상세 / 수정 / 등록
+- [ ] B4. 이벤트 목록 / 상세 / 이력
+- [ ] B5. 위저드 5단 + 상태 변경 모달
+- [ ] B6. settings 3종 (신규 mockup 포함)
+- [ ] B7. (auth) login / onboarding 다크
 
 ## v2 이후 (범위 외 — 메모용)
 
