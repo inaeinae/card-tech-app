@@ -78,15 +78,15 @@ function SettingRow({ item, hasDivider }: { item: SettingItem; hasDivider: boole
       onPress={item.onPress}
       accessibilityRole="button"
       accessibilityLabel={item.label}
-      style={({ pressed }) => ({
+      style={{
         flexDirection: 'row',
         alignItems: 'center',
         gap: 14,
         padding: 16,
-        backgroundColor: pressed ? '#F9FAFB' : '#FFFFFF',
+        backgroundColor: '#FFFFFF',
         borderTopWidth: hasDivider ? 1 : 0,
         borderTopColor: '#F2F4F6',
-      })}
+      }}
     >
       {item.icon}
       <Text
