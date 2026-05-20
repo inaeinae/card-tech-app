@@ -93,30 +93,127 @@ export type Database = {
           },
         ]
       }
+      card_benefit_cap_tiers: {
+        Row: {
+          benefit_id: string
+          cap_won: number
+          created_at: string
+          id: string
+          min_spend_won: number
+          sort_order: number
+          user_id: string
+        }
+        Insert: {
+          benefit_id: string
+          cap_won: number
+          created_at?: string
+          id?: string
+          min_spend_won: number
+          sort_order?: number
+          user_id: string
+        }
+        Update: {
+          benefit_id?: string
+          cap_won?: number
+          created_at?: string
+          id?: string
+          min_spend_won?: number
+          sort_order?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_benefit_cap_tiers_benefit_id_fkey"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "card_benefits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_benefit_targets: {
+        Row: {
+          benefit_id: string
+          created_at: string
+          group_label: string
+          id: string
+          merchants: string
+          sort_order: number
+          user_id: string
+        }
+        Insert: {
+          benefit_id: string
+          created_at?: string
+          group_label: string
+          id?: string
+          merchants: string
+          sort_order?: number
+          user_id: string
+        }
+        Update: {
+          benefit_id?: string
+          created_at?: string
+          group_label?: string
+          id?: string
+          merchants?: string
+          sort_order?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_benefit_targets_benefit_id_fkey"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "card_benefits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       card_benefits: {
         Row: {
           card_id: string
+          category: string | null
           created_at: string
           details: Json
+          discount_method: string | null
+          discount_pct: number | null
           id: string
+          min_spend_won: number | null
+          monthly_cap_won: number | null
+          notes: string | null
+          overseas_only: boolean
           title: string
           updated_at: string
           user_id: string
         }
         Insert: {
           card_id: string
+          category?: string | null
           created_at?: string
           details?: Json
+          discount_method?: string | null
+          discount_pct?: number | null
           id?: string
+          min_spend_won?: number | null
+          monthly_cap_won?: number | null
+          notes?: string | null
+          overseas_only?: boolean
           title: string
           updated_at?: string
           user_id: string
         }
         Update: {
           card_id?: string
+          category?: string | null
           created_at?: string
           details?: Json
+          discount_method?: string | null
+          discount_pct?: number | null
           id?: string
+          min_spend_won?: number | null
+          monthly_cap_won?: number | null
+          notes?: string | null
+          overseas_only?: boolean
           title?: string
           updated_at?: string
           user_id?: string
@@ -133,8 +230,11 @@ export type Database = {
       }
       cards: {
         Row: {
+          annual_fee_won: number | null
+          base_min_spend_won: number | null
           cancel_scheduled_at: string | null
           canceled_at: string | null
+          card_type: string | null
           created_at: string
           id: string
           issuer: string
@@ -145,8 +245,11 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          annual_fee_won?: number | null
+          base_min_spend_won?: number | null
           cancel_scheduled_at?: string | null
           canceled_at?: string | null
+          card_type?: string | null
           created_at?: string
           id?: string
           issuer: string
@@ -157,8 +260,11 @@ export type Database = {
           user_id: string
         }
         Update: {
+          annual_fee_won?: number | null
+          base_min_spend_won?: number | null
           cancel_scheduled_at?: string | null
           canceled_at?: string | null
+          card_type?: string | null
           created_at?: string
           id?: string
           issuer?: string

@@ -1,4 +1,9 @@
-import { BENEFIT_TEMPLATES, getTemplateById } from '@/lib/templates';
+import {
+  BENEFIT_TEMPLATES,
+  getTemplateById,
+  BENEFIT_CATEGORIES,
+  getCategoryById,
+} from '@/lib/templates';
 
 describe('BENEFIT_TEMPLATES', () => {
   it('id 가 모두 유일하다', () => {
@@ -32,5 +37,16 @@ describe('BENEFIT_TEMPLATES', () => {
 
   it('context=event 는 autopay 포함', () => {
     expect(BENEFIT_TEMPLATES.find((t) => t.id === 'autopay')).toBeDefined();
+  });
+});
+
+describe('BENEFIT_CATEGORIES', () => {
+  test('8개 카테고리 + 직접입력 마지막', () => {
+    expect(BENEFIT_CATEGORIES.length).toBe(8);
+    expect(BENEFIT_CATEGORIES[BENEFIT_CATEGORIES.length - 1].id).toBe('custom');
+  });
+  test('getCategoryById', () => {
+    expect(getCategoryById('life')?.label).toBe('생활');
+    expect(getCategoryById('unknown')).toBeNull();
   });
 });

@@ -106,20 +106,34 @@ describe('cardStore.draftBenefits', () => {
     useCardStore.setState({ draftBenefits: [] } as never);
   });
 
+  // BenefitPayload 의 모든 필드를 채운 헬퍼 (정규화 모델 — Phase 5.3)
+  const makePayload = (title: string, opts?: Partial<{ discount_pct: number | null }>) => ({
+    title,
+    category: null,
+    discount_pct: opts?.discount_pct ?? null,
+    discount_method: null,
+    min_spend_won: null,
+    monthly_cap_won: null,
+    overseas_only: false,
+    notes: null,
+    targets: [],
+    cap_tiers: [],
+  });
+
   it('addDraftBenefit 은 localId 가 부여된 항목을 끝에 추가한다', () => {
-    useCardStore.getState().addDraftBenefit({ title: '커피 10% 할인' });
-    useCardStore.getState().addDraftBenefit({ title: '해외 적립', details: { rate: 1.5 } });
+    useCardStore.getState().addDraftBenefit(makePayload('커피 10% 할인'));
+    useCardStore.getState().addDraftBenefit(makePayload('해외 적립', { discount_pct: 1.5 }));
     const list = useCardStore.getState().draftBenefits;
     expect(list).toHaveLength(2);
     expect(list[0].title).toBe('커피 10% 할인');
     expect(list[0].localId).toBeTruthy();
-    expect(list[1].details).toEqual({ rate: 1.5 });
+    expect(list[1].discount_pct).toBe(1.5);
     expect(list[0].localId).not.toBe(list[1].localId);
   });
 
   it('removeDraftBenefit 은 해당 localId 항목만 제거한다', () => {
-    useCardStore.getState().addDraftBenefit({ title: 'A' });
-    useCardStore.getState().addDraftBenefit({ title: 'B' });
+    useCardStore.getState().addDraftBenefit(makePayload('A'));
+    useCardStore.getState().addDraftBenefit(makePayload('B'));
     const [first] = useCardStore.getState().draftBenefits;
     useCardStore.getState().removeDraftBenefit(first.localId);
     const list = useCardStore.getState().draftBenefits;
@@ -128,7 +142,7 @@ describe('cardStore.draftBenefits', () => {
   });
 
   it('clearDraftBenefits 는 빈 배열로 리셋한다', () => {
-    useCardStore.getState().addDraftBenefit({ title: 'A' });
+    useCardStore.getState().addDraftBenefit(makePayload('A'));
     useCardStore.getState().clearDraftBenefits();
     expect(useCardStore.getState().draftBenefits).toEqual([]);
   });

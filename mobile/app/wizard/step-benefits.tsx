@@ -50,7 +50,7 @@ export default function WizardStepBenefits() {
                   hitSlop={8}
                   className="flex-row items-center gap-1"
                 >
-                  <Pencil size={16} color="#94A3B8" />
+                  <Pencil size={16} />
                   <Text className="text-label text-muted dark:text-muted-dark">편집</Text>
                 </Pressable>
                 <Pressable
@@ -60,7 +60,7 @@ export default function WizardStepBenefits() {
                   hitSlop={8}
                   className="flex-row items-center gap-1"
                 >
-                  <Trash2 size={16} color="#DC2626" />
+                  <Trash2 size={16} />
                   <Text className="text-label text-destructive dark:text-destructive-dark">
                     삭제
                   </Text>
@@ -75,7 +75,7 @@ export default function WizardStepBenefits() {
         <Button
           label="혜택 추가"
           variant="secondary"
-          leftIcon={<Plus size={16} color="#94A3B8" />}
+          leftIcon={<Plus size={16} />}
           onPress={() => router.push('/wizard/template-picker')}
         />
 
