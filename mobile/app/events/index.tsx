@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  FlatList, Pressable, RefreshControl, SafeAreaView,
-  ScrollView, Text, View,
-} from 'react-native';
+import { FlatList, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import EventListItem from '@/components/home/EventListItem';
+import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { sumEventExpected } from '@/lib/eventTotals';
 import { useCardStore } from '@/stores/cardStore';
 import { useEventStore } from '@/stores/eventStore';
@@ -20,7 +18,14 @@ const CHIPS: { key: FilterChip; label: string }[] = [
   { key: 'canceled', label: '해지' },
 ];
 
-const ACTIVE_SET = new Set<EventStatus>(['registered', 'applied', 'in_progress', 'performance_done', 'pending_payout', 'cancelable']);
+const ACTIVE_SET = new Set<EventStatus>([
+  'registered',
+  'applied',
+  'in_progress',
+  'performance_done',
+  'pending_payout',
+  'cancelable',
+]);
 
 function filterEvents(events: EventRow[], chip: FilterChip): EventRow[] {
   if (chip === 'all') return events;
@@ -54,25 +59,40 @@ export default function EventListScreen() {
     await loadEventBenefits();
   }, [loadEvents, loadEventBenefits]);
 
-  const renderItem = useCallback(({ item }: { item: EventRow }) => {
-    const card = cards.find((c) => c.id === item.card_id);
-    return (
-      <EventListItem
-        id={item.id}
-        title={item.title}
-        issuer={card?.issuer ?? ''}
-        status={item.status}
-        expectedAmount={sumEventExpected(benefitsByEvent[item.id] ?? [])}
-        onPress={() => router.push(`/events/${item.id}`)}
-      />
-    );
-  }, [cards, benefitsByEvent, router]);
+  const renderItem = useCallback(
+    ({ item }: { item: EventRow }) => {
+      const card = cards.find((c) => c.id === item.card_id);
+      return (
+        <EventListItem
+          id={item.id}
+          title={item.title}
+          issuer={card?.issuer ?? ''}
+          status={item.status}
+          expectedAmount={sumEventExpected(benefitsByEvent[item.id] ?? [])}
+          onPress={() => router.push(`/events/${item.id}`)}
+        />
+      );
+    },
+    [cards, benefitsByEvent, router],
+  );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <SafeAreaScreen>
       {/* 헤더 */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4, gap: 8 }}>
-        <Pressable onPress={() => router.back()} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 16,
+          paddingTop: 8,
+          paddingBottom: 4,
+          gap: 8,
+        }}
+      >
+        <Pressable
+          onPress={() => router.back()}
+          style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}
+        >
           <ChevronLeft size={24} color="#191F28" />
         </Pressable>
         <Text style={{ fontSize: 22, fontWeight: '700', color: '#191F28' }}>이벤트</Text>
@@ -95,7 +115,13 @@ export default function EventListScreen() {
               backgroundColor: chip === c.key ? '#191F28' : '#F9FAFB',
             }}
           >
-            <Text style={{ fontSize: 14, fontWeight: '600', color: chip === c.key ? '#FFFFFF' : '#4E5968' }}>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: '600',
+                color: chip === c.key ? '#FFFFFF' : '#4E5968',
+              }}
+            >
               {c.label}
             </Text>
           </Pressable>
@@ -107,7 +133,9 @@ export default function EventListScreen() {
         data={filtered}
         keyExtractor={(e) => e.id}
         renderItem={renderItem}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={handleRefresh} tintColor="#3182F6" />}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={handleRefresh} tintColor="#3182F6" />
+        }
         contentContainerStyle={{ paddingTop: 4, paddingBottom: 32 }}
         ListEmptyComponent={
           <View style={{ alignItems: 'center', padding: 48 }}>
@@ -115,6 +143,6 @@ export default function EventListScreen() {
           </View>
         }
       />
-    </SafeAreaView>
+    </SafeAreaScreen>
   );
 }
