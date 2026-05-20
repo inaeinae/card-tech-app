@@ -34,7 +34,7 @@ export function ThemeModeSheet({ visible, onClose }: { visible: boolean; onClose
         accessibilityRole="button"
         accessibilityLabel="배경 탭하여 닫기"
         onPress={onClose}
-        style={{ flex: 1, backgroundColor: '#00000066', justifyContent: 'flex-end' }}
+        className="flex-1 bg-black/40 justify-end"
       >
         <Pressable
           // 시트 영역 탭은 닫히지 않도록 stop propagation
