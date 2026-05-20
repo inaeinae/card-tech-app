@@ -29,10 +29,11 @@ jest.mock('@/lib/supabase', () => {
         }),
       };
     },
-    // delete(targets/cap_tiers) — eq() 으로 종결
-    delete: () => ({
-      eq: () => Promise.resolve({ error: null }),
-    }),
+    // delete(targets/cap_tiers) — eq() 으로 종결. 호출 순서 캡쳐 위해 calls 에 push.
+    delete: () => {
+      calls.push({ table, op: 'delete' });
+      return { eq: () => Promise.resolve({ error: null }) };
+    },
     // insert(targets/cap_tiers) — 즉시 Promise 반환
     insert: (rows: unknown) => {
       calls.push({ table, op: 'insert', rows });
@@ -84,6 +85,35 @@ describe('upsertCardBenefit', () => {
     const ops = __calls.map((c) => `${c.op}:${c.table}`);
     expect(ops).toEqual([
       'upsert:card_benefits',
+      'insert:card_benefit_targets',
+      'insert:card_benefit_cap_tiers',
+    ]);
+  });
+
+  test('편집: upsert → targets delete → cap_tiers delete → targets insert → cap_tiers insert', async () => {
+    const { upsertCardBenefit } = useCardStore.getState();
+    await upsertCardBenefit(
+      'c1',
+      {
+        title: 't',
+        category: '생활',
+        discount_pct: 5,
+        discount_method: 'bill_discount',
+        min_spend_won: null,
+        monthly_cap_won: null,
+        overseas_only: false,
+        notes: null,
+        targets: [{ group_label: 'g', merchants: 'm', sort_order: 0 }],
+        cap_tiers: [{ min_spend_won: 400000, cap_won: 7000, sort_order: 0 }],
+      },
+      'b-existing',
+    );
+
+    const ops = __calls.map((c) => `${c.op}:${c.table}`);
+    expect(ops).toEqual([
+      'upsert:card_benefits',
+      'delete:card_benefit_targets',
+      'delete:card_benefit_cap_tiers',
       'insert:card_benefit_targets',
       'insert:card_benefit_cap_tiers',
     ]);
