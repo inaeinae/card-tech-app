@@ -63,13 +63,13 @@ module.exports = {
           DEFAULT: '#FF4D4F',
           soft: '#FFF1F0',
           dark: '#EF4444',
-          darkSoft: '#3F1D1D',
+          darkSoft: '#450A0A',
         },
         warning: {
           DEFAULT: '#F59E0B',
           soft: '#FEF3C7',
-          dark: '#FBBF24',
-          darkSoft: '#3F2D0A',
+          dark: '#F59E0B',
+          darkSoft: '#451A03',
         },
 
         // 별칭 — Phase 5.3 이전 코드 호환 (background/foreground/muted/destructive)

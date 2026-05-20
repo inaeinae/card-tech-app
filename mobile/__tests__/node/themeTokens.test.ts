@@ -43,4 +43,18 @@ describe('tailwind.config.js ↔ constants/theme.ts 토큰 일치', () => {
     expect(colors.muted.DEFAULT).toBe(Colors.light.ink3);
     expect(colors.destructive.DEFAULT).toBe(Colors.light.danger);
   });
+
+  // 다크 hex 동일성 — Pencil 다크 변형 보장
+  test('다크 토큰', () => {
+    expect(colors.bg.dark).toBe(Colors.dark.bg);
+    expect(colors.surface.dark).toBe(Colors.dark.surface);
+    expect(colors.ink.dark).toBe(Colors.dark.ink);
+    expect(colors['ink-2'].dark).toBe(Colors.dark.ink2);
+    expect(colors['ink-3'].dark).toBe(Colors.dark.ink3);
+    expect(colors['ink-4'].dark).toBe(Colors.dark.ink4);
+    expect(colors.danger.dark).toBe(Colors.dark.danger);
+    expect(colors.danger.darkSoft).toBe(Colors.dark.dangerSoft);
+    expect(colors.warning.dark).toBe(Colors.dark.warning);
+    expect(colors.warning.darkSoft).toBe(Colors.dark.warningSoft);
+  });
 });
