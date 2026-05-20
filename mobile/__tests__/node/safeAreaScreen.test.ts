@@ -55,8 +55,16 @@ describe('SafeAreaScreen', () => {
     expect((inner as ReactElement).type).toBe(ScrollView);
   });
 
-  test('scroll 미지정 — View 자식', () => {
+  test('scroll 미지정 + viewProps 없음 — children 직접 자식 (inner View 생략)', () => {
     const root = renderRoot({ children: child });
+    expect(root.props.children).toBe(child);
+  });
+
+  test('viewProps 지정 — inner View 유지', () => {
+    const root = renderRoot({
+      children: child,
+      viewProps: { style: { justifyContent: 'flex-end' } },
+    });
     const inner = root.props.children;
     expect(isValidElement(inner)).toBe(true);
     expect((inner as ReactElement).type).toBe(View);

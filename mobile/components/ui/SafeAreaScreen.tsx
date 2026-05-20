@@ -31,12 +31,18 @@ export function SafeAreaScreen(props: ScreenProps) {
       </SafeAreaView>
     );
   }
+  const viewProps = (props as BaseProps & { viewProps?: ViewProps }).viewProps;
+  // viewProps 가 없으면 inner View 생략 — children 의 width stretch 보존
+  if (!viewProps) {
+    return (
+      <SafeAreaView edges={edges} className={cls}>
+        {children}
+      </SafeAreaView>
+    );
+  }
   return (
     <SafeAreaView edges={edges} className={cls}>
-      <View
-        {...((props as BaseProps & { viewProps?: ViewProps }).viewProps ?? {})}
-        className="flex-1"
-      >
+      <View {...viewProps} className="flex-1">
         {children}
       </View>
     </SafeAreaView>
