@@ -120,6 +120,22 @@
 - [x] `wizard/benefit-form.tsx` — `context=card` 분기 (cardStore 경유)
 - [x] `CardBenefitItem` — `onDelete` prop, 카드 신규/수정 양쪽 재사용
 
+### 5.3 카드 메타 + 혜택 정규화 (Phase 5.3)
+
+- [x] cards 메타 컬럼(card_type/annual_fee_won/base_min_spend_won) + pgTAP
+- [x] card_benefits 정규화 + card_benefit_targets/cap_tiers 신규 + pgTAP
+- [x] RLS 신규 두 테이블 + pgTAP
+- [x] lib/formatWon, lib/benefitForm 신설
+- [x] UI 키트 Select/RadioGroup/Chip 신설 + IssuerSelect 래퍼 축소
+- [x] CardBenefitItem 고밀도 재설계 (구분·대상 / cap_tiers / 메모 / 해외겸용 Chip)
+- [x] cardStore upsertCardBenefit 트랜잭션 (delete-then-insert) + 조인 로드
+- [x] 위저드 3단(template-picker/sub-item-picker/benefit-form) 카드 컨텍스트 분기 풀폼
+- [x] cards/new, cards/[id]/edit, cards/[id]/index 통합 + 카드 메타 표시
+- [x] Pencil mockup 동기화 (CardNew/BenefitCell/Select/RadioGroup/ChipGrid/BenefitForm 라이트·다크)
+- [x] step-benefits 토큰 정리
+- [ ] v1.1: card_benefits.details jsonb 컬럼 drop + DraftCardBenefit.details 잔재 제거
+- [ ] v1.1: 수동 QA 후 발견된 보강 항목
+
 ## Phase 6. 이벤트 위저드 + CRUD
 
 ### 6.1 위저드
