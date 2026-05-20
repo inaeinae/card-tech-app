@@ -66,20 +66,22 @@ export function ThemeModeSheet({ visible, onClose }: { visible: boolean; onClose
                 onPress={() => onPick(opt.mode)}
                 accessibilityRole="button"
                 accessibilityLabel={`${opt.label}${selected ? ', 선택됨' : ''}`}
-                style={({ pressed }) => ({
+                style={{
                   flexDirection: 'row',
                   alignItems: 'center',
                   gap: 12,
                   padding: 16,
-                  backgroundColor: pressed ? C.surface : 'transparent',
+                  backgroundColor: 'transparent',
                   borderRadius: 12,
-                })}
+                }}
               >
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: 15, fontFamily: Fonts.semibold, color: C.ink }}>
                     {opt.label}
                   </Text>
-                  <Text style={{ fontSize: 12, fontFamily: Fonts.medium, color: C.ink3, marginTop: 2 }}>
+                  <Text
+                    style={{ fontSize: 12, fontFamily: Fonts.medium, color: C.ink3, marginTop: 2 }}
+                  >
                     {opt.desc}
                   </Text>
                 </View>

@@ -231,6 +231,24 @@
 - [ ] App Store 메타데이터 (스크린샷, 설명, 개인정보처리방침) — `mobile/app/settings/about.tsx` 의 `TERMS_URL` / `PRIVACY_URL` 확정 필요
 - [ ] Android 확장 (Play Console 준비) — v1.1
 
+## Phase A. 탭 UI 인프라 (2026-05-21)
+
+- [x] SafeAreaProvider root 래핑 (`app/_layout.tsx`)
+- [x] themeStore ↔ NativeWind `colorScheme.set` 연동
+- [x] `tailwind.config.js` 토큰 Pencil/theme.ts 1:1 (`primary/accent/bg/surface(-2)/ink(-2/3/4)/border(-strong)/danger/warning + *Soft`) + 별칭(`background/foreground/muted/destructive`) 유지
+- [x] `SafeAreaScreen` 공통 래퍼 신설 + 단위 테스트
+- [x] 9 파일 `SafeAreaView from 'react-native'` → `SafeAreaScreen` 일괄 교체 (`(tabs)` 4 + `cards/[id]/index` + `events/[id]/history` + `events/index` + `events/[id]/index` + `modals/status-change`)
+- [x] 토큰 일치/래퍼 단위 테스트 (라이트 + 다크 hex)
+
+## Phase B. 화면별 Pencil 1:1 재현 (예정)
+
+- [ ] `(tabs)/mypage` — hex 인라인 18건 정리, Pencil mockup 매칭
+- [ ] `(tabs)/index`, `calendar`, `report` — hex 잔존 정리
+- [ ] `cards/[id]/index` — hex 37건 정리, Pencil 매칭
+- [ ] `events/[id]/index`, `history` — hex 60건 정리
+- [ ] `modals/status-change` — hex 36건 정리, 백드롭 처리 검증
+- [ ] `events/index` — hex 7건 정리
+
 ## v2 이후 (범위 외 — 메모용)
 
 - [ ] Apple / Naver 로그인

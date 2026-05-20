@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { FlatList, Pressable, RefreshControl, SafeAreaView, Text } from 'react-native';
+import { FlatList, Pressable, RefreshControl, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import SummaryCard from '@/components/home/SummaryCard';
 import EventListItem from '@/components/home/EventListItem';
 import EmptyHome from '@/components/home/EmptyHome';
+import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { useEventStore } from '@/stores/eventStore';
 import { useCardStore } from '@/stores/cardStore';
 import { useWizardStore } from '@/stores/wizardStore';
@@ -13,7 +14,12 @@ import { sumEventExpected, summarizeEvents } from '@/lib/eventTotals';
 
 // paid / canceled 제외 — active 이벤트만
 const ACTIVE_STATUSES = new Set([
-  'registered', 'applied', 'in_progress', 'performance_done', 'pending_payout', 'cancelable',
+  'registered',
+  'applied',
+  'in_progress',
+  'performance_done',
+  'pending_payout',
+  'cancelable',
 ]);
 
 export default function HomeScreen() {
@@ -64,7 +70,7 @@ export default function HomeScreen() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <SafeAreaScreen>
       {activeEvents.length === 0 && !loading ? (
         <EmptyHome onRegister={startWizard} />
       ) : (
@@ -124,6 +130,6 @@ export default function HomeScreen() {
           <Plus size={28} color="#FFFFFF" />
         </Pressable>
       )}
-    </SafeAreaView>
+    </SafeAreaScreen>
   );
 }

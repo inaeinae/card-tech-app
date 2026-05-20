@@ -7,12 +7,15 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
 import 'react-native-reanimated';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { colorScheme } from 'nativewind';
 
 import {
   useFonts,
   NotoSansKR_300Light,
   NotoSansKR_400Regular,
   NotoSansKR_500Medium,
+  NotoSansKR_600SemiBold,
   NotoSansKR_700Bold,
 } from '@expo-google-fonts/noto-sans-kr';
 
@@ -29,7 +32,8 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useResolvedColorScheme();
+  const resolvedColorScheme = useResolvedColorScheme();
+  const themeMode = useThemeStore((s) => s.mode);
   const loadThemeMode = useThemeStore((s) => s.loadMode);
   const bootstrap = useAuthStore((s) => s.bootstrap);
   const initializing = useAuthStore((s) => s.initializing);
@@ -38,6 +42,7 @@ export default function RootLayout() {
     NotoSansKR_300Light,
     NotoSansKR_400Regular,
     NotoSansKR_500Medium,
+    NotoSansKR_600SemiBold,
     NotoSansKR_700Bold,
   });
 
@@ -50,6 +55,11 @@ export default function RootLayout() {
   useEffect(() => {
     loadThemeMode();
   }, [loadThemeMode]);
+
+  // mode 변경 시 NativeWind 색 스키마 동기화 (store 액션 외부 변경 대비 안전망)
+  useEffect(() => {
+    colorScheme.set(themeMode);
+  }, [themeMode]);
 
   // Phase 11: 인증 완료 후 알림 prefs / 권한 로드 + foreground 재스케줄
   const loadPrefs = useNotificationStore((s) => s.loadPrefs);
@@ -82,16 +92,26 @@ export default function RootLayout() {
   if (!fontsLoaded || initializing) return null;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AuthGate>
-        <Stack>
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-          <Stack.Screen name="modals/status-change" options={{ presentation: 'transparentModal', animation: 'slide_from_bottom', headerShown: false }} />
-        </Stack>
-      </AuthGate>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    // SafeAreaProvider: 하위 SafeAreaView 가 정확한 inset 을 반환하도록 루트에서 래핑
+    <SafeAreaProvider>
+      <ThemeProvider value={resolvedColorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <AuthGate>
+          <Stack>
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+            <Stack.Screen
+              name="modals/status-change"
+              options={{
+                presentation: 'transparentModal',
+                animation: 'slide_from_bottom',
+                headerShown: false,
+              }}
+            />
+          </Stack>
+        </AuthGate>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

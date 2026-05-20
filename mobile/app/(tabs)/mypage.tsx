@@ -1,14 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Pressable, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import {
-  Bell, ChevronRight, FileText, Info,
-  LogOut, Moon, Shield, Trash2, User,
+  Bell,
+  ChevronRight,
+  FileText,
+  Info,
+  LogOut,
+  Moon,
+  Shield,
+  Trash2,
+  User,
 } from 'lucide-react-native';
 import { useAuthStore } from '@/stores/authStore';
 import { useEventStore } from '@/stores/eventStore';
 import { useProfileStore } from '@/stores/profileStore';
 import { useThemeStore, type ThemeMode } from '@/stores/themeStore';
+import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { ThemeModeSheet } from '@/components/mypage/ThemeModeSheet';
 
 // 가입일로부터 경과 개월 계산 — Pencil §5.6 프로필 sub "가입 N개월 · 이벤트 N건" 표기용
@@ -41,10 +49,20 @@ const THEME_LABEL: Record<ThemeMode, string> = {
 function SectionGroup({ section }: { section: Section }) {
   return (
     <View style={{ marginHorizontal: 16, marginBottom: 24 }}>
-      <Text style={{ fontSize: 12, fontWeight: '600', color: '#8B95A1', marginBottom: 8, paddingHorizontal: 4 }}>
+      <Text
+        style={{
+          fontSize: 12,
+          fontWeight: '600',
+          color: '#8B95A1',
+          marginBottom: 8,
+          paddingHorizontal: 4,
+        }}
+      >
         {section.title}
       </Text>
-      <View style={{ borderRadius: 16, borderWidth: 1, borderColor: '#E5E8EB', overflow: 'hidden' }}>
+      <View
+        style={{ borderRadius: 16, borderWidth: 1, borderColor: '#E5E8EB', overflow: 'hidden' }}
+      >
         {section.items.map((item, idx) => (
           <SettingRow key={item.label} item={item} hasDivider={idx > 0} />
         ))}
@@ -60,16 +78,25 @@ function SettingRow({ item, hasDivider }: { item: SettingItem; hasDivider: boole
       onPress={item.onPress}
       accessibilityRole="button"
       accessibilityLabel={item.label}
-      style={({ pressed }) => ({
-        flexDirection: 'row', alignItems: 'center', gap: 14,
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 14,
         padding: 16,
-        backgroundColor: pressed ? '#F9FAFB' : '#FFFFFF',
+        backgroundColor: '#FFFFFF',
         borderTopWidth: hasDivider ? 1 : 0,
         borderTopColor: '#F2F4F6',
-      })}
+      }}
     >
       {item.icon}
-      <Text style={{ flex: 1, fontSize: 15, fontWeight: '500', color: isDestructive ? '#FF4D4F' : '#191F28' }}>
+      <Text
+        style={{
+          flex: 1,
+          fontSize: 15,
+          fontWeight: '500',
+          color: isDestructive ? '#FF4D4F' : '#191F28',
+        }}
+      >
         {item.label}
       </Text>
       {item.right ?? (!isDestructive && <ChevronRight size={16} color="#B0B8C1" />)}
@@ -196,7 +223,7 @@ export default function MyPageScreen() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+    <SafeAreaScreen bg="surface">
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8 }}>
           <Text style={{ fontSize: 22, fontWeight: '700', color: '#191F28' }}>마이</Text>
@@ -205,16 +232,26 @@ export default function MyPageScreen() {
         {/* 프로필 카드 */}
         <View
           style={{
-            marginHorizontal: 16, marginBottom: 24, padding: 20,
-            borderRadius: 20, backgroundColor: '#FFFFFF',
-            flexDirection: 'row', alignItems: 'center', gap: 16,
-            borderWidth: 1, borderColor: '#E5E8EB',
+            marginHorizontal: 16,
+            marginBottom: 24,
+            padding: 20,
+            borderRadius: 20,
+            backgroundColor: '#FFFFFF',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 16,
+            borderWidth: 1,
+            borderColor: '#E5E8EB',
           }}
         >
           <View
             style={{
-              width: 56, height: 56, borderRadius: 28,
-              backgroundColor: '#E8F2FE', alignItems: 'center', justifyContent: 'center',
+              width: 56,
+              height: 56,
+              borderRadius: 28,
+              backgroundColor: '#E8F2FE',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             <User size={28} color="#3182F6" />
@@ -230,8 +267,11 @@ export default function MyPageScreen() {
             accessibilityRole="button"
             accessibilityLabel="프로필 수정"
             style={{
-              paddingHorizontal: 12, paddingVertical: 6,
-              borderRadius: 8, borderWidth: 1, borderColor: '#E5E8EB',
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: '#E5E8EB',
             }}
           >
             <Text style={{ fontSize: 13, fontWeight: '600', color: '#4E5968' }}>수정</Text>
@@ -247,10 +287,7 @@ export default function MyPageScreen() {
         </Text>
       </ScrollView>
 
-      <ThemeModeSheet
-        visible={themeSheetVisible}
-        onClose={() => setThemeSheetVisible(false)}
-      />
-    </SafeAreaView>
+      <ThemeModeSheet visible={themeSheetVisible} onClose={() => setThemeSheetVisible(false)} />
+    </SafeAreaScreen>
   );
 }

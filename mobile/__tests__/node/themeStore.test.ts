@@ -9,6 +9,9 @@ jest.mock('expo-secure-store', () => ({
   deleteItemAsync: jest.fn(),
 }));
 
+// node 환경에서 NativeWind 의 colorScheme.set 호출이 throw 하지 않도록 모킹
+jest.mock('nativewind', () => ({ colorScheme: { set: jest.fn() } }));
+
 beforeEach(() => {
   mockGet.mockReset();
   mockSet.mockReset();

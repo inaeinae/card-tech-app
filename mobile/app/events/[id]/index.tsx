@@ -1,13 +1,12 @@
 // 이벤트 상세 — Hero 상태 카드 + 타임라인 섹션 + 혜택 리스트 + sticky CTA
 // Pencil frame z5SQd 기반 재설계
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Alert, Pressable, SafeAreaView, ScrollView, Switch, Text, View,
-} from 'react-native';
+import { Alert, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Pencil, RefreshCw, Trash2 } from 'lucide-react-native';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingState } from '@/components/ui/LoadingState';
+import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { supabase } from '@/lib/supabase';
 import { useCardStore } from '@/stores/cardStore';
 import { useEventStore } from '@/stores/eventStore';
@@ -66,7 +65,9 @@ export default function EventDetailScreen() {
       setBenefits(bs ?? []);
       setLoading(false);
     })();
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [id]);
 
   const total = useMemo(
@@ -163,19 +164,25 @@ export default function EventDetailScreen() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <SafeAreaScreen>
       {/* 상단 앱바 */}
       <View
         style={{
-          flexDirection: 'row', alignItems: 'center',
-          paddingHorizontal: 8, height: 56,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 8,
+          height: 56,
         }}
       >
         <Pressable
           onPress={() => router.back()}
           style={{
-            width: 40, height: 40, borderRadius: 20,
-            backgroundColor: '#F9FAFB', alignItems: 'center', justifyContent: 'center',
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: '#F9FAFB',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <ChevronLeft size={20} color="#191F28" />
@@ -193,8 +200,11 @@ export default function EventDetailScreen() {
           </View>
           <Text
             style={{
-              fontSize: 22, fontWeight: '700', color: '#191F28',
-              textAlign: 'center', lineHeight: 30,
+              fontSize: 22,
+              fontWeight: '700',
+              color: '#191F28',
+              textAlign: 'center',
+              lineHeight: 30,
             }}
           >
             {event.title}
@@ -206,25 +216,33 @@ export default function EventDetailScreen() {
           ) : null}
         </View>
 
-        {suggested && (
-          <AutoSuggestionBanner suggested={suggested} onConfirm={onConfirmSuggested} />
-        )}
+        {suggested && <AutoSuggestionBanner suggested={suggested} onConfirm={onConfirmSuggested} />}
 
         {/* 타임라인 섹션 */}
         <View
           style={{
-            marginHorizontal: 16, marginBottom: 12, padding: 16,
-            borderRadius: 18, borderWidth: 1, borderColor: '#E5E8EB', gap: 12,
+            marginHorizontal: 16,
+            marginBottom: 12,
+            padding: 16,
+            borderRadius: 18,
+            borderWidth: 1,
+            borderColor: '#E5E8EB',
+            gap: 12,
           }}
         >
           {timelineRows.map((row) => (
             <View
               key={row.label}
-              style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
             >
               <Text style={{ fontSize: 13, color: '#8B95A1', fontWeight: '500' }}>{row.label}</Text>
               <Text style={{ fontSize: 13, color: '#191F28', fontWeight: '600' }}>
-                {row.start ?? '-'}{row.end ? ` ~ ${row.end}` : ''}
+                {row.start ?? '-'}
+                {row.end ? ` ~ ${row.end}` : ''}
               </Text>
             </View>
           ))}
@@ -242,8 +260,11 @@ export default function EventDetailScreen() {
               <View
                 key={b.id}
                 style={{
-                  padding: 16, borderRadius: 18,
-                  borderWidth: 1, borderColor: '#E5E8EB', gap: 4,
+                  padding: 16,
+                  borderRadius: 18,
+                  borderWidth: 1,
+                  borderColor: '#E5E8EB',
+                  gap: 4,
                 }}
               >
                 <Text style={{ fontSize: 15, fontWeight: '600', color: '#191F28' }}>{b.title}</Text>
@@ -259,9 +280,14 @@ export default function EventDetailScreen() {
         {benefits.length > 0 && (
           <View
             style={{
-              marginHorizontal: 16, marginTop: 12,
-              flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-              paddingTop: 12, borderTopWidth: 1, borderTopColor: '#E5E8EB',
+              marginHorizontal: 16,
+              marginTop: 12,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingTop: 12,
+              borderTopWidth: 1,
+              borderTopColor: '#E5E8EB',
             }}
           >
             <Text style={{ fontSize: 14, color: '#8B95A1' }}>예상 수령 합계</Text>
@@ -305,18 +331,31 @@ export default function EventDetailScreen() {
       {/* sticky CTA */}
       <View
         style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#E5E8EB',
-          padding: 24, paddingBottom: 36, gap: 10,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 1,
+          borderTopColor: '#E5E8EB',
+          padding: 24,
+          paddingBottom: 36,
+          gap: 10,
         }}
       >
         <Pressable
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onPress={() => router.push(`/modals/status-change?id=${event.id}&current=${event.status}` as any)}
+          onPress={() =>
+            router.push(`/modals/status-change?id=${event.id}&current=${event.status}` as any)
+          }
           style={({ pressed }) => ({
-            flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
             backgroundColor: pressed ? '#1B64DA' : '#3182F6',
-            borderRadius: 14, paddingVertical: 14,
+            borderRadius: 14,
+            paddingVertical: 14,
           })}
         >
           <RefreshCw size={16} color="#FFFFFF" />
@@ -325,10 +364,15 @@ export default function EventDetailScreen() {
         <Pressable
           onPress={onEdit}
           style={({ pressed }) => ({
-            flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
             backgroundColor: pressed ? '#F2F4F6' : '#F9FAFB',
-            borderRadius: 14, paddingVertical: 14,
-            borderWidth: 1, borderColor: '#E5E8EB',
+            borderRadius: 14,
+            paddingVertical: 14,
+            borderWidth: 1,
+            borderColor: '#E5E8EB',
           })}
         >
           <Pencil size={16} color="#4E5968" />
@@ -337,16 +381,21 @@ export default function EventDetailScreen() {
         <Pressable
           onPress={onDelete}
           style={({ pressed }) => ({
-            flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
             backgroundColor: pressed ? '#FFF1F0' : '#FFFFFF',
-            borderRadius: 14, paddingVertical: 14,
-            borderWidth: 1, borderColor: '#FFD8D8',
+            borderRadius: 14,
+            paddingVertical: 14,
+            borderWidth: 1,
+            borderColor: '#FFD8D8',
           })}
         >
           <Trash2 size={16} color="#FF4D4F" />
           <Text style={{ fontSize: 15, fontWeight: '600', color: '#FF4D4F' }}>삭제</Text>
         </Pressable>
       </View>
-    </SafeAreaView>
+    </SafeAreaScreen>
   );
 }

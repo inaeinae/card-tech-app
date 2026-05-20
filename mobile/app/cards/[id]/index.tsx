@@ -1,9 +1,10 @@
 // 카드 상세 — Hero 카드 + 탭 세그먼트(상시혜택/이벤트이력) + sticky CTA
 // Pencil frame bH9xP 기반 재설계
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Pressable, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, CreditCard, EllipsisVertical, RotateCcw } from 'lucide-react-native';
+import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Chip } from '@/components/ui/Chip';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -123,7 +124,7 @@ export default function CardDetailScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <SafeAreaScreen>
       {/* 상단 앱바 */}
       <View
         style={{
@@ -433,6 +434,6 @@ export default function CardDetailScreen() {
           </Pressable>
         )}
       </View>
-    </SafeAreaView>
+    </SafeAreaScreen>
   );
 }

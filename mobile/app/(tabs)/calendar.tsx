@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, RefreshControl, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useRouter } from 'expo-router';
 import { useEventStore } from '@/stores/eventStore';
+import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Colors } from '@/constants/theme';
 import {
@@ -24,9 +25,7 @@ export default function CalendarScreen() {
   const loading = useEventStore((s) => s.loading);
 
   const [segment, setSegment] = useState<Segment>('month');
-  const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().slice(0, 10),
-  );
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().slice(0, 10));
 
   // 마운트 시 이벤트 1회 로드 (홈 탭과 독립적으로 진입 가능)
   useEffect(() => {
@@ -64,7 +63,7 @@ export default function CalendarScreen() {
   const dayEvents = useMemo(() => eventsByDate[selectedDate] ?? [], [eventsByDate, selectedDate]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }}>
+    <SafeAreaScreen>
       {/* 헤더 */}
       <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8 }}>
         <Text style={{ fontSize: 22, fontWeight: '700', color: C.ink }}>캘린더</Text>
@@ -81,36 +80,33 @@ export default function CalendarScreen() {
           padding: 4,
         }}
       >
-        {(
-          [
-            ['month', '월'] as [Segment, string],
-            ['agenda', '일정'] as [Segment, string],
-          ]
-        ).map(([key, label]) => (
-          <Pressable
-            key={key}
-            onPress={() => setSegment(key)}
-            accessibilityRole="button"
-            accessibilityState={{ selected: segment === key }}
-            style={{
-              flex: 1,
-              paddingVertical: 8,
-              borderRadius: 8,
-              alignItems: 'center',
-              backgroundColor: segment === key ? C.bg : 'transparent',
-            }}
-          >
-            <Text
+        {[['month', '월'] as [Segment, string], ['agenda', '일정'] as [Segment, string]].map(
+          ([key, label]) => (
+            <Pressable
+              key={key}
+              onPress={() => setSegment(key)}
+              accessibilityRole="button"
+              accessibilityState={{ selected: segment === key }}
               style={{
-                fontSize: 14,
-                fontWeight: segment === key ? '700' : '500',
-                color: segment === key ? C.ink : C.ink3,
+                flex: 1,
+                paddingVertical: 8,
+                borderRadius: 8,
+                alignItems: 'center',
+                backgroundColor: segment === key ? C.bg : 'transparent',
               }}
             >
-              {label}
-            </Text>
-          </Pressable>
-        ))}
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: segment === key ? '700' : '500',
+                  color: segment === key ? C.ink : C.ink3,
+                }}
+              >
+                {label}
+              </Text>
+            </Pressable>
+          ),
+        )}
       </View>
 
       <ScrollView
@@ -157,10 +153,7 @@ export default function CalendarScreen() {
         )}
 
         {segment === 'agenda' && (
-          <AgendaList
-            eventsByDate={eventsByDate}
-            onSelect={(id) => router.push(`/events/${id}`)}
-          />
+          <AgendaList eventsByDate={eventsByDate} onSelect={(id) => router.push(`/events/${id}`)} />
         )}
 
         {/* dot 범례 */}
@@ -181,17 +174,11 @@ export default function CalendarScreen() {
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaScreen>
   );
 }
 
-function CalendarEventCard({
-  event,
-  onPress,
-}: {
-  event: EventRow;
-  onPress: () => void;
-}) {
+function CalendarEventCard({ event, onPress }: { event: EventRow; onPress: () => void }) {
   const cat = statusToDotCategory(event.status);
   const barColor = DOT_COLOR[cat];
   return (
