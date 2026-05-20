@@ -12,14 +12,16 @@ import {
   Trash2,
   User,
 } from 'lucide-react-native';
+import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { useAuthStore } from '@/stores/authStore';
 import { useEventStore } from '@/stores/eventStore';
 import { useProfileStore } from '@/stores/profileStore';
 import { useThemeStore, type ThemeMode } from '@/stores/themeStore';
-import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { ThemeModeSheet } from '@/components/mypage/ThemeModeSheet';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
+import { Colors } from '@/constants/theme';
 
-// 가입일로부터 경과 개월 계산 — Pencil §5.6 프로필 sub "가입 N개월 · 이벤트 N건" 표기용
+// 가입일로부터 경과 개월 계산 — 프로필 sub "가입 N개월 · 이벤트 N건" 표기용
 function monthsSince(isoString: string | null | undefined): number {
   if (!isoString) return 0;
   const ms = Date.now() - new Date(isoString).getTime();
@@ -48,21 +50,11 @@ const THEME_LABEL: Record<ThemeMode, string> = {
 
 function SectionGroup({ section }: { section: Section }) {
   return (
-    <View style={{ marginHorizontal: 16, marginBottom: 24 }}>
-      <Text
-        style={{
-          fontSize: 12,
-          fontWeight: '600',
-          color: '#8B95A1',
-          marginBottom: 8,
-          paddingHorizontal: 4,
-        }}
-      >
+    <View className="mx-4 mb-6">
+      <Text className="text-caption font-semibold text-ink-3 dark:text-ink-3-dark mb-2 px-1">
         {section.title}
       </Text>
-      <View
-        style={{ borderRadius: 16, borderWidth: 1, borderColor: '#E5E8EB', overflow: 'hidden' }}
-      >
+      <View className="rounded-lg border border-border-strong dark:border-border-strong-dark overflow-hidden">
         {section.items.map((item, idx) => (
           <SettingRow key={item.label} item={item} hasDivider={idx > 0} />
         ))}
@@ -78,28 +70,19 @@ function SettingRow({ item, hasDivider }: { item: SettingItem; hasDivider: boole
       onPress={item.onPress}
       accessibilityRole="button"
       accessibilityLabel={item.label}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 14,
-        padding: 16,
-        backgroundColor: '#FFFFFF',
-        borderTopWidth: hasDivider ? 1 : 0,
-        borderTopColor: '#F2F4F6',
-      }}
+      className={`flex-row items-center gap-3.5 p-4 bg-bg dark:bg-bg-dark ${
+        hasDivider ? 'border-t border-border dark:border-border-dark' : ''
+      }`}
     >
       {item.icon}
       <Text
-        style={{
-          flex: 1,
-          fontSize: 15,
-          fontWeight: '500',
-          color: isDestructive ? '#FF4D4F' : '#191F28',
-        }}
+        className={`flex-1 text-body font-medium ${
+          isDestructive ? 'text-danger dark:text-danger-dark' : 'text-ink dark:text-ink-dark'
+        }`}
       >
         {item.label}
       </Text>
-      {item.right ?? (!isDestructive && <ChevronRight size={16} color="#B0B8C1" />)}
+      {item.right ?? null}
     </Pressable>
   );
 }
@@ -117,6 +100,9 @@ export default function MyPageScreen() {
   const loadEvents = useEventStore((s) => s.loadEvents);
 
   const themeMode = useThemeStore((s) => s.mode);
+
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
 
   const [themeSheetVisible, setThemeSheetVisible] = useState(false);
 
@@ -168,15 +154,16 @@ export default function MyPageScreen() {
       title: '서비스 설정',
       items: [
         {
-          icon: <Bell size={20} color="#4E5968" />,
+          icon: <Bell size={20} color={C.ink2} />,
           label: '알림 설정',
           onPress: () => router.push('/settings/notifications'),
+          right: <ChevronRight size={16} color={C.ink4} />,
         },
         {
-          icon: <Moon size={20} color="#4E5968" />,
+          icon: <Moon size={20} color={C.ink2} />,
           label: '다크모드',
           right: (
-            <Text style={{ fontSize: 13, color: '#8B95A1', fontWeight: '500' }}>
+            <Text className="text-caption font-medium text-ink-3 dark:text-ink-3-dark">
               {THEME_LABEL[themeMode]}
             </Text>
           ),
@@ -188,19 +175,22 @@ export default function MyPageScreen() {
       title: '앱 정보',
       items: [
         {
-          icon: <Shield size={20} color="#4E5968" />,
+          icon: <Shield size={20} color={C.ink2} />,
           label: '개인정보처리방침',
           onPress: () => router.push('/settings/about'),
+          right: <ChevronRight size={16} color={C.ink4} />,
         },
         {
-          icon: <FileText size={20} color="#4E5968" />,
+          icon: <FileText size={20} color={C.ink2} />,
           label: '이용약관',
           onPress: () => router.push('/settings/about'),
+          right: <ChevronRight size={16} color={C.ink4} />,
         },
         {
-          icon: <Info size={20} color="#4E5968" />,
+          icon: <Info size={20} color={C.ink2} />,
           label: '앱 정보',
           onPress: () => router.push('/settings/about'),
+          right: <ChevronRight size={16} color={C.ink4} />,
         },
       ],
     },
@@ -208,12 +198,13 @@ export default function MyPageScreen() {
       title: '계정',
       items: [
         {
-          icon: <LogOut size={20} color="#4E5968" />,
+          icon: <LogOut size={20} color={C.ink2} />,
           label: '로그아웃',
           onPress: onSignOut,
+          right: <ChevronRight size={16} color={C.ink4} />,
         },
         {
-          icon: <Trash2 size={20} color="#FF4D4F" />,
+          icon: <Trash2 size={20} color={C.danger} />,
           label: '회원 탈퇴',
           onPress: onDeleteAccount,
           destructive: true,
@@ -225,56 +216,30 @@ export default function MyPageScreen() {
   return (
     <SafeAreaScreen bg="surface">
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8 }}>
-          <Text style={{ fontSize: 22, fontWeight: '700', color: '#191F28' }}>마이</Text>
+        <View className="px-6 pt-4 pb-2">
+          <Text className="text-title font-bold text-ink dark:text-ink-dark">마이</Text>
         </View>
 
         {/* 프로필 카드 */}
-        <View
-          style={{
-            marginHorizontal: 16,
-            marginBottom: 24,
-            padding: 20,
-            borderRadius: 20,
-            backgroundColor: '#FFFFFF',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 16,
-            borderWidth: 1,
-            borderColor: '#E5E8EB',
-          }}
-        >
-          <View
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 28,
-              backgroundColor: '#E8F2FE',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <User size={28} color="#3182F6" />
+        <View className="mx-4 mb-6 p-5 rounded-xl bg-bg dark:bg-bg-dark border border-border-strong dark:border-border-strong-dark flex-row items-center gap-4">
+          <View className="w-14 h-14 rounded-full bg-primary-soft dark:bg-primary-darkSoft items-center justify-center">
+            <User size={28} color={C.primary} />
           </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 16, fontWeight: '700', color: '#191F28' }} numberOfLines={1}>
+          <View className="flex-1">
+            <Text className="text-body font-bold text-ink dark:text-ink-dark" numberOfLines={1}>
               {displayName}
             </Text>
-            <Text style={{ fontSize: 13, color: '#8B95A1', marginTop: 2 }}>{statsLabel}</Text>
+            <Text className="text-caption text-ink-3 dark:text-ink-3-dark mt-0.5">
+              {statsLabel}
+            </Text>
           </View>
           <Pressable
             onPress={() => router.push('/settings/profile')}
             accessibilityRole="button"
             accessibilityLabel="프로필 수정"
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              borderRadius: 8,
-              borderWidth: 1,
-              borderColor: '#E5E8EB',
-            }}
+            className="px-3 py-1.5 rounded-sm border border-border-strong dark:border-border-strong-dark"
           >
-            <Text style={{ fontSize: 13, fontWeight: '600', color: '#4E5968' }}>수정</Text>
+            <Text className="text-caption font-semibold text-ink-2 dark:text-ink-2-dark">수정</Text>
           </Pressable>
         </View>
 
@@ -282,7 +247,7 @@ export default function MyPageScreen() {
           <SectionGroup key={section.title} section={section} />
         ))}
 
-        <Text style={{ textAlign: 'center', color: '#B0B8C1', fontSize: 12, marginTop: 8 }}>
+        <Text className="text-center text-ink-4 dark:text-ink-4-dark text-caption mt-2">
           v1.0.0 · 카테크
         </Text>
       </ScrollView>
