@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, RefreshControl, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useEventStore } from '@/stores/eventStore';
 import { useCardStore } from '@/stores/cardStore';
+import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Colors, Fonts } from '@/constants/theme';
 import { summarizeEvents } from '@/lib/eventTotals';
@@ -63,7 +64,7 @@ export default function ReportScreen() {
   const yearGroups = useMemo(() => groupEventsByYear(filtered), [filtered]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }}>
+    <SafeAreaScreen>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={handleRefresh} tintColor={C.primary} />
@@ -123,24 +124,32 @@ export default function ReportScreen() {
           }}
         >
           <View>
-            <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, fontFamily: Fonts.medium }}>
+            <Text
+              style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, fontFamily: Fonts.medium }}
+            >
               누적 확정
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8, marginTop: 4 }}>
               <Text style={{ color: C.bg, fontSize: 26, fontFamily: Fonts.bold }}>
                 {formatKRW(totals.confirmed)}
               </Text>
-              <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, fontFamily: Fonts.medium }}>
+              <Text
+                style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, fontFamily: Fonts.medium }}
+              >
                 {counts.paid}건
               </Text>
             </View>
           </View>
           <View style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.08)' }} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, fontFamily: Fonts.medium }}>
+            <Text
+              style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, fontFamily: Fonts.medium }}
+            >
               예상 {formatKRW(totals.expected)}
             </Text>
-            <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, fontFamily: Fonts.medium }}>
+            <Text
+              style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, fontFamily: Fonts.medium }}
+            >
               진행 {counts.inProgress}건 · 응모 {counts.applied}건
             </Text>
           </View>
@@ -172,7 +181,7 @@ export default function ReportScreen() {
             />
           ))}
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaScreen>
   );
 }
 
@@ -245,15 +254,9 @@ function MonthCard({
   cards: import('@/types/models').Card[];
   onSelect: (id: string) => void;
 }) {
-  const totals = useMemo(
-    () => summarizeEvents(events, benefitsByEvent),
-    [events, benefitsByEvent],
-  );
+  const totals = useMemo(() => summarizeEvents(events, benefitsByEvent), [events, benefitsByEvent]);
 
-  const monthLabel =
-    month === '미분류'
-      ? '날짜 없음'
-      : `${Number(month.slice(5, 7))}월`;
+  const monthLabel = month === '미분류' ? '날짜 없음' : `${Number(month.slice(5, 7))}월`;
 
   return (
     <View

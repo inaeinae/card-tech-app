@@ -1,21 +1,22 @@
 // 이벤트 수동 상태 변경 바텀시트 모달
 // Pencil frame 참조 — 현재 상태 표시 + 전이 가능 상태 선택
 import { useState } from 'react';
-import { Pressable, SafeAreaView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEventStore } from '@/stores/eventStore';
+import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { EVENT_STATUS_LABEL, type EventStatus } from '@/types/models';
 import { ALLOWED_TRANSITIONS, canTransition } from '@/lib/eventStatus';
 
 const STATUS_PALETTE: Record<string, { bg: string; text: string; dot: string }> = {
-  registered:       { bg: '#F2F4F6', text: '#4E5968', dot: '#8B95A1' },
-  applied:          { bg: '#E8F2FE', text: '#3182F6', dot: '#3182F6' },
-  in_progress:      { bg: '#FEF3C7', text: '#D97706', dot: '#F59E0B' },
+  registered: { bg: '#F2F4F6', text: '#4E5968', dot: '#8B95A1' },
+  applied: { bg: '#E8F2FE', text: '#3182F6', dot: '#3182F6' },
+  in_progress: { bg: '#FEF3C7', text: '#D97706', dot: '#F59E0B' },
   performance_done: { bg: '#FEF3C7', text: '#D97706', dot: '#F59E0B' },
-  pending_payout:   { bg: '#F2F4F6', text: '#4E5968', dot: '#8B95A1' },
-  paid:             { bg: '#E5FAF3', text: '#0F8568', dot: '#19D294' },
-  cancelable:       { bg: '#FFF1F0', text: '#FF4D4F', dot: '#FF4D4F' },
-  canceled:         { bg: '#FFF1F0', text: '#FF4D4F', dot: '#FF4D4F' },
+  pending_payout: { bg: '#F2F4F6', text: '#4E5968', dot: '#8B95A1' },
+  paid: { bg: '#E5FAF3', text: '#0F8568', dot: '#19D294' },
+  cancelable: { bg: '#FFF1F0', text: '#FF4D4F', dot: '#FF4D4F' },
+  canceled: { bg: '#FFF1F0', text: '#FF4D4F', dot: '#FF4D4F' },
 };
 
 // 최종 수령 완료 상태를 추천으로 강조
@@ -41,14 +42,19 @@ export default function StatusChangeModal() {
   }
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: 'rgba(25,31,40,0.5)', justifyContent: 'flex-end' }}
+    <SafeAreaScreen
+      edges={['top', 'bottom', 'left', 'right']}
+      className="bg-[rgba(25,31,40,0.5)]"
+      viewProps={{ style: { justifyContent: 'flex-end' } }}
     >
       <View
         style={{
           backgroundColor: '#FFFFFF',
-          borderTopLeftRadius: 24, borderTopRightRadius: 24,
-          padding: 24, paddingBottom: 40, gap: 16,
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
+          padding: 24,
+          paddingBottom: 40,
+          gap: 16,
         }}
       >
         <Text style={{ fontSize: 18, fontWeight: '700', color: '#191F28' }}>상태 변경</Text>
@@ -57,8 +63,10 @@ export default function StatusChangeModal() {
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <View
             style={{
-              backgroundColor: '#E8F2FE', borderRadius: 999,
-              paddingHorizontal: 10, paddingVertical: 4,
+              backgroundColor: '#E8F2FE',
+              borderRadius: 999,
+              paddingHorizontal: 10,
+              paddingVertical: 4,
             }}
           >
             <Text style={{ fontSize: 12, fontWeight: '600', color: '#3182F6' }}>현재</Text>
@@ -71,7 +79,9 @@ export default function StatusChangeModal() {
         {/* 전이 가능 상태 목록 */}
         <View style={{ gap: 8 }}>
           {options.length === 0 ? (
-            <Text style={{ fontSize: 14, color: '#8B95A1', textAlign: 'center', paddingVertical: 8 }}>
+            <Text
+              style={{ fontSize: 14, color: '#8B95A1', textAlign: 'center', paddingVertical: 8 }}
+            >
               변경 가능한 상태가 없습니다.
             </Text>
           ) : (
@@ -84,9 +94,12 @@ export default function StatusChangeModal() {
                   onPress={() => onSelect(status)}
                   disabled={loading}
                   style={({ pressed }) => ({
-                    flexDirection: 'row', alignItems: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: 16, borderRadius: 14, borderWidth: 1.5,
+                    padding: 16,
+                    borderRadius: 14,
+                    borderWidth: 1.5,
                     borderColor: pressed ? pal.dot : '#E5E8EB',
                     backgroundColor: pressed ? pal.bg : '#FFFFFF',
                   })}
@@ -102,11 +115,15 @@ export default function StatusChangeModal() {
                   {isRec && (
                     <View
                       style={{
-                        backgroundColor: '#E5FAF3', borderRadius: 999,
-                        paddingHorizontal: 8, paddingVertical: 3,
+                        backgroundColor: '#E5FAF3',
+                        borderRadius: 999,
+                        paddingHorizontal: 8,
+                        paddingVertical: 3,
                       }}
                     >
-                      <Text style={{ fontSize: 11, fontWeight: '700', color: '#0F8568' }}>추천</Text>
+                      <Text style={{ fontSize: 11, fontWeight: '700', color: '#0F8568' }}>
+                        추천
+                      </Text>
                     </View>
                   )}
                 </Pressable>
@@ -119,6 +136,6 @@ export default function StatusChangeModal() {
           <Text style={{ fontSize: 15, fontWeight: '600', color: '#8B95A1' }}>취소</Text>
         </Pressable>
       </View>
-    </SafeAreaView>
+    </SafeAreaScreen>
   );
 }

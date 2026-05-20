@@ -1,10 +1,11 @@
 // 이벤트 상태 이력 — 타임라인 뷰
 // Pencil frame FCGBU 기반
 import { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import { supabase } from '@/lib/supabase';
+import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { EVENT_STATUS_LABEL } from '@/types/models';
@@ -43,19 +44,26 @@ export default function EventHistoryScreen() {
   if (loading) return <LoadingState />;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <SafeAreaScreen>
       {/* 앱바 */}
       <View
         style={{
-          flexDirection: 'row', alignItems: 'center',
-          paddingHorizontal: 8, height: 56, gap: 4,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 8,
+          height: 56,
+          gap: 4,
         }}
       >
         <Pressable
           onPress={() => router.back()}
           style={{
-            width: 40, height: 40, borderRadius: 20,
-            backgroundColor: '#F9FAFB', alignItems: 'center', justifyContent: 'center',
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: '#F9FAFB',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <ChevronLeft size={20} color="#191F28" />
@@ -78,14 +86,15 @@ export default function EventHistoryScreen() {
                 <View style={{ alignItems: 'center', width: 20 }}>
                   <View
                     style={{
-                      width: 12, height: 12, borderRadius: 6,
-                      backgroundColor: dotColor, marginTop: 4,
+                      width: 12,
+                      height: 12,
+                      borderRadius: 6,
+                      backgroundColor: dotColor,
+                      marginTop: 4,
                     }}
                   />
                   {!isLast && (
-                    <View
-                      style={{ width: 2, flex: 1, backgroundColor: '#E5E8EB', marginTop: 4 }}
-                    />
+                    <View style={{ width: 2, flex: 1, backgroundColor: '#E5E8EB', marginTop: 4 }} />
                   )}
                 </View>
 
@@ -93,7 +102,9 @@ export default function EventHistoryScreen() {
                 <View style={{ flex: 1, paddingBottom: 24, gap: 4 }}>
                   <View
                     style={{
-                      flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                     }}
                   >
                     <Text style={{ fontSize: 14, fontWeight: '700', color: '#191F28' }}>
@@ -101,13 +112,16 @@ export default function EventHistoryScreen() {
                     </Text>
                     <View
                       style={{
-                        paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999,
+                        paddingHorizontal: 8,
+                        paddingVertical: 3,
+                        borderRadius: 999,
                         backgroundColor: h.is_auto ? '#E8F2FE' : '#F2F4F6',
                       }}
                     >
                       <Text
                         style={{
-                          fontSize: 11, fontWeight: '700',
+                          fontSize: 11,
+                          fontWeight: '700',
                           color: h.is_auto ? '#3182F6' : '#8B95A1',
                         }}
                       >
@@ -128,7 +142,9 @@ export default function EventHistoryScreen() {
 
                   <Text style={{ fontSize: 12, color: '#B0B8C1' }}>
                     {new Date(h.changed_at).toLocaleDateString('ko-KR', {
-                      year: 'numeric', month: 'long', day: 'numeric',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
                     })}
                   </Text>
                 </View>
@@ -137,6 +153,6 @@ export default function EventHistoryScreen() {
           })}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </SafeAreaScreen>
   );
 }
