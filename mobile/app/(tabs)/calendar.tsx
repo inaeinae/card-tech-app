@@ -6,6 +6,7 @@ import { useEventStore } from '@/stores/eventStore';
 import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 import {
   DOT_COLOR,
   extractMilestoneDates,
@@ -16,13 +17,15 @@ import type { EventRow } from '@/types/models';
 
 type Segment = 'month' | 'agenda';
 
-const C = Colors.light;
-
 export default function CalendarScreen() {
   const router = useRouter();
   const events = useEventStore((s) => s.events);
   const loadEvents = useEventStore((s) => s.loadEvents);
   const loading = useEventStore((s) => s.loading);
+
+  // 라이트/다크 자동 해석 — Calendar theme prop, 인라인 색에 사용
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
 
   const [segment, setSegment] = useState<Segment>('month');
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().slice(0, 10));
@@ -58,54 +61,44 @@ export default function CalendarScreen() {
       marks[selectedDate] = { dots: [], selected: true, selectedColor: C.primary };
     }
     return marks;
-  }, [eventsByDate, selectedDate]);
+  }, [eventsByDate, selectedDate, C.primary]);
 
   const dayEvents = useMemo(() => eventsByDate[selectedDate] ?? [], [eventsByDate, selectedDate]);
 
   return (
     <SafeAreaScreen>
       {/* 헤더 */}
-      <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8 }}>
-        <Text style={{ fontSize: 22, fontWeight: '700', color: C.ink }}>캘린더</Text>
+      <View className="px-6 pt-4 pb-2">
+        <Text className="text-[22px] font-bold text-ink dark:text-ink-dark">캘린더</Text>
       </View>
 
       {/* 세그먼트 토글 */}
-      <View
-        style={{
-          marginHorizontal: 24,
-          marginBottom: 8,
-          backgroundColor: C.surface2,
-          borderRadius: 12,
-          flexDirection: 'row',
-          padding: 4,
-        }}
-      >
+      <View className="mx-6 mb-2 bg-surface dark:bg-surface-dark rounded-md flex-row p-1">
         {[['month', '월'] as [Segment, string], ['agenda', '일정'] as [Segment, string]].map(
-          ([key, label]) => (
-            <Pressable
-              key={key}
-              onPress={() => setSegment(key)}
-              accessibilityRole="button"
-              accessibilityState={{ selected: segment === key }}
-              style={{
-                flex: 1,
-                paddingVertical: 8,
-                borderRadius: 8,
-                alignItems: 'center',
-                backgroundColor: segment === key ? C.bg : 'transparent',
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: segment === key ? '700' : '500',
-                  color: segment === key ? C.ink : C.ink3,
-                }}
+          ([key, label]) => {
+            const active = segment === key;
+            return (
+              <Pressable
+                key={key}
+                onPress={() => setSegment(key)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: active }}
+                className={`flex-1 py-2 rounded-sm items-center ${
+                  active ? 'bg-bg dark:bg-bg-dark' : ''
+                }`}
               >
-                {label}
-              </Text>
-            </Pressable>
-          ),
+                <Text
+                  className={`text-label ${
+                    active
+                      ? 'font-bold text-ink dark:text-ink-dark'
+                      : 'font-medium text-ink-3 dark:text-ink-3-dark'
+                  }`}
+                >
+                  {label}
+                </Text>
+              </Pressable>
+            );
+          },
         )}
       </View>
 
@@ -119,10 +112,18 @@ export default function CalendarScreen() {
               markedDates={markedDates}
               onDayPress={(day) => setSelectedDate(day.dateString)}
               theme={{
+                // 다크/라이트 자동 — Colors[scheme] 기반
+                calendarBackground: C.bg,
+                monthTextColor: C.ink,
+                dayTextColor: C.ink,
+                textDisabledColor: C.ink4,
+                textSectionTitleColor: C.ink3,
+                arrowColor: C.primary,
                 todayTextColor: C.primary,
                 selectedDayBackgroundColor: C.primary,
-                selectedDayTextColor: C.bg,
-                arrowColor: C.primary,
+                selectedDayTextColor: '#FFFFFF',
+                dotColor: C.primary,
+                selectedDotColor: '#FFFFFF',
                 textDayFontFamily: 'NotoSansKR_400Regular',
                 textMonthFontFamily: 'NotoSansKR_700Bold',
                 textDayHeaderFontFamily: 'NotoSansKR_500Medium',
@@ -131,12 +132,12 @@ export default function CalendarScreen() {
             />
 
             {/* 선택 날짜 인라인 섹션 */}
-            <View style={{ padding: 16, gap: 8 }}>
-              <Text style={{ fontSize: 13, fontWeight: '600', color: C.ink3 }}>
+            <View className="p-4 gap-2">
+              <Text className="text-[13px] font-semibold text-ink-3 dark:text-ink-3-dark">
                 {selectedDate} 일정
               </Text>
               {dayEvents.length === 0 ? (
-                <Text style={{ fontSize: 14, color: C.ink3, padding: 8 }}>
+                <Text className="text-label text-ink-3 dark:text-ink-3-dark p-2">
                   이날 일정이 없습니다
                 </Text>
               ) : (
@@ -157,19 +158,11 @@ export default function CalendarScreen() {
         )}
 
         {/* dot 범례 */}
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            gap: 8,
-            paddingHorizontal: 16,
-            paddingBottom: 32,
-          }}
-        >
+        <View className="flex-row flex-wrap gap-2 px-4 pb-8">
           {Object.entries(DOT_COLOR).map(([label, color]) => (
-            <View key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <View key={label} className="flex-row items-center gap-1">
               <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: color }} />
-              <Text style={{ fontSize: 11, color: C.ink3 }}>{label}</Text>
+              <Text className="text-[11px] text-ink-3 dark:text-ink-3-dark">{label}</Text>
             </View>
           ))}
         </View>
@@ -186,24 +179,15 @@ function CalendarEventCard({ event, onPress }: { event: EventRow; onPress: () =>
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`${event.title} 상세 보기`}
-      style={({ pressed }) => ({
-        padding: 14,
-        borderRadius: 18,
-        borderWidth: 1,
-        borderColor: C.borderStrong,
-        backgroundColor: pressed ? C.surface : C.bg,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-      })}
+      className="p-[14px] rounded-2xl border border-border-strong dark:border-border-strong-dark bg-bg dark:bg-bg-dark flex-row items-center gap-3"
     >
       {/* 좌측 컬러 바 4×40 (UI_STRUCTURE §2.5) */}
       <View style={{ width: 4, height: 40, borderRadius: 999, backgroundColor: barColor }} />
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 15, fontWeight: '700', color: C.ink }} numberOfLines={1}>
+      <View className="flex-1">
+        <Text className="text-[15px] font-bold text-ink dark:text-ink-dark" numberOfLines={1}>
           {event.title}
         </Text>
-        <Text style={{ fontSize: 13, color: C.ink3 }} numberOfLines={1}>
+        <Text className="text-[13px] text-ink-3 dark:text-ink-3-dark" numberOfLines={1}>
           {extractMilestoneDates(event).join(' · ')}
         </Text>
       </View>
@@ -227,17 +211,17 @@ function AgendaList({
 
   if (sortedDates.length === 0) {
     return (
-      <View style={{ padding: 24, alignItems: 'center' }}>
-        <Text style={{ fontSize: 14, color: C.ink3 }}>예정된 일정이 없습니다</Text>
+      <View className="p-6 items-center">
+        <Text className="text-label text-ink-3 dark:text-ink-3-dark">예정된 일정이 없습니다</Text>
       </View>
     );
   }
 
   return (
-    <View style={{ paddingHorizontal: 16, paddingTop: 8, gap: 16 }}>
+    <View className="px-4 pt-2 gap-4">
       {sortedDates.map((d) => (
-        <View key={d} style={{ gap: 8 }}>
-          <Text style={{ fontSize: 13, fontWeight: '600', color: C.ink3 }}>{d}</Text>
+        <View key={d} className="gap-2">
+          <Text className="text-[13px] font-semibold text-ink-3 dark:text-ink-3-dark">{d}</Text>
           {eventsByDate[d].map((e) => (
             <CalendarEventCard key={`${d}-${e.id}`} event={e} onPress={() => onSelect(e.id)} />
           ))}
