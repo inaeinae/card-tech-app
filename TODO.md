@@ -266,7 +266,7 @@
 - [ ] cards/[id]/index, edit 시뮬 검증 — 카드 등록 데이터 필요
 
 ## Phase B (잔여 sub-phase)
-- [ ] B4. 이벤트 목록 / 상세 / 이력
+- [x] B4. 이벤트 목록 / 상세 / 이력 — 3파일 hex 67건 + _layout 다크 토큰화, 칩 정렬 fix (시뮬 검증 데이터 필요시 후속)
 - [ ] B5. 위저드 5단 + 상태 변경 모달
 - [ ] B6. settings 3종 (신규 mockup 포함)
 - [ ] B7. (auth) login / onboarding 다크
