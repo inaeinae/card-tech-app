@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { CATEGORY_PRESETS, getTemplateById } from '@/lib/templates';
 import { useWizardStore } from '@/stores/wizardStore';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 type Row = { label: string; eligible: boolean; amount: number };
 
@@ -39,6 +41,7 @@ function EventContextPicker({
   templateId?: string;
   router: ReturnType<typeof useRouter>;
 }) {
+  const C = Colors[useResolvedColorScheme()];
   const template = useMemo(() => getTemplateById(templateId ?? ''), [templateId]);
   const addBenefit = useWizardStore((s) => s.addBenefit);
 
@@ -110,9 +113,9 @@ function EventContextPicker({
               hitSlop={8}
             >
               {r.eligible ? (
-                <CheckSquare size={20} color="#1E40AF" />
+                <CheckSquare size={20} color={C.primary} />
               ) : (
-                <Square size={20} color="#94A3B8" />
+                <Square size={20} color={C.ink3} />
               )}
             </Pressable>
             <Text className="flex-1 text-body text-foreground dark:text-foreground-dark">
@@ -145,7 +148,7 @@ function EventContextPicker({
           <Button
             label="추가"
             variant="secondary"
-            leftIcon={<Plus size={16} color="#94A3B8" />}
+            leftIcon={<Plus size={16} color={C.ink3} />}
             onPress={addCustom}
           />
         </View>

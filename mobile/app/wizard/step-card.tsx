@@ -11,9 +11,12 @@ import { useCardStore } from '@/stores/cardStore';
 import { useEventStore } from '@/stores/eventStore';
 import { useWizardStore } from '@/stores/wizardStore';
 import { computeReuseWarning } from '@/lib/eventForm';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 export default function WizardStepCard() {
   const router = useRouter();
+  const C = Colors[useResolvedColorScheme()];
   const cards = useCardStore((s) => s.cards.filter((c) => !c.canceled_at));
   const loadCards = useCardStore((s) => s.loadCards);
   const events = useEventStore((s) => s.events);
@@ -44,9 +47,7 @@ export default function WizardStepCard() {
         <Text className="text-headline font-bold text-foreground dark:text-foreground-dark">
           카드를 선택하세요
         </Text>
-        <Text className="text-body text-muted dark:text-muted-dark">
-          어떤 카드의 이벤트인가요?
-        </Text>
+        <Text className="text-body text-muted dark:text-muted-dark">어떤 카드의 이벤트인가요?</Text>
 
         {cards.length === 0 ? (
           <EmptyState
@@ -88,10 +89,8 @@ export default function WizardStepCard() {
           onPress={() => router.push('/cards/new')}
           className="mt-2 flex-row items-center justify-center gap-2 h-12 rounded-md bg-surface dark:bg-surface-dark border border-border dark:border-border-dark"
         >
-          <Plus size={18} color="#94A3B8" />
-          <Text className="text-body text-foreground dark:text-foreground-dark">
-            새 카드 등록
-          </Text>
+          <Plus size={18} color={C.ink3} />
+          <Text className="text-body text-foreground dark:text-foreground-dark">새 카드 등록</Text>
         </Pressable>
 
         {warn ? (

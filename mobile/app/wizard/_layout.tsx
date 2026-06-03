@@ -4,13 +4,18 @@ import { Alert, Pressable, View, Text } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
 import { useWizardStore } from '@/stores/wizardStore';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 export default function WizardLayout() {
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: '#0F172A' },
-        headerTintColor: '#FFFFFF',
+        // 다크/라이트 자동 — Colors[scheme] 기반
+        headerStyle: { backgroundColor: C.bg },
+        headerTintColor: C.ink,
         presentation: 'modal',
         headerTitle: () => <ProgressHeader />,
         headerLeft: () => <CloseButton />,
@@ -48,7 +53,7 @@ function ProgressHeader() {
           }`}
         />
       ))}
-      <Text className="text-label text-white ml-2">Step {step} / 4</Text>
+      <Text className="text-label text-ink dark:text-ink-dark ml-2">Step {step} / 4</Text>
     </View>
   );
 }
@@ -57,10 +62,10 @@ function CloseButton() {
   const router = useRouter();
   const draft = useWizardStore((s) => s.draft);
   const reset = useWizardStore((s) => s.reset);
+  const C = Colors[useResolvedColorScheme()];
 
   function onClose() {
-    const dirty =
-      Boolean(draft.cardId) || Boolean(draft.title) || draft.benefits.length > 0;
+    const dirty = Boolean(draft.cardId) || Boolean(draft.title) || draft.benefits.length > 0;
     if (!dirty) {
       reset();
       router.back();
@@ -87,7 +92,7 @@ function CloseButton() {
       accessibilityLabel="위저드 취소"
       className="px-2"
     >
-      <X size={24} color="#FFFFFF" />
+      <X size={24} color={C.ink} />
     </Pressable>
   );
 }
