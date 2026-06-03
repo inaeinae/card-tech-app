@@ -276,7 +276,7 @@
 - [x] AutoSuggestionBanner 다크 토큰화 — inline 라이트 고정 색 → NativeWind 다크(primary-soft/ink 토큰, Sparkles Colors[scheme])
 - [x] 데이터 의존 화면 시뮬 검증 — local seed 후 홈/리포트/캘린더(이벤트 dots)/이벤트 상세/status-change 모달/카드 상세 다크 전수 확인
 - [x] **Zustand v5 무한 리렌더 버그 수정** — cards/[id]/index·edit, wizard/step-card selector 안정화 + selectorStability 회귀 테스트 (commit c85b607)
-- [ ] (관찰) cards/[id]·edit, wizard/step-card 직접 진입 시 loadCards 미호출로 무한 로딩 — 정상 플로우(리포트/위저드 경유)는 OK. 직접 딥링크 대비 자체 loadCards 부트스트랩 검토 (선택)
+- [x] cards/[id]·edit 직접 진입 loadCards 부트스트랩 — effect 에 loadCards() 추가, 시뮬 재시작 후 직접 딥링크 렌더 확인 (commit 41ea304). step-card 는 기존 호출
 
 ## v2 이후 (범위 외 — 메모용)
 
