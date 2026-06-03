@@ -44,6 +44,7 @@ export default function CardDetailScreen() {
   // raw slice 만 선택 — 파생(fallback/filter)은 아래 body 에서. selector 안 ?? []/.filter()
   // 는 매 호출 새 배열을 만들어 Zustand v5(useSyncExternalStore) 무한 리렌더를 유발한다.
   const benefitsMap = useCardStore((s) => s.benefits);
+  const loadCards = useCardStore((s) => s.loadCards);
   const loadCardBenefits = useCardStore((s) => s.loadCardBenefits);
   const scheduleCancel = useCardStore((s) => s.scheduleCancel);
   const confirmCancel = useCardStore((s) => s.confirmCancel);
@@ -69,11 +70,13 @@ export default function CardDetailScreen() {
   );
 
   useEffect(() => {
+    // 직접 진입(딥링크) 대비 — 목록 경유 없이도 카드 store 부트스트랩
+    loadCards();
     if (id) {
       loadCardBenefits(id);
       loadEvents({ cardId: id });
     }
-  }, [id, loadCardBenefits, loadEvents]);
+  }, [id, loadCards, loadCardBenefits, loadEvents]);
 
   if (!card) return <LoadingState />;
 

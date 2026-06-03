@@ -34,6 +34,7 @@ export default function EditCardScreen() {
   const upsertCard = useCardStore((s) => s.upsertCard);
   // raw slice 선택 후 body 에서 파생 — selector 안 ?? [] 는 Zustand v5 무한 리렌더 유발
   const benefitsMap = useCardStore((s) => s.benefits);
+  const loadCards = useCardStore((s) => s.loadCards);
   const loadCardBenefits = useCardStore((s) => s.loadCardBenefits);
   const deleteCardBenefit = useCardStore((s) => s.deleteCardBenefit);
 
@@ -60,8 +61,10 @@ export default function EditCardScreen() {
   }, [card]);
 
   useEffect(() => {
+    // 직접 진입(딥링크) 대비 — 목록 경유 없이도 카드 store 부트스트랩
+    loadCards();
     if (id) loadCardBenefits(id);
-  }, [id, loadCardBenefits]);
+  }, [id, loadCards, loadCardBenefits]);
 
   if (!card) return <EmptyState title="카드를 찾을 수 없습니다" />;
 
