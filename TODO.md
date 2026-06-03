@@ -271,7 +271,8 @@
 - [x] B6. settings 3종 다크 — notifications Colors[scheme] 전환, _layout 헤더 토큰화, profile/about 기존 대응 확인 (Pencil mockup 신규 생략: settings 는 inline 스타일 기반, Pencil 1:1 대상 아님)
 - [x] B7. (auth) login / onboarding 다크 — login/onboarding/dev-login 이미 dark 클래스 적용 확인. 부수 발견·수정: Button/Input/LoadingState/(tabs)탭바가 raw useColorScheme 사용해 수동 테마 override 무시하던 버그 → useResolvedColorScheme 교체 (ThemeToggle 은 미사용 stub, parallax/collapsible 은 미사용 scaffold — 보류)
 - [ ] EmptyHomeDark Pencil mockup (보류)
-- [ ] Pressable pressed 효과 복원 (함수형 style 회귀 회피 패턴 모색)
+- [x] Pressable pressed 효과 복원 — NativeWind active: variant 일괄 적용 (함수형 style 회피). 공용 컴포넌트 + 화면 전반 interactive Pressable active:opacity-(60|80)/active:bg, 함수형 잔존 3곳 static+active 전환. backdrop/container 의도적 제외
+- [ ] AutoSuggestionBanner 다크 토큰화 — 현재 #E8F2FE/#3182F6/#191F28 라이트 고정 (pressed 복원 중 발견, 별도 후속)
 
 ## v2 이후 (범위 외 — 메모용)
 
