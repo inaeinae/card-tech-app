@@ -4,6 +4,8 @@ import { Pressable, Text, View } from 'react-native';
 import { CreditCard } from 'lucide-react-native';
 import type { Card } from '@/types/models';
 import { computeCancelState } from '@/lib/cardCancel';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 type Props = {
   card: Card;
@@ -42,11 +44,8 @@ export function CardListItem({ card, onPress, variant = 'row' }: Props) {
             <CardThumb />
           </View>
           <View className="flex-1 px-3 py-3 gap-1">
-            <Text className="text-label text-muted dark:text-muted-dark">{card.issuer}</Text>
-            <Text
-              className="text-body font-medium text-foreground dark:text-foreground-dark"
-              numberOfLines={1}
-            >
+            <Text className="text-label text-ink-3 dark:text-ink-3-dark">{card.issuer}</Text>
+            <Text className="text-body font-medium text-ink dark:text-ink-dark" numberOfLines={1}>
               {card.name}
             </Text>
             {stateLabel ? (
@@ -65,11 +64,8 @@ export function CardListItem({ card, onPress, variant = 'row' }: Props) {
       )}
       {isCarousel ? (
         <View className="p-3 gap-1">
-          <Text className="text-label text-muted dark:text-muted-dark">{card.issuer}</Text>
-          <Text
-            className="text-body font-medium text-foreground dark:text-foreground-dark"
-            numberOfLines={1}
-          >
+          <Text className="text-label text-ink-3 dark:text-ink-3-dark">{card.issuer}</Text>
+          <Text className="text-body font-medium text-ink dark:text-ink-dark" numberOfLines={1}>
             {card.name}
           </Text>
           {stateLabel ? (
@@ -90,9 +86,12 @@ export function CardListItem({ card, onPress, variant = 'row' }: Props) {
 }
 
 function CardThumb() {
+  // 다크/라이트에 따른 ink-3 아이콘 컬러 — lucide 는 NativeWind className 미지원
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
   return (
     <View className="flex-1 items-center justify-center bg-surface dark:bg-surface-dark">
-      <CreditCard size={28} color="#94A3B8" />
+      <CreditCard size={28} color={C.ink3} />
     </View>
   );
 }
