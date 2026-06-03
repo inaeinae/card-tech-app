@@ -256,9 +256,16 @@
 - [x] 시뮬 다크 검증 (홈/캘린더/리포트)
 - [ ] 라이트 모드 시각 검증 — 사용자 themeMode 라이트 토글 후 확인
 
-## Phase B (잔여 sub-phase)
+## Phase B3. 카드 상세/수정/등록 Pencil 1:1 (2026-06-03)
 
-- [ ] B3. 카드 상세 / 수정 / 등록
+- [x] Pencil CardDetailDark(`a9MTe`) + CardEditDark(`Zn9GA`) 신규 (디스크 flush 후속)
+- [x] cards/new + cards/[id]/edit dark variant 보강 (별칭 토큰 통일, lucide color)
+- [x] cards/[id]/index hex 37건 → 토큰 (30건 토큰화, 15건 브랜드/Hero 의도적 유지)
+- [x] Pressable 함수형 style → 객체 2곳
+- [x] cards/new 다크 시뮬 검증
+- [ ] cards/[id]/index, edit 시뮬 검증 — 카드 등록 데이터 필요
+
+## Phase B (잔여 sub-phase)
 - [ ] B4. 이벤트 목록 / 상세 / 이력
 - [ ] B5. 위저드 5단 + 상태 변경 모달
 - [ ] B6. settings 3종 (신규 mockup 포함)
