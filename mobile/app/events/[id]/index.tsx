@@ -16,21 +16,35 @@ import { EVENT_STATUS_LABEL } from '@/types/models';
 import type { Benefit, EventRow } from '@/types/models';
 import { AutoSuggestionBanner } from '@/components/events/AutoSuggestionBanner';
 import { suggestNextStatus } from '@/lib/eventStatus';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
-const STATUS_COLOR: Record<string, string> = {
-  registered: '#8B95A1',
-  applied: '#3182F6',
-  in_progress: '#F59E0B',
-  performance_done: '#F59E0B',
-  pending_payout: '#8B95A1',
-  paid: '#19D294',
-  cancelable: '#FF4D4F',
-  canceled: '#FF4D4F',
-};
+// 상태 도트/라벨 컬러 — 라이트/다크 토큰 매핑 (color-not-only: 텍스트 라벨 병기로 충족)
+type ThemeC = (typeof Colors)[keyof typeof Colors];
+function getStatusColor(status: string, C: ThemeC): string {
+  switch (status) {
+    case 'applied':
+      return C.primary;
+    case 'in_progress':
+    case 'performance_done':
+      return C.warning;
+    case 'paid':
+      return C.accent;
+    case 'cancelable':
+    case 'canceled':
+      return C.danger;
+    case 'registered':
+    case 'pending_payout':
+    default:
+      return C.ink3;
+  }
+}
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
   const eventInState = useEventStore((s) => s.events.find((e) => e.id === id));
   const deleteEvent = useEventStore((s) => s.deleteEvent);
   const changeStatus = useEventStore((s) => s.changeStatus);
@@ -151,7 +165,7 @@ export default function EventDetailScreen() {
   if (loading) return <LoadingState />;
   if (!event) return <EmptyState title="이벤트를 찾을 수 없습니다" />;
 
-  const dotColor = STATUS_COLOR[event.status] ?? '#8B95A1';
+  const dotColor = getStatusColor(event.status, C);
 
   const timelineRows = [
     { label: '응모', start: event.apply_start, end: event.apply_end },
@@ -166,51 +180,29 @@ export default function EventDetailScreen() {
   return (
     <SafeAreaScreen>
       {/* 상단 앱바 */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 8,
-          height: 56,
-        }}
-      >
+      <View className="flex-row items-center px-2 h-14">
         <Pressable
           onPress={() => router.back()}
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            backgroundColor: '#F9FAFB',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center"
         >
-          <ChevronLeft size={20} color="#191F28" />
+          <ChevronLeft size={20} color={C.ink} />
         </Pressable>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 140 }}>
         {/* Hero 상태 카드 */}
-        <View style={{ alignItems: 'center', paddingHorizontal: 24, paddingVertical: 20, gap: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: dotColor }} />
-            <Text style={{ fontSize: 15, fontWeight: '700', color: dotColor }}>
+        <View className="items-center px-6 py-5 gap-2">
+          <View className="flex-row items-center gap-1.5">
+            <View className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: dotColor }} />
+            <Text className="text-[15px] font-bold" style={{ color: dotColor }}>
               {EVENT_STATUS_LABEL[event.status]}
             </Text>
           </View>
-          <Text
-            style={{
-              fontSize: 22,
-              fontWeight: '700',
-              color: '#191F28',
-              textAlign: 'center',
-              lineHeight: 30,
-            }}
-          >
+          <Text className="text-[22px] font-bold text-ink dark:text-ink-dark text-center leading-[30px]">
             {event.title}
           </Text>
           {card ? (
-            <Text style={{ fontSize: 14, color: '#8B95A1' }}>
+            <Text className="text-label text-ink-3 dark:text-ink-3-dark">
               {card.issuer} · {card.name}
             </Text>
           ) : null}
@@ -219,28 +211,13 @@ export default function EventDetailScreen() {
         {suggested && <AutoSuggestionBanner suggested={suggested} onConfirm={onConfirmSuggested} />}
 
         {/* 타임라인 섹션 */}
-        <View
-          style={{
-            marginHorizontal: 16,
-            marginBottom: 12,
-            padding: 16,
-            borderRadius: 18,
-            borderWidth: 1,
-            borderColor: '#E5E8EB',
-            gap: 12,
-          }}
-        >
+        <View className="mx-4 mb-3 p-4 rounded-lg border border-border-strong dark:border-border-strong-dark gap-3">
           {timelineRows.map((row) => (
-            <View
-              key={row.label}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Text style={{ fontSize: 13, color: '#8B95A1', fontWeight: '500' }}>{row.label}</Text>
-              <Text style={{ fontSize: 13, color: '#191F28', fontWeight: '600' }}>
+            <View key={row.label} className="flex-row justify-between items-center">
+              <Text className="text-[13px] font-medium text-ink-3 dark:text-ink-3-dark">
+                {row.label}
+              </Text>
+              <Text className="text-[13px] font-semibold text-ink dark:text-ink-dark">
                 {row.start ?? '-'}
                 {row.end ? ` ~ ${row.end}` : ''}
               </Text>
@@ -249,8 +226,8 @@ export default function EventDetailScreen() {
         </View>
 
         {/* 혜택 목록 */}
-        <View style={{ marginHorizontal: 16, gap: 8 }}>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: '#191F28', marginBottom: 4 }}>
+        <View className="mx-4 gap-2">
+          <Text className="text-[16px] font-bold text-ink dark:text-ink-dark mb-1">
             혜택 {benefits.length}건
           </Text>
           {benefits.length === 0 ? (
@@ -259,16 +236,12 @@ export default function EventDetailScreen() {
             benefits.map((b) => (
               <View
                 key={b.id}
-                style={{
-                  padding: 16,
-                  borderRadius: 18,
-                  borderWidth: 1,
-                  borderColor: '#E5E8EB',
-                  gap: 4,
-                }}
+                className="p-4 rounded-lg border border-border-strong dark:border-border-strong-dark gap-1"
               >
-                <Text style={{ fontSize: 15, fontWeight: '600', color: '#191F28' }}>{b.title}</Text>
-                <Text style={{ fontSize: 13, color: '#8B95A1' }}>
+                <Text className="text-[15px] font-semibold text-ink dark:text-ink-dark">
+                  {b.title}
+                </Text>
+                <Text className="text-[13px] text-ink-3 dark:text-ink-3-dark">
                   예상 ₩{Number(b.expected_amount ?? 0).toLocaleString('ko-KR')}
                 </Text>
               </View>
@@ -278,40 +251,19 @@ export default function EventDetailScreen() {
 
         {/* 합계 */}
         {benefits.length > 0 && (
-          <View
-            style={{
-              marginHorizontal: 16,
-              marginTop: 12,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingTop: 12,
-              borderTopWidth: 1,
-              borderTopColor: '#E5E8EB',
-            }}
-          >
-            <Text style={{ fontSize: 14, color: '#8B95A1' }}>예상 수령 합계</Text>
-            <Text style={{ fontSize: 18, fontWeight: '700', color: '#191F28' }}>
+          <View className="mx-4 mt-3 flex-row justify-between items-center pt-3 border-t border-border-strong dark:border-border-strong-dark">
+            <Text className="text-label text-ink-3 dark:text-ink-3-dark">예상 수령 합계</Text>
+            <Text className="text-[18px] font-bold text-ink dark:text-ink-dark">
               ₩{total.toLocaleString('ko-KR')}
             </Text>
           </View>
         )}
 
         {/* 이벤트별 알림 토글 */}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingVertical: 12,
-            paddingHorizontal: 16,
-            backgroundColor: '#F9FAFB',
-            borderRadius: 12,
-            marginHorizontal: 16,
-            marginVertical: 8,
-          }}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '600', color: '#191F28' }}>이 이벤트 알림</Text>
+        <View className="flex-row items-center justify-between py-3 px-4 bg-surface dark:bg-surface-dark rounded-md mx-4 my-2">
+          <Text className="text-label font-semibold text-ink dark:text-ink-dark">
+            이 이벤트 알림
+          </Text>
           <Switch
             value={notifyEnabled}
             onValueChange={onToggleNotify}
@@ -322,78 +274,42 @@ export default function EventDetailScreen() {
         {/* 상태 이력 링크 */}
         <Pressable
           onPress={() => router.push(`/events/${event.id}/history`)}
-          style={{ alignItems: 'center', justifyContent: 'center', padding: 16, marginTop: 4 }}
+          className="items-center justify-center p-4 mt-1"
         >
-          <Text style={{ fontSize: 14, fontWeight: '600', color: '#3182F6' }}>상태 이력 보기</Text>
+          <Text className="text-label font-semibold text-primary dark:text-primary-dark">
+            상태 이력 보기
+          </Text>
         </Pressable>
       </ScrollView>
 
       {/* sticky CTA */}
       <View
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#E5E8EB',
-          padding: 24,
-          paddingBottom: 36,
-          gap: 10,
-        }}
+        className="absolute bottom-0 left-0 right-0 bg-bg dark:bg-bg-dark border-t border-border-strong dark:border-border-strong-dark"
+        style={{ padding: 24, paddingBottom: 36, gap: 10 }}
       >
         <Pressable
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onPress={() =>
             router.push(`/modals/status-change?id=${event.id}&current=${event.status}` as any)
           }
-          style={({ pressed }) => ({
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            backgroundColor: pressed ? '#1B64DA' : '#3182F6',
-            borderRadius: 14,
-            paddingVertical: 14,
-          })}
+          className="flex-row items-center justify-center gap-1.5 bg-primary dark:bg-primary-dark rounded-lg py-3.5"
         >
           <RefreshCw size={16} color="#FFFFFF" />
-          <Text style={{ fontSize: 15, fontWeight: '700', color: '#FFFFFF' }}>상태 변경</Text>
+          <Text className="text-[15px] font-bold text-white">상태 변경</Text>
         </Pressable>
         <Pressable
           onPress={onEdit}
-          style={({ pressed }) => ({
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            backgroundColor: pressed ? '#F2F4F6' : '#F9FAFB',
-            borderRadius: 14,
-            paddingVertical: 14,
-            borderWidth: 1,
-            borderColor: '#E5E8EB',
-          })}
+          className="flex-row items-center justify-center gap-1.5 bg-surface dark:bg-surface-dark rounded-lg py-3.5 border border-border-strong dark:border-border-strong-dark"
         >
-          <Pencil size={16} color="#4E5968" />
-          <Text style={{ fontSize: 15, fontWeight: '600', color: '#4E5968' }}>수정</Text>
+          <Pencil size={16} color={C.ink2} />
+          <Text className="text-[15px] font-semibold text-ink-2 dark:text-ink-2-dark">수정</Text>
         </Pressable>
         <Pressable
           onPress={onDelete}
-          style={({ pressed }) => ({
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            backgroundColor: pressed ? '#FFF1F0' : '#FFFFFF',
-            borderRadius: 14,
-            paddingVertical: 14,
-            borderWidth: 1,
-            borderColor: '#FFD8D8',
-          })}
+          className="flex-row items-center justify-center gap-1.5 bg-bg dark:bg-bg-dark rounded-lg py-3.5 border border-danger-soft dark:border-danger-darkSoft"
         >
-          <Trash2 size={16} color="#FF4D4F" />
-          <Text style={{ fontSize: 15, fontWeight: '600', color: '#FF4D4F' }}>삭제</Text>
+          <Trash2 size={16} color={C.danger} />
+          <Text className="text-[15px] font-semibold text-danger dark:text-danger-dark">삭제</Text>
         </Pressable>
       </View>
     </SafeAreaScreen>

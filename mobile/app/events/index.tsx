@@ -8,6 +8,8 @@ import { sumEventExpected } from '@/lib/eventTotals';
 import { useCardStore } from '@/stores/cardStore';
 import { useEventStore } from '@/stores/eventStore';
 import type { EventRow, EventStatus } from '@/types/models';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 type FilterChip = 'all' | 'active' | 'done' | 'canceled';
 
@@ -37,6 +39,8 @@ function filterEvents(events: EventRow[], chip: FilterChip): EventRow[] {
 
 export default function EventListScreen() {
   const router = useRouter();
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
   const events = useEventStore((s) => s.events);
   const loading = useEventStore((s) => s.loading);
   const loadEvents = useEventStore((s) => s.loadEvents);
@@ -79,23 +83,11 @@ export default function EventListScreen() {
   return (
     <SafeAreaScreen>
       {/* 헤더 */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 16,
-          paddingTop: 8,
-          paddingBottom: 4,
-          gap: 8,
-        }}
-      >
-        <Pressable
-          onPress={() => router.back()}
-          style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}
-        >
-          <ChevronLeft size={24} color="#191F28" />
+      <View className="flex-row items-center px-4 pt-2 pb-1 gap-2">
+        <Pressable onPress={() => router.back()} className="w-10 h-10 items-center justify-center">
+          <ChevronLeft size={24} color={C.ink} />
         </Pressable>
-        <Text style={{ fontSize: 22, fontWeight: '700', color: '#191F28' }}>이벤트</Text>
+        <Text className="text-[22px] font-bold text-ink dark:text-ink-dark">이벤트</Text>
       </View>
 
       {/* 필터 칩 */}
@@ -108,19 +100,14 @@ export default function EventListScreen() {
           <Pressable
             key={c.key}
             onPress={() => setChip(c.key)}
-            style={{
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderRadius: 999,
-              backgroundColor: chip === c.key ? '#191F28' : '#F9FAFB',
-            }}
+            className={`px-4 py-2 rounded-full ${
+              chip === c.key ? 'bg-ink dark:bg-ink-dark' : 'bg-surface dark:bg-surface-dark'
+            }`}
           >
             <Text
-              style={{
-                fontSize: 14,
-                fontWeight: '600',
-                color: chip === c.key ? '#FFFFFF' : '#4E5968',
-              }}
+              className={`text-label font-semibold ${
+                chip === c.key ? 'text-bg dark:text-bg-dark' : 'text-ink-2 dark:text-ink-2-dark'
+              }`}
             >
               {c.label}
             </Text>
@@ -134,12 +121,12 @@ export default function EventListScreen() {
         keyExtractor={(e) => e.id}
         renderItem={renderItem}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={handleRefresh} tintColor="#3182F6" />
+          <RefreshControl refreshing={loading} onRefresh={handleRefresh} tintColor={C.primary} />
         }
         contentContainerStyle={{ paddingTop: 4, paddingBottom: 32 }}
         ListEmptyComponent={
-          <View style={{ alignItems: 'center', padding: 48 }}>
-            <Text style={{ fontSize: 15, color: '#8B95A1' }}>이벤트가 없습니다</Text>
+          <View className="items-center p-12">
+            <Text className="text-[15px] text-ink-3 dark:text-ink-3-dark">이벤트가 없습니다</Text>
           </View>
         }
       />
