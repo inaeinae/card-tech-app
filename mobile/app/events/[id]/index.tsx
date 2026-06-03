@@ -288,7 +288,6 @@ export default function EventDetailScreen() {
         style={{ padding: 24, paddingBottom: 36, gap: 10 }}
       >
         <Pressable
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onPress={() =>
             router.push(`/modals/status-change?id=${event.id}&current=${event.status}` as any)
           }
