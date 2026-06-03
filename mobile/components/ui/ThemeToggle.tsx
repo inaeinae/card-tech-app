@@ -18,7 +18,7 @@ export function ThemeToggle({ onPress }: ThemeToggleProps) {
       accessibilityState={{ checked: scheme === 'dark' }}
       hitSlop={10}
       onPress={onPress}
-      className="flex-row items-center gap-2 rounded-md border border-border dark:border-border-dark px-4 py-2"
+      className="flex-row items-center gap-2 rounded-md border border-border dark:border-border-dark px-4 py-2 active:opacity-80"
     >
       <Text className="text-label text-foreground dark:text-foreground-dark">{label}</Text>
     </Pressable>

@@ -173,7 +173,7 @@ export default function NewCardScreen() {
             onPress={() => router.push('/wizard/template-picker?context=card')}
             accessibilityRole="button"
             accessibilityLabel="혜택 추가"
-            className="flex-row items-center justify-center gap-1.5 p-3 rounded-md border border-dashed border-primary dark:border-primary-dark"
+            className="flex-row items-center justify-center gap-1.5 p-3 rounded-md border border-dashed border-primary dark:border-primary-dark active:opacity-80"
           >
             <Plus size={16} color={C.primary} />
             <Text className="text-body font-semibold text-primary dark:text-primary-dark">

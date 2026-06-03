@@ -91,7 +91,7 @@ export default function StatusChangeModal() {
                   key={status}
                   onPress={() => onSelect(status)}
                   disabled={loading}
-                  className="flex-row items-center justify-between p-4 rounded-[14px] border-[1.5px] border-border-strong dark:border-border-strong-dark bg-bg dark:bg-surface-dark"
+                  className="flex-row items-center justify-between p-4 rounded-[14px] border-[1.5px] border-border-strong dark:border-border-strong-dark bg-bg dark:bg-surface-dark active:opacity-80"
                 >
                   <View className="flex-row items-center gap-2.5">
                     <View className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: dot }} />
@@ -112,7 +112,7 @@ export default function StatusChangeModal() {
           )}
         </View>
 
-        <Pressable onPress={() => router.back()} className="items-center p-2">
+        <Pressable onPress={() => router.back()} className="items-center p-2 active:opacity-60">
           <Text className="text-[15px] font-semibold text-ink-3 dark:text-ink-3-dark">취소</Text>
         </Pressable>
       </View>

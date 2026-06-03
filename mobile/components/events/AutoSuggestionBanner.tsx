@@ -39,18 +39,21 @@ export function AutoSuggestionBanner({ suggested, onConfirm }: Props) {
   return (
     <View
       style={{
-        marginHorizontal: 16, marginBottom: 12, padding: 14,
-        borderRadius: 16, backgroundColor: '#E8F2FE',
-        flexDirection: 'row', alignItems: 'center', gap: 12,
+        marginHorizontal: 16,
+        marginBottom: 12,
+        padding: 14,
+        borderRadius: 16,
+        backgroundColor: '#E8F2FE',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
       }}
       accessibilityRole="alert"
       accessibilityLabel={`자동 제안: ${EVENT_STATUS_LABEL[suggested]} 로 변경`}
     >
       <Sparkles size={18} color="#3182F6" />
       <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 13, color: '#3182F6', fontWeight: '600' }}>
-          {COPY[suggested]}
-        </Text>
+        <Text style={{ fontSize: 13, color: '#3182F6', fontWeight: '600' }}>{COPY[suggested]}</Text>
         <Text style={{ fontSize: 14, color: '#191F28', fontWeight: '700', marginTop: 2 }}>
           &apos;{EVENT_STATUS_LABEL[suggested]}&apos; 로 변경할까요?
         </Text>
@@ -58,11 +61,15 @@ export function AutoSuggestionBanner({ suggested, onConfirm }: Props) {
       <Pressable
         onPress={handle}
         disabled={busy}
-        style={({ pressed }) => ({
-          paddingHorizontal: 14, paddingVertical: 8, minHeight: 44, borderRadius: 999,
-          backgroundColor: pressed ? '#1B64DA' : '#3182F6',
+        className="active:opacity-80"
+        style={{
+          paddingHorizontal: 14,
+          paddingVertical: 8,
+          minHeight: 44,
+          borderRadius: 999,
+          backgroundColor: '#3182F6',
           opacity: busy ? 0.6 : 1,
-        })}
+        }}
         accessibilityRole="button"
         accessibilityLabel={`${EVENT_STATUS_LABEL[suggested]} 로 변경 확정`}
         accessibilityState={{ disabled: busy, busy }}

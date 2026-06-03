@@ -49,7 +49,7 @@ export default function LoginScreen() {
           <Pressable
             onPress={() => router.push('/(auth)/dev-login')}
             accessibilityRole="button"
-            className="py-3 items-center"
+            className="py-3 items-center active:opacity-60"
           >
             <Text className="text-muted dark:text-muted-dark text-caption underline">
               개발자 로그인 (로컬 전용)

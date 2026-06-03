@@ -35,6 +35,7 @@ export default function EmptyHome({ onRegister }: Props) {
       {/* Pressable 함수형 style 제거 — RN 0.81 회귀 fix. pressed 효과 필요 시 className 변형 권장 */}
       <Pressable
         onPress={onRegister}
+        className="active:opacity-80"
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -52,7 +53,7 @@ export default function EmptyHome({ onRegister }: Props) {
         <Text className="text-[16px] font-bold text-white">이벤트 등록하기</Text>
       </Pressable>
 
-      <Pressable onPress={() => router.push('/cards/new')}>
+      <Pressable onPress={() => router.push('/cards/new')} className="active:opacity-80">
         <Text className="text-label font-semibold text-primary">먼저 카드 등록부터 →</Text>
       </Pressable>
     </View>

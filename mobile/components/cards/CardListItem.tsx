@@ -32,7 +32,7 @@ export function CardListItem({ card, onPress, variant = 'row' }: Props) {
       hitSlop={8}
       className={`${
         isCarousel ? 'w-64 mr-3' : 'w-full'
-      } rounded-md overflow-hidden bg-surface dark:bg-surface-dark border border-border dark:border-border-dark`}
+      } rounded-md overflow-hidden bg-surface dark:bg-surface-dark border border-border dark:border-border-dark active:opacity-80`}
     >
       {isCarousel ? (
         <View style={{ aspectRatio: 16 / 10 }}>

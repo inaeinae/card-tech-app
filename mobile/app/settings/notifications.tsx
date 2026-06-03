@@ -101,6 +101,7 @@ export default function NotificationSettingsScreen() {
           accessibilityRole="button"
           accessibilityLabel="알림 권한 요청"
           onPress={() => requestPermission()}
+          className="active:opacity-80"
           style={{
             backgroundColor: C.surface,
             padding: 16,
@@ -137,6 +138,7 @@ export default function NotificationSettingsScreen() {
         accessibilityRole="button"
         accessibilityLabel={`알림 시간 ${time.slice(0, 5)}`}
         onPress={() => setShowPicker(true)}
+        className="active:opacity-80"
         style={{
           backgroundColor: C.surface,
           padding: 16,
@@ -165,6 +167,7 @@ export default function NotificationSettingsScreen() {
               accessibilityRole="button"
               accessibilityLabel="알림 시간 선택 완료"
               onPress={() => setShowPicker(false)}
+              className="active:opacity-60"
               style={{
                 alignSelf: 'flex-end',
                 paddingHorizontal: 16,

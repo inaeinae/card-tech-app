@@ -66,6 +66,7 @@ export function ThemeModeSheet({ visible, onClose }: { visible: boolean; onClose
                 onPress={() => onPick(opt.mode)}
                 accessibilityRole="button"
                 accessibilityLabel={`${opt.label}${selected ? ', 선택됨' : ''}`}
+                className="active:bg-surface dark:active:bg-surface-dark"
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',

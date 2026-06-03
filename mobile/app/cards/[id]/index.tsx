@@ -134,13 +134,13 @@ export default function CardDetailScreen() {
       <View className="flex-row items-center justify-between px-2 h-14">
         <Pressable
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center"
+          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center active:opacity-80"
         >
           <ChevronLeft size={20} color={C.ink} />
         </Pressable>
         <Pressable
           onPress={onMenuPress}
-          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center"
+          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center active:opacity-80"
         >
           <EllipsisVertical size={20} color={C.ink} />
         </Pressable>
@@ -264,7 +264,7 @@ export default function CardDetailScreen() {
             onPress={() => setTab(key)}
             accessibilityRole="tab"
             accessibilityState={{ selected: tab === key }}
-            className={`flex-1 py-2 rounded-sm items-center ${
+            className={`flex-1 py-2 rounded-sm items-center active:opacity-80 ${
               tab === key ? 'bg-bg dark:bg-bg-dark' : 'bg-transparent'
             }`}
           >
@@ -299,6 +299,7 @@ export default function CardDetailScreen() {
             <Pressable
               key={e.id}
               onPress={() => router.push(`/events/${e.id}`)}
+              className="active:opacity-80"
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -336,6 +337,7 @@ export default function CardDetailScreen() {
           <>
             <Pressable
               onPress={startWizard}
+              className="active:opacity-80"
               style={{
                 backgroundColor: C.primary,
                 borderRadius: 14,
@@ -345,7 +347,11 @@ export default function CardDetailScreen() {
             >
               <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700' }}>이벤트 등록</Text>
             </Pressable>
-            <Pressable onPress={onMenuPress} style={{ alignItems: 'center' }}>
+            <Pressable
+              onPress={onMenuPress}
+              className="active:opacity-60"
+              style={{ alignItems: 'center' }}
+            >
               <Text
                 className="text-ink-3 dark:text-ink-3-dark"
                 style={{ fontSize: 13, fontWeight: '500' }}
@@ -358,7 +364,7 @@ export default function CardDetailScreen() {
           <>
             <Pressable
               onPress={onMenuPress}
-              className="bg-danger-soft dark:bg-danger-darkSoft"
+              className="bg-danger-soft dark:bg-danger-darkSoft active:opacity-80"
               style={{
                 borderRadius: 14,
                 paddingVertical: 16,
@@ -372,7 +378,11 @@ export default function CardDetailScreen() {
                 해지 완료 기록
               </Text>
             </Pressable>
-            <Pressable onPress={() => restoreCancel(card.id)} style={{ alignItems: 'center' }}>
+            <Pressable
+              onPress={() => restoreCancel(card.id)}
+              className="active:opacity-60"
+              style={{ alignItems: 'center' }}
+            >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <RotateCcw size={14} color={C.ink3} />
                 <Text
@@ -387,7 +397,7 @@ export default function CardDetailScreen() {
         ) : (
           <Pressable
             onPress={() => restoreCancel(card.id)}
-            className="bg-surface dark:bg-surface-dark"
+            className="bg-surface dark:bg-surface-dark active:opacity-80"
             style={{
               borderRadius: 14,
               paddingVertical: 16,

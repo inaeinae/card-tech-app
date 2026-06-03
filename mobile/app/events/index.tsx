@@ -84,7 +84,10 @@ export default function EventListScreen() {
     <SafeAreaScreen>
       {/* 헤더 */}
       <View className="flex-row items-center px-4 pt-2 pb-1 gap-2">
-        <Pressable onPress={() => router.back()} className="w-10 h-10 items-center justify-center">
+        <Pressable
+          onPress={() => router.back()}
+          className="w-10 h-10 items-center justify-center active:opacity-60"
+        >
           <ChevronLeft size={24} color={C.ink} />
         </Pressable>
         <Text className="text-[22px] font-bold text-ink dark:text-ink-dark">이벤트</Text>
@@ -106,7 +109,7 @@ export default function EventListScreen() {
           <Pressable
             key={c.key}
             onPress={() => setChip(c.key)}
-            className={`px-4 py-2 rounded-full ${
+            className={`px-4 py-2 rounded-full active:opacity-80 ${
               chip === c.key ? 'bg-ink dark:bg-ink-dark' : 'bg-surface dark:bg-surface-dark'
             }`}
           >

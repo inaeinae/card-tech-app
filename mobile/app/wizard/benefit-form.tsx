@@ -281,7 +281,7 @@ function CardBenefitForm({
                     onPress={() => removeTier(idx)}
                     accessibilityRole="button"
                     accessibilityLabel="구간 삭제"
-                    className="h-12 w-12 items-center justify-center"
+                    className="h-12 w-12 items-center justify-center active:opacity-60"
                     hitSlop={8}
                   >
                     <Trash2 size={18} color={C.danger} />
@@ -299,7 +299,7 @@ function CardBenefitForm({
             onPress={addTier}
             accessibilityRole="button"
             accessibilityLabel="구간 추가"
-            className="flex-row items-center gap-1 self-start py-2"
+            className="flex-row items-center gap-1 self-start py-2 active:opacity-60"
             hitSlop={8}
           >
             <Plus size={16} color={C.primary} />
@@ -332,7 +332,7 @@ function CardBenefitForm({
                   onPress={() => removeTarget(idx)}
                   accessibilityRole="button"
                   accessibilityLabel="대상 구분 삭제"
-                  className="h-12 w-12 items-center justify-center"
+                  className="h-12 w-12 items-center justify-center active:opacity-60"
                   hitSlop={8}
                 >
                   <Trash2 size={18} color={C.danger} />
@@ -355,7 +355,7 @@ function CardBenefitForm({
             onPress={addTarget}
             accessibilityRole="button"
             accessibilityLabel="대상 구분 추가"
-            className="flex-row items-center gap-1 self-start py-2"
+            className="flex-row items-center gap-1 self-start py-2 active:opacity-60"
             hitSlop={8}
           >
             <Plus size={16} color={C.primary} />

@@ -37,7 +37,7 @@ export function RadioGroup<T extends string>({
               accessibilityRole="radio"
               accessibilityState={{ selected }}
               accessibilityLabel={o.label}
-              className={`flex-1 h-12 items-center justify-center rounded-md border ${
+              className={`flex-1 h-12 items-center justify-center rounded-md border active:opacity-80 ${
                 selected
                   ? 'border-primary bg-primary/10 dark:bg-primary/20'
                   : hasError

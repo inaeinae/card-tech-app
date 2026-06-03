@@ -37,7 +37,7 @@ export default function EventListItem({ title, issuer, status, expectedAmount, o
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center p-4 bg-bg dark:bg-bg-dark rounded-lg border border-border-strong dark:border-border-strong-dark mx-4 mb-2 gap-3"
+      className="flex-row items-center p-4 bg-bg dark:bg-bg-dark rounded-lg border border-border-strong dark:border-border-strong-dark mx-4 mb-2 gap-3 active:opacity-80"
     >
       {/* 카드사 컬러 바 */}
       <View style={{ width: 4, height: 40, borderRadius: 999, backgroundColor: barColor }} />

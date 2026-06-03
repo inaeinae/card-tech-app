@@ -77,7 +77,7 @@ export function Button({
       disabled={isDisabled}
       hitSlop={8}
       android_ripple={{ color: 'rgba(255,255,255,0.15)' }}
-      className={`${containerClass(variant, isDisabled)} ${sizeClass[size]}`}
+      className={`${containerClass(variant, isDisabled)} ${sizeClass[size]} active:opacity-80`}
       {...pressable}
     >
       {loading ? (

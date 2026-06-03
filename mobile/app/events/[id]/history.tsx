@@ -63,7 +63,7 @@ export default function EventHistoryScreen() {
       <View className="flex-row items-center px-2 h-14 gap-1">
         <Pressable
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center"
+          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center active:opacity-80"
         >
           <ChevronLeft size={20} color={C.ink} />
         </Pressable>

@@ -48,7 +48,7 @@ export default function WizardStepBenefits() {
                   accessibilityRole="button"
                   accessibilityLabel="혜택 편집"
                   hitSlop={8}
-                  className="flex-row items-center gap-1"
+                  className="flex-row items-center gap-1 active:opacity-60"
                 >
                   <Pencil size={16} />
                   <Text className="text-label text-muted dark:text-muted-dark">편집</Text>
@@ -58,7 +58,7 @@ export default function WizardStepBenefits() {
                   accessibilityRole="button"
                   accessibilityLabel="혜택 삭제"
                   hitSlop={8}
-                  className="flex-row items-center gap-1"
+                  className="flex-row items-center gap-1 active:opacity-60"
                 >
                   <Trash2 size={16} />
                   <Text className="text-label text-destructive dark:text-destructive-dark">

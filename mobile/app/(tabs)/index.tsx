@@ -98,7 +98,10 @@ export default function HomeScreen() {
             <SummaryCard confirmedAmount={confirmedAmount} expectedAmount={expectedAmount} />
           }
           ListFooterComponent={
-            <Pressable onPress={() => router.push('/events')} className="items-center p-4">
+            <Pressable
+              onPress={() => router.push('/events')}
+              className="items-center p-4 active:opacity-80"
+            >
               <Text className="text-label font-semibold text-primary">전체 이벤트 보기 →</Text>
             </Pressable>
           }
@@ -106,10 +109,11 @@ export default function HomeScreen() {
         />
       )}
 
-      {/* FAB — Pressable 함수형 style 제거 (RN 0.81 회귀 fix). pressed 상태는 className 대신 객체 유지 */}
+      {/* FAB — pressed 피드백은 NativeWind active: variant (함수형 style 회귀 회피) */}
       {activeEvents.length > 0 && (
         <Pressable
           onPress={startWizard}
+          className="active:opacity-80"
           style={{
             position: 'absolute',
             bottom: 24,

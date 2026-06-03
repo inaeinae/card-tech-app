@@ -183,7 +183,7 @@ export default function EventDetailScreen() {
       <View className="flex-row items-center px-2 h-14">
         <Pressable
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center"
+          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center active:opacity-80"
         >
           <ChevronLeft size={20} color={C.ink} />
         </Pressable>
@@ -274,7 +274,7 @@ export default function EventDetailScreen() {
         {/* 상태 이력 링크 */}
         <Pressable
           onPress={() => router.push(`/events/${event.id}/history`)}
-          className="items-center justify-center p-4 mt-1"
+          className="items-center justify-center p-4 mt-1 active:opacity-60"
         >
           <Text className="text-label font-semibold text-primary dark:text-primary-dark">
             상태 이력 보기
@@ -291,21 +291,21 @@ export default function EventDetailScreen() {
           onPress={() =>
             router.push(`/modals/status-change?id=${event.id}&current=${event.status}` as any)
           }
-          className="flex-row items-center justify-center gap-1.5 bg-primary dark:bg-primary-dark rounded-lg py-3.5"
+          className="flex-row items-center justify-center gap-1.5 bg-primary dark:bg-primary-dark rounded-lg py-3.5 active:opacity-80"
         >
           <RefreshCw size={16} color="#FFFFFF" />
           <Text className="text-[15px] font-bold text-white">상태 변경</Text>
         </Pressable>
         <Pressable
           onPress={onEdit}
-          className="flex-row items-center justify-center gap-1.5 bg-surface dark:bg-surface-dark rounded-lg py-3.5 border border-border-strong dark:border-border-strong-dark"
+          className="flex-row items-center justify-center gap-1.5 bg-surface dark:bg-surface-dark rounded-lg py-3.5 border border-border-strong dark:border-border-strong-dark active:opacity-80"
         >
           <Pencil size={16} color={C.ink2} />
           <Text className="text-[15px] font-semibold text-ink-2 dark:text-ink-2-dark">수정</Text>
         </Pressable>
         <Pressable
           onPress={onDelete}
-          className="flex-row items-center justify-center gap-1.5 bg-bg dark:bg-bg-dark rounded-lg py-3.5 border border-danger-soft dark:border-danger-darkSoft"
+          className="flex-row items-center justify-center gap-1.5 bg-bg dark:bg-bg-dark rounded-lg py-3.5 border border-danger-soft dark:border-danger-darkSoft active:opacity-80"
         >
           <Trash2 size={16} color={C.danger} />
           <Text className="text-[15px] font-semibold text-danger dark:text-danger-dark">삭제</Text>

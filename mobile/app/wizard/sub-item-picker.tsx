@@ -111,6 +111,7 @@ function EventContextPicker({
               accessibilityRole="checkbox"
               accessibilityState={{ checked: r.eligible }}
               hitSlop={8}
+              className="active:opacity-60"
             >
               {r.eligible ? (
                 <CheckSquare size={20} color={C.primary} />
@@ -208,7 +209,7 @@ function CardContextPicker({
                 onPress={() => toggle(i)}
                 accessibilityRole="checkbox"
                 accessibilityState={{ checked: selected.has(i) }}
-                className={`rounded-md border p-3 ${
+                className={`rounded-md border p-3 active:opacity-80 ${
                   selected.has(i)
                     ? 'border-primary bg-primary/10'
                     : 'border-border dark:border-border-dark bg-surface dark:bg-surface-dark'

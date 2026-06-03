@@ -90,7 +90,7 @@ function CloseButton() {
       hitSlop={8}
       accessibilityRole="button"
       accessibilityLabel="위저드 취소"
-      className="px-2"
+      className="px-2 active:opacity-60"
     >
       <X size={24} color={C.ink} />
     </Pressable>

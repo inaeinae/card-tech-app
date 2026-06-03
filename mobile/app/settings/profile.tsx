@@ -69,14 +69,15 @@ export default function ProfileEditScreen() {
         disabled={saving || value.trim().length === 0}
         accessibilityRole="button"
         accessibilityLabel="닉네임 저장"
-        style={({ pressed }) => ({
+        className="active:opacity-80"
+        style={{
           marginTop: 24,
-          backgroundColor: pressed ? C.primaryPressed : C.primary,
+          backgroundColor: C.primary,
           opacity: saving || value.trim().length === 0 ? 0.5 : 1,
           paddingVertical: 16,
           borderRadius: 12,
           alignItems: 'center',
-        })}
+        }}
       >
         <Text style={{ fontSize: 15, fontFamily: Fonts.bold, color: '#FFFFFF' }}>
           {saving ? '저장 중…' : '저장'}

@@ -105,7 +105,7 @@ export default function ReportScreen() {
                 onPress={() => setPeriod(y)}
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
-                className={`px-4 py-2 rounded-full ${
+                className={`px-4 py-2 rounded-full active:opacity-80 ${
                   active ? 'bg-ink dark:bg-ink-dark' : 'bg-surface dark:bg-surface-dark'
                 }`}
               >
@@ -305,7 +305,7 @@ function MonthCard({
             onPress={() => onSelect(e.id)}
             accessibilityRole="button"
             accessibilityLabel={`${e.title} 상세 보기`}
-            className="flex-row items-center justify-between p-[14px] border-t border-border dark:border-border-dark bg-bg dark:bg-bg-dark gap-3"
+            className="flex-row items-center justify-between p-[14px] border-t border-border dark:border-border-dark bg-bg dark:bg-bg-dark gap-3 active:opacity-80"
           >
             <View className="flex-1 gap-0.5">
               <Text

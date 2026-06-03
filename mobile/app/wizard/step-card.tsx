@@ -69,7 +69,7 @@ export default function WizardStepCard() {
                   accessibilityRole="radio"
                   accessibilityState={{ selected }}
                   hitSlop={4}
-                  className={`rounded-md border ${
+                  className={`rounded-md border active:opacity-80 ${
                     selected
                       ? 'border-primary dark:border-primary-dark'
                       : 'border-border dark:border-border-dark'
@@ -87,7 +87,7 @@ export default function WizardStepCard() {
           accessibilityLabel="새 카드 등록"
           hitSlop={8}
           onPress={() => router.push('/cards/new')}
-          className="mt-2 flex-row items-center justify-center gap-2 h-12 rounded-md bg-surface dark:bg-surface-dark border border-border dark:border-border-dark"
+          className="mt-2 flex-row items-center justify-center gap-2 h-12 rounded-md bg-surface dark:bg-surface-dark border border-border dark:border-border-dark active:opacity-80"
         >
           <Plus size={18} color={C.ink3} />
           <Text className="text-body text-foreground dark:text-foreground-dark">새 카드 등록</Text>

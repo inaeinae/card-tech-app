@@ -83,7 +83,7 @@ export default function CalendarScreen() {
                 onPress={() => setSegment(key)}
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
-                className={`flex-1 py-2 rounded-sm items-center ${
+                className={`flex-1 py-2 rounded-sm items-center active:opacity-80 ${
                   active ? 'bg-bg dark:bg-bg-dark' : ''
                 }`}
               >
@@ -179,7 +179,7 @@ function CalendarEventCard({ event, onPress }: { event: EventRow; onPress: () =>
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`${event.title} 상세 보기`}
-      className="p-[14px] rounded-2xl border border-border-strong dark:border-border-strong-dark bg-bg dark:bg-bg-dark flex-row items-center gap-3"
+      className="p-[14px] rounded-2xl border border-border-strong dark:border-border-strong-dark bg-bg dark:bg-bg-dark flex-row items-center gap-3 active:opacity-80"
     >
       {/* 좌측 컬러 바 4×40 (UI_STRUCTURE §2.5) */}
       <View style={{ width: 4, height: 40, borderRadius: 999, backgroundColor: barColor }} />

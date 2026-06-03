@@ -42,7 +42,7 @@ export default function TemplatePicker() {
                 accessibilityRole="button"
                 accessibilityLabel={c.label}
                 hitSlop={4}
-                className="flex-row items-center justify-between rounded-md border border-border dark:border-border-dark bg-surface dark:bg-surface-dark px-4 py-3"
+                className="flex-row items-center justify-between rounded-md border border-border dark:border-border-dark bg-surface dark:bg-surface-dark px-4 py-3 active:opacity-80"
               >
                 <Text className="text-body text-foreground dark:text-foreground-dark">
                   {c.label}
@@ -60,7 +60,7 @@ export default function TemplatePicker() {
                 accessibilityRole="button"
                 accessibilityLabel={t.label}
                 hitSlop={4}
-                className="basis-[31%] grow aspect-square rounded-md bg-surface dark:bg-surface-dark border border-border dark:border-border-dark items-center justify-center p-2"
+                className="basis-[31%] grow aspect-square rounded-md bg-surface dark:bg-surface-dark border border-border dark:border-border-dark items-center justify-center p-2 active:opacity-80"
               >
                 <Text className="text-body font-medium text-foreground dark:text-foreground-dark text-center">
                   {t.label}

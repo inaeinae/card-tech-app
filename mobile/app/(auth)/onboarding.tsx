@@ -65,7 +65,9 @@ export default function OnboardingScreen() {
           <View
             key={i}
             className={`h-2 rounded-full ${
-              i === index ? 'w-6 bg-primary dark:bg-primary-dark' : 'w-2 bg-border dark:bg-border-dark'
+              i === index
+                ? 'w-6 bg-primary dark:bg-primary-dark'
+                : 'w-2 bg-border dark:bg-border-dark'
             }`}
           />
         ))}
@@ -74,7 +76,7 @@ export default function OnboardingScreen() {
         <Pressable
           onPress={next}
           accessibilityRole="button"
-          className="min-h-[52px] rounded-md bg-primary dark:bg-primary-dark items-center justify-center"
+          className="min-h-[52px] rounded-md bg-primary dark:bg-primary-dark items-center justify-center active:opacity-80"
         >
           <Text className="text-white font-bold text-body">
             {index < SLIDES.length - 1 ? '다음' : '시작하기'}

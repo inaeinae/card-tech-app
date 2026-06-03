@@ -70,7 +70,7 @@ function SettingRow({ item, hasDivider }: { item: SettingItem; hasDivider: boole
       onPress={item.onPress}
       accessibilityRole="button"
       accessibilityLabel={item.label}
-      className={`flex-row items-center gap-3.5 p-4 bg-bg dark:bg-bg-dark ${
+      className={`flex-row items-center gap-3.5 p-4 bg-bg dark:bg-bg-dark active:bg-surface dark:active:bg-surface-dark ${
         hasDivider ? 'border-t border-border dark:border-border-dark' : ''
       }`}
     >
@@ -237,7 +237,7 @@ export default function MyPageScreen() {
             onPress={() => router.push('/settings/profile')}
             accessibilityRole="button"
             accessibilityLabel="프로필 수정"
-            className="px-3 py-1.5 rounded-sm border border-border-strong dark:border-border-strong-dark"
+            className="px-3 py-1.5 rounded-sm border border-border-strong dark:border-border-strong-dark active:opacity-80"
           >
             <Text className="text-caption font-semibold text-ink-2 dark:text-ink-2-dark">수정</Text>
           </Pressable>

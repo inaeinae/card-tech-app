@@ -53,6 +53,7 @@ export function CardBenefitItem({ benefit, onDelete }: Props) {
             accessibilityRole="button"
             accessibilityLabel="혜택 삭제"
             hitSlop={8}
+            className="active:opacity-60"
           >
             <Trash2 size={18} color={C.danger} />
           </Pressable>
