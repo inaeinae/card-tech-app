@@ -269,7 +269,7 @@
 - [x] B4. 이벤트 목록 / 상세 / 이력 — 3파일 hex 67건 + _layout 다크 토큰화, 칩 정렬 fix (시뮬 검증 데이터 필요시 후속)
 - [x] B5. 위저드 5단 + 상태 변경 모달 — status-change 전면 다크 토큰화, _layout 헤더 Colors[scheme], 아이콘 hex 8건 토큰화 (시뮬 검증 데이터 필요시 후속)
 - [x] B6. settings 3종 다크 — notifications Colors[scheme] 전환, _layout 헤더 토큰화, profile/about 기존 대응 확인 (Pencil mockup 신규 생략: settings 는 inline 스타일 기반, Pencil 1:1 대상 아님)
-- [ ] B7. (auth) login / onboarding 다크
+- [x] B7. (auth) login / onboarding 다크 — login/onboarding/dev-login 이미 dark 클래스 적용 확인. 부수 발견·수정: Button/Input/LoadingState/(tabs)탭바가 raw useColorScheme 사용해 수동 테마 override 무시하던 버그 → useResolvedColorScheme 교체 (ThemeToggle 은 미사용 stub, parallax/collapsible 은 미사용 scaffold — 보류)
 - [ ] EmptyHomeDark Pencil mockup (보류)
 - [ ] Pressable pressed 효과 복원 (함수형 style 회귀 회피 패턴 모색)
 
