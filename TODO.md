@@ -263,7 +263,7 @@
 - [x] cards/[id]/index hex 37건 → 토큰 (30건 토큰화, 15건 브랜드/Hero 의도적 유지)
 - [x] Pressable 함수형 style → 객체 2곳
 - [x] cards/new 다크 시뮬 검증
-- [ ] cards/[id]/index, edit 시뮬 검증 — 카드 등록 데이터 필요
+- [x] cards/[id]/index, edit 시뮬 검증 — local Supabase seed(카드 2/이벤트 4) 후 다크 렌더 확인. **버그 발견·수정:** Zustand v5 불안정 selector(.filter()/?? []) 무한 리렌더 → raw 선택+body 파생으로 수정 (commit c85b607)
 
 ## Phase B (잔여 sub-phase)
 - [x] B4. 이벤트 목록 / 상세 / 이력 — 3파일 hex 67건 + _layout 다크 토큰화, 칩 정렬 fix (시뮬 검증 데이터 필요시 후속)
@@ -274,6 +274,9 @@
 - [x] 시뮬 라이트/다크 시각 검증 — iPhone 17 시뮬 appearance 토글로 EmptyHome(라/다), settings/about(다), settings/notifications 헤더(다), wizard benefit-form(다, Input/Button/X헤더), cards/new(라/다, Select/Input/RadioGroup) 확인. 데이터 의존 화면(이벤트 목록/상세·캘린더·리포트·카드 상세·status-change)은 로그인/Supabase 데이터 필요 — 후속
 - [x] Pressable pressed 효과 복원 — NativeWind active: variant 일괄 적용 (함수형 style 회피). 공용 컴포넌트 + 화면 전반 interactive Pressable active:opacity-(60|80)/active:bg, 함수형 잔존 3곳 static+active 전환. backdrop/container 의도적 제외
 - [x] AutoSuggestionBanner 다크 토큰화 — inline 라이트 고정 색 → NativeWind 다크(primary-soft/ink 토큰, Sparkles Colors[scheme])
+- [x] 데이터 의존 화면 시뮬 검증 — local seed 후 홈/리포트/캘린더(이벤트 dots)/이벤트 상세/status-change 모달/카드 상세 다크 전수 확인
+- [x] **Zustand v5 무한 리렌더 버그 수정** — cards/[id]/index·edit, wizard/step-card selector 안정화 + selectorStability 회귀 테스트 (commit c85b607)
+- [ ] (관찰) cards/[id]·edit, wizard/step-card 직접 진입 시 loadCards 미호출로 무한 로딩 — 정상 플로우(리포트/위저드 경유)는 OK. 직접 딥링크 대비 자체 loadCards 부트스트랩 검토 (선택)
 
 ## v2 이후 (범위 외 — 메모용)
 
