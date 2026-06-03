@@ -1,7 +1,7 @@
 // 기본 버튼 — Pressable 기반. 44pt 터치 타겟 · accessibilityRole 고정 · 로딩 시 비활성
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import type { PressableProps } from 'react-native';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'destructive';
 type Size = 'sm' | 'md' | 'lg';
@@ -60,11 +60,14 @@ export function Button({
   accessibilityLabel,
   ...pressable
 }: ButtonProps) {
-  const scheme = useColorScheme();
+  const scheme = useResolvedColorScheme();
   const isDisabled = disabled || loading;
-  const spinnerColor = variant === 'secondary' || variant === 'ghost'
-    ? scheme === 'dark' ? '#F8FAFC' : '#0F172A'
-    : '#FFFFFF';
+  const spinnerColor =
+    variant === 'secondary' || variant === 'ghost'
+      ? scheme === 'dark'
+        ? '#F8FAFC'
+        : '#0F172A'
+      : '#FFFFFF';
 
   return (
     <Pressable

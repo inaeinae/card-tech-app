@@ -2,10 +2,10 @@ import { Tabs } from 'expo-router';
 import { Home, CalendarDays, BarChart3, User } from 'lucide-react-native';
 import { HapticTab } from '@/components/haptic-tab';
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 export default function TabLayout() {
-  const scheme = useColorScheme() ?? 'light';
+  const scheme = useResolvedColorScheme();
   const active = Colors[scheme].tint;
   const inactive = Colors[scheme].tabIconDefault;
 

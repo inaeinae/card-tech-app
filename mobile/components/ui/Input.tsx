@@ -2,7 +2,7 @@
 import { forwardRef } from 'react';
 import { Text, TextInput, View } from 'react-native';
 import type { TextInputProps } from 'react-native';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 type InputProps = TextInputProps & {
   label: string;
@@ -15,7 +15,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
   { label, helperText, errorText, required, style, ...textInput },
   ref,
 ) {
-  const scheme = useColorScheme();
+  const scheme = useResolvedColorScheme();
   const placeholderColor = scheme === 'dark' ? '#94A3B8' : '#64748B';
   const hasError = Boolean(errorText);
 
@@ -42,7 +42,10 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
         {...textInput}
       />
       {hasError ? (
-        <Text className="text-caption text-destructive dark:text-destructive-dark" accessibilityLiveRegion="polite">
+        <Text
+          className="text-caption text-destructive dark:text-destructive-dark"
+          accessibilityLiveRegion="polite"
+        >
           {errorText}
         </Text>
       ) : helperText ? (
