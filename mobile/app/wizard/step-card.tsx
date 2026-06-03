@@ -17,13 +17,16 @@ import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 export default function WizardStepCard() {
   const router = useRouter();
   const C = Colors[useResolvedColorScheme()];
-  const cards = useCardStore((s) => s.cards.filter((c) => !c.canceled_at));
+  // raw slice 선택 후 body 에서 filter — selector 안 .filter() 는 Zustand v5 무한 리렌더 유발
+  const allCards = useCardStore((s) => s.cards);
   const loadCards = useCardStore((s) => s.loadCards);
   const events = useEventStore((s) => s.events);
   const loadEvents = useEventStore((s) => s.loadEvents);
   const draft = useWizardStore((s) => s.draft);
   const patchDraft = useWizardStore((s) => s.patchDraft);
   const setStep = useWizardStore((s) => s.setStep);
+
+  const cards = useMemo(() => allCards.filter((c) => !c.canceled_at), [allCards]);
 
   useEffect(() => {
     loadCards();

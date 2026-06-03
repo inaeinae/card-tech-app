@@ -1,6 +1,6 @@
 // 카드 수정 — 기존 값 로드 후 new 와 동일한 폼 재사용.
 // 혜택은 즉시 반영(template-picker 경유 / 삭제 즉시 deleteCardBenefit) 정책 유지.
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
@@ -32,9 +32,12 @@ export default function EditCardScreen() {
   const user = useAuthStore((s) => s.user);
   const card = useCardStore((s) => s.cards.find((c) => c.id === id));
   const upsertCard = useCardStore((s) => s.upsertCard);
-  const benefits = useCardStore((s) => s.benefits[id ?? ''] ?? []);
+  // raw slice 선택 후 body 에서 파생 — selector 안 ?? [] 는 Zustand v5 무한 리렌더 유발
+  const benefitsMap = useCardStore((s) => s.benefits);
   const loadCardBenefits = useCardStore((s) => s.loadCardBenefits);
   const deleteCardBenefit = useCardStore((s) => s.deleteCardBenefit);
+
+  const benefits = useMemo(() => benefitsMap[id ?? ''] ?? [], [benefitsMap, id]);
 
   const [issuer, setIssuer] = useState('');
   const [name, setName] = useState('');

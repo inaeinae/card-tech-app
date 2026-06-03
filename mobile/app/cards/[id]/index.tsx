@@ -41,14 +41,19 @@ export default function CardDetailScreen() {
   const C = Colors[scheme];
 
   const card = useCardStore((s) => s.cards.find((c) => c.id === id));
-  const benefits = useCardStore((s) => (id ? (s.benefits[id] ?? []) : []));
+  // raw slice 만 선택 — 파생(fallback/filter)은 아래 body 에서. selector 안 ?? []/.filter()
+  // 는 매 호출 새 배열을 만들어 Zustand v5(useSyncExternalStore) 무한 리렌더를 유발한다.
+  const benefitsMap = useCardStore((s) => s.benefits);
   const loadCardBenefits = useCardStore((s) => s.loadCardBenefits);
   const scheduleCancel = useCardStore((s) => s.scheduleCancel);
   const confirmCancel = useCardStore((s) => s.confirmCancel);
   const restoreCancel = useCardStore((s) => s.restoreCancel);
 
-  const events = useEventStore((s) => s.events.filter((e) => e.card_id === id));
+  const allEvents = useEventStore((s) => s.events);
   const loadEvents = useEventStore((s) => s.loadEvents);
+
+  const benefits = useMemo(() => (id ? (benefitsMap[id] ?? []) : []), [benefitsMap, id]);
+  const events = useMemo(() => allEvents.filter((e) => e.card_id === id), [allEvents, id]);
 
   const [tab, setTab] = useState<Tab>('benefits');
 
