@@ -267,7 +267,7 @@
 
 ## Phase B (잔여 sub-phase)
 - [x] B4. 이벤트 목록 / 상세 / 이력 — 3파일 hex 67건 + _layout 다크 토큰화, 칩 정렬 fix (시뮬 검증 데이터 필요시 후속)
-- [ ] B5. 위저드 5단 + 상태 변경 모달
+- [x] B5. 위저드 5단 + 상태 변경 모달 — status-change 전면 다크 토큰화, _layout 헤더 Colors[scheme], 아이콘 hex 8건 토큰화 (시뮬 검증 데이터 필요시 후속)
 - [ ] B6. settings 3종 (신규 mockup 포함)
 - [ ] B7. (auth) login / onboarding 다크
 - [ ] EmptyHomeDark Pencil mockup (보류)
