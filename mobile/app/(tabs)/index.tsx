@@ -9,6 +9,8 @@ import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { useEventStore } from '@/stores/eventStore';
 import { useCardStore } from '@/stores/cardStore';
 import { useWizardStore } from '@/stores/wizardStore';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
+import { Colors } from '@/constants/theme';
 import type { EventRow } from '@/types/models';
 import { sumEventExpected, summarizeEvents } from '@/lib/eventTotals';
 
@@ -30,6 +32,10 @@ export default function HomeScreen() {
   const benefitsByEvent = useEventStore((s) => s.benefitsByEvent);
   const loadEventBenefits = useEventStore((s) => s.loadEventBenefits);
   const cards = useCardStore((s) => s.cards);
+
+  // 다크/라이트 자동 해석 — lucide 아이콘 color / RefreshControl tintColor 인라인 토큰
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
 
   useEffect(() => {
     (async () => {
@@ -85,46 +91,41 @@ export default function HomeScreen() {
                 await loadEvents();
                 await loadEventBenefits();
               }}
-              tintColor="#3182F6"
+              tintColor={C.primary}
             />
           }
           ListHeaderComponent={
             <SummaryCard confirmedAmount={confirmedAmount} expectedAmount={expectedAmount} />
           }
           ListFooterComponent={
-            <Pressable
-              onPress={() => router.push('/events')}
-              style={{ alignItems: 'center', padding: 16 }}
-            >
-              <Text style={{ fontSize: 14, fontWeight: '600', color: '#3182F6' }}>
-                전체 이벤트 보기 →
-              </Text>
+            <Pressable onPress={() => router.push('/events')} className="items-center p-4">
+              <Text className="text-label font-semibold text-primary">전체 이벤트 보기 →</Text>
             </Pressable>
           }
           contentContainerStyle={{ paddingTop: 8, paddingBottom: 100 }}
         />
       )}
 
-      {/* FAB */}
+      {/* FAB — Pressable 함수형 style 제거 (RN 0.81 회귀 fix). pressed 상태는 className 대신 객체 유지 */}
       {activeEvents.length > 0 && (
         <Pressable
           onPress={startWizard}
-          style={({ pressed }) => ({
+          style={{
             position: 'absolute',
             bottom: 24,
             right: 24,
             width: 56,
             height: 56,
             borderRadius: 28,
-            backgroundColor: pressed ? '#1B64DA' : '#3182F6',
+            backgroundColor: C.primary,
             alignItems: 'center',
             justifyContent: 'center',
-            shadowColor: '#3182F6',
+            shadowColor: C.primary,
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.4,
             shadowRadius: 8,
             elevation: 6,
-          })}
+          }}
           accessibilityLabel="이벤트 등록"
         >
           <Plus size={28} color="#FFFFFF" />

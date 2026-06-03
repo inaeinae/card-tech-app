@@ -247,14 +247,24 @@
 - [x] 시뮬 라이트/다크 동작 확인 (dark:bg-bg-dark 패턴 정상 동작)
 - [ ] Pencil AC4EX 갱신 + MyPageDark 신규 — Pencil 앱 ⌘S 후 commit 별건
 
-## Phase B (예정 sub-phase)
+## Phase B2. 3 탭 Pencil 1:1 (2026-05-22)
 
-- [ ] B2. 홈 / 캘린더 / 리포트 탭
+- [x] Pencil HomeDark/CalendarDark/ReportDark 신규
+- [x] (tabs)/index, calendar, report + EventListItem/EmptyHome hex → NativeWind 토큰 + dark variant
+- [x] Pressable 함수형 style → 객체 5곳 (RN 0.81 회귀)
+- [x] react-native-calendars theme prop 다크 적용 (Colors[scheme])
+- [x] 시뮬 다크 검증 (홈/캘린더/리포트)
+- [ ] 라이트 모드 시각 검증 — 사용자 themeMode 라이트 토글 후 확인
+
+## Phase B (잔여 sub-phase)
+
 - [ ] B3. 카드 상세 / 수정 / 등록
 - [ ] B4. 이벤트 목록 / 상세 / 이력
 - [ ] B5. 위저드 5단 + 상태 변경 모달
 - [ ] B6. settings 3종 (신규 mockup 포함)
 - [ ] B7. (auth) login / onboarding 다크
+- [ ] EmptyHomeDark Pencil mockup (보류)
+- [ ] Pressable pressed 효과 복원 (함수형 style 회귀 회피 패턴 모색)
 
 ## v2 이후 (범위 외 — 메모용)
 
