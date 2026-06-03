@@ -3,15 +3,12 @@ import { Platform, Pressable, ScrollView, Switch, Text, View } from 'react-nativ
 import DateTimePicker from '@react-native-community/datetimepicker';
 import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Colors, Fonts } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 import { useNotificationStore } from '@/stores/notificationStore';
-import {
-  DEFAULT_KINDS_ENABLED,
-  type KindsEnabled,
-  type NotificationKind,
-} from '@/types/models';
+import { DEFAULT_KINDS_ENABLED, type KindsEnabled, type NotificationKind } from '@/types/models';
 
-// 라이트 모드 색상 토큰 단축 참조
-const C = Colors.light;
+// 색상 토큰 타입 — Row 컴포넌트에 scheme 색상 전달용
+type ThemeC = (typeof Colors)[keyof typeof Colors];
 
 // 알림 종류별 한국어 라벨
 const KIND_LABELS: Record<NotificationKind, string> = {
@@ -37,6 +34,8 @@ function dateToTimeString(date: Date): string {
 }
 
 export default function NotificationSettingsScreen() {
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
   const prefs = useNotificationStore((s) => s.prefs);
   const permission = useNotificationStore((s) => s.permission);
   const updatePrefs = useNotificationStore((s) => s.updatePrefs);
@@ -86,7 +85,9 @@ export default function NotificationSettingsScreen() {
   // prefs 미로드 상태 (초기 로딩 중)
   if (!prefs) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: C.bg }}>
+      <View
+        style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: C.bg }}
+      >
         <Text style={{ color: C.ink3, fontFamily: Fonts.medium }}>알림 설정을 불러오는 중…</Text>
       </View>
     );
@@ -120,6 +121,7 @@ export default function NotificationSettingsScreen() {
 
       {/* 전역 on/off 토글 */}
       <Row
+        C={C}
         label="알림 전체 사용"
         right={
           <Switch
@@ -191,6 +193,7 @@ export default function NotificationSettingsScreen() {
       {(Object.keys(KIND_LABELS) as NotificationKind[]).map((kind) => (
         <Row
           key={kind}
+          C={C}
           label={KIND_LABELS[kind]}
           // 전역 off 또는 미구현 항목(autopay_check)은 비활성화
           disabled={!prefs.global_enabled || kind === 'autopay_check'}
@@ -223,10 +226,12 @@ export default function NotificationSettingsScreen() {
 
 // 공통 설정 행 컴포넌트 — 라벨 + 우측 컨트롤
 function Row({
+  C,
   label,
   right,
   disabled,
 }: {
+  C: ThemeC;
   label: string;
   right: React.ReactNode;
   disabled?: boolean;
