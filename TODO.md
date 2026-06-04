@@ -245,7 +245,7 @@
 - [x] mypage.tsx hex 18건 → NativeWind 토큰 + 다크 variant
 - [x] ThemeModeSheet 백드롭 토큰화
 - [x] 시뮬 라이트/다크 동작 확인 (dark:bg-bg-dark 패턴 정상 동작)
-- [ ] Pencil AC4EX 갱신 + MyPageDark 신규 — Pencil 앱 ⌘S 후 commit 별건
+- [x] Pencil AC4EX 갱신 + MyPageDark 신규 — AC4EX(라이트) 토큰화 + MyPageDark(`SBC1L`) 완료. 디스크 flush(⌘S) 후 commit 별건
 
 ## Phase B2. 3 탭 Pencil 1:1 (2026-05-22)
 
@@ -270,7 +270,7 @@
 - [x] B5. 위저드 5단 + 상태 변경 모달 — status-change 전면 다크 토큰화, _layout 헤더 Colors[scheme], 아이콘 hex 8건 토큰화 (시뮬 검증 데이터 필요시 후속)
 - [x] B6. settings 3종 다크 — notifications Colors[scheme] 전환, _layout 헤더 토큰화, profile/about 기존 대응 확인 (Pencil mockup 신규 생략: settings 는 inline 스타일 기반, Pencil 1:1 대상 아님)
 - [x] B7. (auth) login / onboarding 다크 — login/onboarding/dev-login 이미 dark 클래스 적용 확인. 부수 발견·수정: Button/Input/LoadingState/(tabs)탭바가 raw useColorScheme 사용해 수동 테마 override 무시하던 버그 → useResolvedColorScheme 교체 (ThemeToggle 은 미사용 stub, parallax/collapsible 은 미사용 scaffold — 보류)
-- [ ] EmptyHomeDark Pencil mockup (보류 — 실기 다크 렌더는 정상 확인됨, 목업 산출물만 미작성)
+- [x] EmptyHomeDark Pencil mockup — EmptyHome(`QT7oC`) 복사 + 다크 토큰 오버라이드 → `Screen / EmptyHomeDark`(`jMs3t`) 신규. 디스크 flush(⌘S) 후 commit 별건
 - [x] 시뮬 라이트/다크 시각 검증 — iPhone 17 시뮬 appearance 토글로 EmptyHome(라/다), settings/about(다), settings/notifications 헤더(다), wizard benefit-form(다, Input/Button/X헤더), cards/new(라/다, Select/Input/RadioGroup) 확인. 데이터 의존 화면(이벤트 목록/상세·캘린더·리포트·카드 상세·status-change)은 로그인/Supabase 데이터 필요 — 후속
 - [x] Pressable pressed 효과 복원 — NativeWind active: variant 일괄 적용 (함수형 style 회피). 공용 컴포넌트 + 화면 전반 interactive Pressable active:opacity-(60|80)/active:bg, 함수형 잔존 3곳 static+active 전환. backdrop/container 의도적 제외
 - [x] AutoSuggestionBanner 다크 토큰화 — inline 라이트 고정 색 → NativeWind 다크(primary-soft/ink 토큰, Sparkles Colors[scheme])
