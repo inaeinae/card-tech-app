@@ -24,7 +24,10 @@ export default function AboutScreen() {
   const version = Constants.expoConfig?.version ?? '1.0.0';
 
   const rows: { label: string; right: React.ReactNode; onPress?: () => void }[] = [
-    { label: '앱 버전', right: <Text style={{ color: C.ink3, fontFamily: Fonts.medium }}>v{version}</Text> },
+    {
+      label: '앱 버전',
+      right: <Text style={{ color: C.ink3, fontFamily: Fonts.medium }}>v{version}</Text>,
+    },
     {
       label: '이용약관',
       right: <ChevronRight size={16} color={C.ink4} />,
@@ -55,15 +58,16 @@ export default function AboutScreen() {
             disabled={!row.onPress}
             accessibilityRole={row.onPress ? 'button' : 'text'}
             accessibilityLabel={row.label}
-            style={({ pressed }) => ({
+            className="active:bg-surface-2 dark:active:bg-surface-2-dark"
+            style={{
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: 16,
-              backgroundColor: pressed ? C.surface2 : 'transparent',
+              backgroundColor: 'transparent',
               borderTopWidth: idx > 0 ? 1 : 0,
               borderTopColor: C.border,
-            })}
+            }}
           >
             <Text style={{ fontSize: 15, fontFamily: Fonts.semibold, color: C.ink }}>
               {row.label}

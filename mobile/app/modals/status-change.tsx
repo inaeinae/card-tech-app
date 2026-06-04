@@ -7,17 +7,29 @@ import { useEventStore } from '@/stores/eventStore';
 import { SafeAreaScreen } from '@/components/ui/SafeAreaScreen';
 import { EVENT_STATUS_LABEL, type EventStatus } from '@/types/models';
 import { ALLOWED_TRANSITIONS, canTransition } from '@/lib/eventStatus';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
-const STATUS_PALETTE: Record<string, { bg: string; text: string; dot: string }> = {
-  registered: { bg: '#F2F4F6', text: '#4E5968', dot: '#8B95A1' },
-  applied: { bg: '#E8F2FE', text: '#3182F6', dot: '#3182F6' },
-  in_progress: { bg: '#FEF3C7', text: '#D97706', dot: '#F59E0B' },
-  performance_done: { bg: '#FEF3C7', text: '#D97706', dot: '#F59E0B' },
-  pending_payout: { bg: '#F2F4F6', text: '#4E5968', dot: '#8B95A1' },
-  paid: { bg: '#E5FAF3', text: '#0F8568', dot: '#19D294' },
-  cancelable: { bg: '#FFF1F0', text: '#FF4D4F', dot: '#FF4D4F' },
-  canceled: { bg: '#FFF1F0', text: '#FF4D4F', dot: '#FF4D4F' },
-};
+// 상태 도트 컬러 — 라이트/다크 토큰 매핑 (텍스트 라벨 병기로 color-not-only 충족)
+type ThemeC = (typeof Colors)[keyof typeof Colors];
+function getStatusColor(status: string, C: ThemeC): string {
+  switch (status) {
+    case 'applied':
+      return C.primary;
+    case 'in_progress':
+    case 'performance_done':
+      return C.warning;
+    case 'paid':
+      return C.accent;
+    case 'cancelable':
+    case 'canceled':
+      return C.danger;
+    case 'registered':
+    case 'pending_payout':
+    default:
+      return C.ink3;
+  }
+}
 
 // 최종 수령 완료 상태를 추천으로 강조
 const RECOMMENDED: EventStatus[] = ['paid'];
@@ -26,6 +38,8 @@ export default function StatusChangeModal() {
   const { id, current } = useLocalSearchParams<{ id: string; current: EventStatus }>();
   const router = useRouter();
   const changeStatus = useEventStore((s) => s.changeStatus);
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
   const [loading, setLoading] = useState(false);
 
   const options = (ALLOWED_TRANSITIONS[current] ?? []) as EventStatus[];
@@ -44,84 +58,50 @@ export default function StatusChangeModal() {
   return (
     <SafeAreaScreen
       edges={['top', 'bottom', 'left', 'right']}
-      className="bg-[rgba(25,31,40,0.5)]"
+      className="bg-[rgba(25,31,40,0.5)] dark:bg-[rgba(0,0,0,0.6)]"
       viewProps={{ style: { justifyContent: 'flex-end' } }}
     >
-      <View
-        style={{
-          backgroundColor: '#FFFFFF',
-          borderTopLeftRadius: 24,
-          borderTopRightRadius: 24,
-          padding: 24,
-          paddingBottom: 40,
-          gap: 16,
-        }}
-      >
-        <Text style={{ fontSize: 18, fontWeight: '700', color: '#191F28' }}>상태 변경</Text>
+      <View className="bg-bg dark:bg-bg-dark rounded-t-xl px-6 pt-6 pb-10 gap-4">
+        <Text className="text-[18px] font-bold text-ink dark:text-ink-dark">상태 변경</Text>
 
         {/* 현재 상태 */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <View
-            style={{
-              backgroundColor: '#E8F2FE',
-              borderRadius: 999,
-              paddingHorizontal: 10,
-              paddingVertical: 4,
-            }}
-          >
-            <Text style={{ fontSize: 12, fontWeight: '600', color: '#3182F6' }}>현재</Text>
+        <View className="flex-row items-center gap-2">
+          <View className="bg-primary-soft dark:bg-primary-darkSoft rounded-full px-2.5 py-1">
+            <Text className="text-caption font-semibold text-primary dark:text-primary-dark">
+              현재
+            </Text>
           </View>
-          <Text style={{ fontSize: 15, fontWeight: '700', color: '#191F28' }}>
+          <Text className="text-[15px] font-bold text-ink dark:text-ink-dark">
             {EVENT_STATUS_LABEL[current]}
           </Text>
         </View>
 
         {/* 전이 가능 상태 목록 */}
-        <View style={{ gap: 8 }}>
+        <View className="gap-2">
           {options.length === 0 ? (
-            <Text
-              style={{ fontSize: 14, color: '#8B95A1', textAlign: 'center', paddingVertical: 8 }}
-            >
+            <Text className="text-label text-ink-3 dark:text-ink-3-dark text-center py-2">
               변경 가능한 상태가 없습니다.
             </Text>
           ) : (
             options.map((status) => {
-              const pal = STATUS_PALETTE[status] ?? STATUS_PALETTE.registered;
+              const dot = getStatusColor(status, C);
               const isRec = RECOMMENDED.includes(status);
               return (
                 <Pressable
                   key={status}
                   onPress={() => onSelect(status)}
                   disabled={loading}
-                  style={({ pressed }) => ({
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: 16,
-                    borderRadius: 14,
-                    borderWidth: 1.5,
-                    borderColor: pressed ? pal.dot : '#E5E8EB',
-                    backgroundColor: pressed ? pal.bg : '#FFFFFF',
-                  })}
+                  className="flex-row items-center justify-between p-4 rounded-[14px] border-[1.5px] border-border-strong dark:border-border-strong-dark bg-bg dark:bg-surface-dark active:opacity-80"
                 >
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                    <View
-                      style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: pal.dot }}
-                    />
-                    <Text style={{ fontSize: 15, fontWeight: '700', color: '#191F28' }}>
+                  <View className="flex-row items-center gap-2.5">
+                    <View className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: dot }} />
+                    <Text className="text-[15px] font-bold text-ink dark:text-ink-dark">
                       {EVENT_STATUS_LABEL[status]}
                     </Text>
                   </View>
                   {isRec && (
-                    <View
-                      style={{
-                        backgroundColor: '#E5FAF3',
-                        borderRadius: 999,
-                        paddingHorizontal: 8,
-                        paddingVertical: 3,
-                      }}
-                    >
-                      <Text style={{ fontSize: 11, fontWeight: '700', color: '#0F8568' }}>
+                    <View className="bg-accent-soft dark:bg-accent-darkSoft rounded-full px-2 py-[3px]">
+                      <Text className="text-[11px] font-bold text-accent dark:text-accent-dark">
                         추천
                       </Text>
                     </View>
@@ -132,8 +112,8 @@ export default function StatusChangeModal() {
           )}
         </View>
 
-        <Pressable onPress={() => router.back()} style={{ alignItems: 'center', padding: 8 }}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: '#8B95A1' }}>취소</Text>
+        <Pressable onPress={() => router.back()} className="items-center p-2 active:opacity-60">
+          <Text className="text-[15px] font-semibold text-ink-3 dark:text-ink-3-dark">취소</Text>
         </Pressable>
       </View>
     </SafeAreaScreen>

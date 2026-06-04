@@ -11,16 +11,22 @@ import { useCardStore } from '@/stores/cardStore';
 import { useEventStore } from '@/stores/eventStore';
 import { useWizardStore } from '@/stores/wizardStore';
 import { computeReuseWarning } from '@/lib/eventForm';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 export default function WizardStepCard() {
   const router = useRouter();
-  const cards = useCardStore((s) => s.cards.filter((c) => !c.canceled_at));
+  const C = Colors[useResolvedColorScheme()];
+  // raw slice 선택 후 body 에서 filter — selector 안 .filter() 는 Zustand v5 무한 리렌더 유발
+  const allCards = useCardStore((s) => s.cards);
   const loadCards = useCardStore((s) => s.loadCards);
   const events = useEventStore((s) => s.events);
   const loadEvents = useEventStore((s) => s.loadEvents);
   const draft = useWizardStore((s) => s.draft);
   const patchDraft = useWizardStore((s) => s.patchDraft);
   const setStep = useWizardStore((s) => s.setStep);
+
+  const cards = useMemo(() => allCards.filter((c) => !c.canceled_at), [allCards]);
 
   useEffect(() => {
     loadCards();
@@ -44,9 +50,7 @@ export default function WizardStepCard() {
         <Text className="text-headline font-bold text-foreground dark:text-foreground-dark">
           카드를 선택하세요
         </Text>
-        <Text className="text-body text-muted dark:text-muted-dark">
-          어떤 카드의 이벤트인가요?
-        </Text>
+        <Text className="text-body text-muted dark:text-muted-dark">어떤 카드의 이벤트인가요?</Text>
 
         {cards.length === 0 ? (
           <EmptyState
@@ -68,7 +72,7 @@ export default function WizardStepCard() {
                   accessibilityRole="radio"
                   accessibilityState={{ selected }}
                   hitSlop={4}
-                  className={`rounded-md border ${
+                  className={`rounded-md border active:opacity-80 ${
                     selected
                       ? 'border-primary dark:border-primary-dark'
                       : 'border-border dark:border-border-dark'
@@ -86,12 +90,10 @@ export default function WizardStepCard() {
           accessibilityLabel="새 카드 등록"
           hitSlop={8}
           onPress={() => router.push('/cards/new')}
-          className="mt-2 flex-row items-center justify-center gap-2 h-12 rounded-md bg-surface dark:bg-surface-dark border border-border dark:border-border-dark"
+          className="mt-2 flex-row items-center justify-center gap-2 h-12 rounded-md bg-surface dark:bg-surface-dark border border-border dark:border-border-dark active:opacity-80"
         >
-          <Plus size={18} color="#94A3B8" />
-          <Text className="text-body text-foreground dark:text-foreground-dark">
-            새 카드 등록
-          </Text>
+          <Plus size={18} color={C.ink3} />
+          <Text className="text-body text-foreground dark:text-foreground-dark">새 카드 등록</Text>
         </Pressable>
 
         {warn ? (

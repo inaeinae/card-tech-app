@@ -40,7 +40,7 @@ export function Select<T extends string>({
         onPress={() => setOpen(true)}
         accessibilityRole="button"
         accessibilityLabel={`${label} 선택`}
-        className={`h-12 flex-row items-center justify-between rounded-md border bg-surface dark:bg-surface-dark px-4 ${
+        className={`h-12 flex-row items-center justify-between rounded-md border bg-surface dark:bg-surface-dark px-4 active:opacity-80 ${
           hasError
             ? 'border-destructive dark:border-destructive-dark'
             : 'border-border dark:border-border-dark'
@@ -89,7 +89,7 @@ export function Select<T extends string>({
                     onChange(item.value);
                     setOpen(false);
                   }}
-                  className="px-4 py-4 border-b border-border dark:border-border-dark"
+                  className="px-4 py-4 border-b border-border dark:border-border-dark active:bg-surface dark:active:bg-surface-dark"
                   accessibilityRole="button"
                 >
                   <Text className="text-body text-foreground dark:text-foreground-dark">

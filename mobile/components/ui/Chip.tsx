@@ -31,7 +31,12 @@ export function Chip({ label, selected, onPress, tone = 'default', size = 'md' }
 
   if (onPress) {
     return (
-      <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label}>
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        className="active:opacity-80"
+      >
         {inner}
       </Pressable>
     );

@@ -1,9 +1,7 @@
 // ISO YYYY-MM-DD 문자열 in/out DatePicker — 라벨/에러는 Input 과 동일 톤
 import { useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
-import DateTimePicker, {
-  type DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
+import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 type Props = {
   label: string;
@@ -52,7 +50,7 @@ export function DatePickerField({
         accessibilityLabel={`${label} ${value ?? '미선택'}`}
         hitSlop={8}
         onPress={() => setOpen(true)}
-        className={`h-12 rounded-md border bg-surface dark:bg-surface-dark px-4 justify-center ${
+        className={`h-12 rounded-md border bg-surface dark:bg-surface-dark px-4 justify-center active:opacity-80 ${
           hasError
             ? 'border-destructive dark:border-destructive-dark'
             : 'border-border dark:border-border-dark'
@@ -60,9 +58,7 @@ export function DatePickerField({
       >
         <Text
           className={`text-body ${
-            value
-              ? 'text-foreground dark:text-foreground-dark'
-              : 'text-muted dark:text-muted-dark'
+            value ? 'text-foreground dark:text-foreground-dark' : 'text-muted dark:text-muted-dark'
           }`}
         >
           {display}

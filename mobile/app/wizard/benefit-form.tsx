@@ -20,6 +20,8 @@ import { normalizeBenefit, validateBenefit, type BenefitFormInput } from '@/lib/
 import { DISCOUNT_METHOD_LABEL, type DiscountMethod } from '@/types/models';
 import { useCardStore } from '@/stores/cardStore';
 import { useWizardStore } from '@/stores/wizardStore';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 // 할인 방식 Select 옵션 — DISCOUNT_METHOD_LABEL 의 한글 라벨 매핑
 const METHOD_OPTIONS: readonly SelectOption<DiscountMethod>[] = (
@@ -62,6 +64,7 @@ function CardBenefitForm({
   presets?: string;
 }) {
   const router = useRouter();
+  const C = Colors[useResolvedColorScheme()];
   const addDraftBenefit = useCardStore((s) => s.addDraftBenefit);
   const upsertCardBenefit = useCardStore((s) => s.upsertCardBenefit);
 
@@ -278,10 +281,10 @@ function CardBenefitForm({
                     onPress={() => removeTier(idx)}
                     accessibilityRole="button"
                     accessibilityLabel="구간 삭제"
-                    className="h-12 w-12 items-center justify-center"
+                    className="h-12 w-12 items-center justify-center active:opacity-60"
                     hitSlop={8}
                   >
-                    <Trash2 size={18} color="#EF4444" />
+                    <Trash2 size={18} color={C.danger} />
                   </Pressable>
                 </View>
               ))}
@@ -296,10 +299,10 @@ function CardBenefitForm({
             onPress={addTier}
             accessibilityRole="button"
             accessibilityLabel="구간 추가"
-            className="flex-row items-center gap-1 self-start py-2"
+            className="flex-row items-center gap-1 self-start py-2 active:opacity-60"
             hitSlop={8}
           >
-            <Plus size={16} color="#1E40AF" />
+            <Plus size={16} color={C.primary} />
             <Text className="text-label font-medium text-primary dark:text-primary-dark">
               구간 추가
             </Text>
@@ -329,10 +332,10 @@ function CardBenefitForm({
                   onPress={() => removeTarget(idx)}
                   accessibilityRole="button"
                   accessibilityLabel="대상 구분 삭제"
-                  className="h-12 w-12 items-center justify-center"
+                  className="h-12 w-12 items-center justify-center active:opacity-60"
                   hitSlop={8}
                 >
-                  <Trash2 size={18} color="#EF4444" />
+                  <Trash2 size={18} color={C.danger} />
                 </Pressable>
               </View>
               <Input
@@ -352,10 +355,10 @@ function CardBenefitForm({
             onPress={addTarget}
             accessibilityRole="button"
             accessibilityLabel="대상 구분 추가"
-            className="flex-row items-center gap-1 self-start py-2"
+            className="flex-row items-center gap-1 self-start py-2 active:opacity-60"
             hitSlop={8}
           >
-            <Plus size={16} color="#1E40AF" />
+            <Plus size={16} color={C.primary} />
             <Text className="text-label font-medium text-primary dark:text-primary-dark">
               구분 추가
             </Text>

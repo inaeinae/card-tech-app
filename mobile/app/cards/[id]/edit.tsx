@@ -1,6 +1,6 @@
 // 카드 수정 — 기존 값 로드 후 new 와 동일한 폼 재사용.
 // 혜택은 즉시 반영(template-picker 경유 / 삭제 즉시 deleteCardBenefit) 정책 유지.
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
@@ -15,6 +15,8 @@ import { useCardStore } from '@/stores/cardStore';
 import { validateCardForm, normalizeCardForm, type CardFormErrors } from '@/lib/cardForm';
 import { parseWon, formatWon } from '@/lib/formatWon';
 import { CARD_TYPE_LABEL, type CardType } from '@/types/models';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 // 카드 종류 라디오 옵션 — domestic/overseas 2종
 const CARD_TYPE_OPTIONS: { value: CardType; label: string }[] = [
@@ -25,12 +27,18 @@ const CARD_TYPE_OPTIONS: { value: CardType; label: string }[] = [
 export default function EditCardScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
   const user = useAuthStore((s) => s.user);
   const card = useCardStore((s) => s.cards.find((c) => c.id === id));
   const upsertCard = useCardStore((s) => s.upsertCard);
-  const benefits = useCardStore((s) => s.benefits[id ?? ''] ?? []);
+  // raw slice 선택 후 body 에서 파생 — selector 안 ?? [] 는 Zustand v5 무한 리렌더 유발
+  const benefitsMap = useCardStore((s) => s.benefits);
+  const loadCards = useCardStore((s) => s.loadCards);
   const loadCardBenefits = useCardStore((s) => s.loadCardBenefits);
   const deleteCardBenefit = useCardStore((s) => s.deleteCardBenefit);
+
+  const benefits = useMemo(() => benefitsMap[id ?? ''] ?? [], [benefitsMap, id]);
 
   const [issuer, setIssuer] = useState('');
   const [name, setName] = useState('');
@@ -53,8 +61,10 @@ export default function EditCardScreen() {
   }, [card]);
 
   useEffect(() => {
+    // 직접 진입(딥링크) 대비 — 목록 경유 없이도 카드 store 부트스트랩
+    loadCards();
     if (id) loadCardBenefits(id);
-  }, [id, loadCardBenefits]);
+  }, [id, loadCards, loadCardBenefits]);
 
   if (!card) return <EmptyState title="카드를 찾을 수 없습니다" />;
 
@@ -110,7 +120,7 @@ export default function EditCardScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-background dark:bg-background-dark">
+    <ScrollView className="flex-1 bg-bg dark:bg-bg-dark">
       <View className="p-4 gap-4">
         <IssuerSelect value={issuer} onChange={setIssuer} errorText={errors.issuer} />
         <Input
@@ -147,9 +157,7 @@ export default function EditCardScreen() {
         <Input label="메모" value={notes} onChangeText={setNotes} multiline />
 
         <View className="gap-2">
-          <Text className="text-headline font-bold text-foreground dark:text-foreground-dark">
-            상시 혜택
-          </Text>
+          <Text className="text-headline font-bold text-ink dark:text-ink-dark">상시 혜택</Text>
           {benefits.map((b) => (
             <CardBenefitItem key={b.id} benefit={b} onDelete={() => confirmDelete(b.id)} />
           ))}
@@ -157,10 +165,12 @@ export default function EditCardScreen() {
             onPress={goAddBenefit}
             accessibilityRole="button"
             accessibilityLabel="혜택 추가"
-            className="flex-row items-center justify-center gap-1.5 p-3 rounded-md border border-dashed border-primary"
+            className="flex-row items-center justify-center gap-1.5 p-3 rounded-md border border-dashed border-primary dark:border-primary-dark active:opacity-80"
           >
-            <Plus size={16} />
-            <Text className="text-body font-semibold text-primary">혜택 추가</Text>
+            <Plus size={16} color={C.primary} />
+            <Text className="text-body font-semibold text-primary dark:text-primary-dark">
+              혜택 추가
+            </Text>
           </Pressable>
         </View>
 

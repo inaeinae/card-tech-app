@@ -16,6 +16,8 @@ import { useCardStore } from '@/stores/cardStore';
 import { validateCardForm, normalizeCardForm, type CardFormErrors } from '@/lib/cardForm';
 import { parseWon } from '@/lib/formatWon';
 import { CARD_TYPE_LABEL, type CardType } from '@/types/models';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 // 카드 종류 라디오 옵션 — domestic/overseas 2종
 const CARD_TYPE_OPTIONS: { value: CardType; label: string }[] = [
@@ -25,6 +27,8 @@ const CARD_TYPE_OPTIONS: { value: CardType; label: string }[] = [
 
 export default function NewCardScreen() {
   const router = useRouter();
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
   const user = useAuthStore((s) => s.user);
   const upsertCard = useCardStore((s) => s.upsertCard);
   const upsertCardBenefit = useCardStore((s) => s.upsertCardBenefit);
@@ -101,7 +105,7 @@ export default function NewCardScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-background dark:bg-background-dark">
+    <ScrollView className="flex-1 bg-bg dark:bg-bg-dark">
       <View className="p-4 gap-4">
         <IssuerSelect value={issuer} onChange={setIssuer} errorText={errors.issuer} />
         <Input
@@ -145,9 +149,7 @@ export default function NewCardScreen() {
         />
 
         <View className="gap-2">
-          <Text className="text-headline font-bold text-foreground dark:text-foreground-dark">
-            상시 혜택
-          </Text>
+          <Text className="text-headline font-bold text-ink dark:text-ink-dark">상시 혜택</Text>
           {draftBenefits.map((b) => (
             <CardBenefitItem
               key={b.localId}
@@ -171,10 +173,12 @@ export default function NewCardScreen() {
             onPress={() => router.push('/wizard/template-picker?context=card')}
             accessibilityRole="button"
             accessibilityLabel="혜택 추가"
-            className="flex-row items-center justify-center gap-1.5 p-3 rounded-md border border-dashed border-primary"
+            className="flex-row items-center justify-center gap-1.5 p-3 rounded-md border border-dashed border-primary dark:border-primary-dark active:opacity-80"
           >
-            <Plus size={16} />
-            <Text className="text-body font-semibold text-primary">혜택 추가</Text>
+            <Plus size={16} color={C.primary} />
+            <Text className="text-body font-semibold text-primary dark:text-primary-dark">
+              혜택 추가
+            </Text>
           </Pressable>
         </View>
 

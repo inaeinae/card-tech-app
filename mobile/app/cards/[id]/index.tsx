@@ -16,9 +16,12 @@ import { useWizardStore } from '@/stores/wizardStore';
 import { computeCancelState } from '@/lib/cardCancel';
 import { CARD_TYPE_LABEL } from '@/types/models';
 import { formatWon } from '@/lib/formatWon';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 type Tab = 'benefits' | 'history';
 
+// Hero 카드 단색 배경 — 발급사 브랜드 컬러 (라이트/다크 공통, 카드 표면 톤 유지)
 const ISSUER_COLOR: Record<string, string> = {
   BC카드: '#E30547',
   하나카드: '#009B6E',
@@ -34,16 +37,24 @@ const ISSUER_COLOR: Record<string, string> = {
 export default function CardDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
 
   const card = useCardStore((s) => s.cards.find((c) => c.id === id));
-  const benefits = useCardStore((s) => (id ? (s.benefits[id] ?? []) : []));
+  // raw slice 만 선택 — 파생(fallback/filter)은 아래 body 에서. selector 안 ?? []/.filter()
+  // 는 매 호출 새 배열을 만들어 Zustand v5(useSyncExternalStore) 무한 리렌더를 유발한다.
+  const benefitsMap = useCardStore((s) => s.benefits);
+  const loadCards = useCardStore((s) => s.loadCards);
   const loadCardBenefits = useCardStore((s) => s.loadCardBenefits);
   const scheduleCancel = useCardStore((s) => s.scheduleCancel);
   const confirmCancel = useCardStore((s) => s.confirmCancel);
   const restoreCancel = useCardStore((s) => s.restoreCancel);
 
-  const events = useEventStore((s) => s.events.filter((e) => e.card_id === id));
+  const allEvents = useEventStore((s) => s.events);
   const loadEvents = useEventStore((s) => s.loadEvents);
+
+  const benefits = useMemo(() => (id ? (benefitsMap[id] ?? []) : []), [benefitsMap, id]);
+  const events = useMemo(() => allEvents.filter((e) => e.card_id === id), [allEvents, id]);
 
   const [tab, setTab] = useState<Tab>('benefits');
 
@@ -59,15 +70,17 @@ export default function CardDetailScreen() {
   );
 
   useEffect(() => {
+    // 직접 진입(딥링크) 대비 — 목록 경유 없이도 카드 store 부트스트랩
+    loadCards();
     if (id) {
       loadCardBenefits(id);
       loadEvents({ cardId: id });
     }
-  }, [id, loadCardBenefits, loadEvents]);
+  }, [id, loadCards, loadCardBenefits, loadEvents]);
 
   if (!card) return <LoadingState />;
 
-  const heroColor = ISSUER_COLOR[card.issuer] ?? '#3182F6';
+  const heroColor = ISSUER_COLOR[card.issuer] ?? C.primary;
 
   function onMenuPress() {
     if (!card) return;
@@ -126,44 +139,22 @@ export default function CardDetailScreen() {
   return (
     <SafeAreaScreen>
       {/* 상단 앱바 */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 8,
-          height: 56,
-          justifyContent: 'space-between',
-        }}
-      >
+      <View className="flex-row items-center justify-between px-2 h-14">
         <Pressable
           onPress={() => router.back()}
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            backgroundColor: '#F9FAFB',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center active:opacity-80"
         >
-          <ChevronLeft size={20} color="#191F28" />
+          <ChevronLeft size={20} color={C.ink} />
         </Pressable>
         <Pressable
           onPress={onMenuPress}
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            backgroundColor: '#F9FAFB',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center active:opacity-80"
         >
-          <EllipsisVertical size={20} color="#191F28" />
+          <EllipsisVertical size={20} color={C.ink} />
         </Pressable>
       </View>
 
-      {/* Hero 카드 */}
+      {/* Hero 카드 — 발급사 브랜드 컬러 단색 (라이트/다크 공통) */}
       <View
         style={{
           marginHorizontal: 24,
@@ -173,13 +164,7 @@ export default function CardDetailScreen() {
           height: 200,
         }}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-          }}
-        >
+        <View className="flex-row justify-between items-start">
           <View style={{ gap: 4 }}>
             <View
               style={{
@@ -275,16 +260,7 @@ export default function CardDetailScreen() {
       ) : null}
 
       {/* 탭 세그먼트 */}
-      <View
-        style={{
-          marginHorizontal: 24,
-          marginTop: 16,
-          backgroundColor: '#F2F4F6',
-          borderRadius: 12,
-          flexDirection: 'row',
-          padding: 4,
-        }}
-      >
+      <View className="mx-6 mt-4 bg-surface-2 dark:bg-surface-2-dark rounded-md flex-row p-1">
         {(
           [
             ['benefits', '상시 혜택'],
@@ -296,20 +272,16 @@ export default function CardDetailScreen() {
             onPress={() => setTab(key)}
             accessibilityRole="tab"
             accessibilityState={{ selected: tab === key }}
-            style={{
-              flex: 1,
-              paddingVertical: 8,
-              borderRadius: 8,
-              alignItems: 'center',
-              backgroundColor: tab === key ? '#FFFFFF' : 'transparent',
-            }}
+            className={`flex-1 py-2 rounded-sm items-center active:opacity-80 ${
+              tab === key ? 'bg-bg dark:bg-bg-dark' : 'bg-transparent'
+            }`}
           >
             <Text
-              style={{
-                fontSize: 14,
-                fontWeight: tab === key ? '700' : '500',
-                color: tab === key ? '#191F28' : '#8B95A1',
-              }}
+              className={`text-label ${
+                tab === key
+                  ? 'font-bold text-ink dark:text-ink-dark'
+                  : 'font-medium text-ink-3 dark:text-ink-3-dark'
+              }`}
             >
               {label}
             </Text>
@@ -335,19 +307,21 @@ export default function CardDetailScreen() {
             <Pressable
               key={e.id}
               onPress={() => router.push(`/events/${e.id}`)}
-              style={({ pressed }) => ({
+              className="active:opacity-80"
+              style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: 16,
                 borderRadius: 18,
                 borderWidth: 1,
-                borderColor: '#E5E8EB',
-                backgroundColor: pressed ? '#F9FAFB' : '#FFFFFF',
-              })}
+                borderColor: C.borderStrong,
+                backgroundColor: C.bg,
+              }}
             >
               <Text
-                style={{ fontSize: 15, fontWeight: '600', color: '#191F28', flex: 1 }}
+                className="text-ink dark:text-ink-dark flex-1"
+                style={{ fontSize: 15, fontWeight: '600' }}
                 numberOfLines={1}
               >
                 {e.title}
@@ -360,14 +334,8 @@ export default function CardDetailScreen() {
 
       {/* sticky CTA */}
       <View
+        className="absolute bottom-0 left-0 right-0 bg-bg dark:bg-bg-dark border-t border-border-strong dark:border-border-strong-dark"
         style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#E5E8EB',
           padding: 24,
           paddingBottom: 36,
           gap: 12,
@@ -377,17 +345,25 @@ export default function CardDetailScreen() {
           <>
             <Pressable
               onPress={startWizard}
-              style={({ pressed }) => ({
-                backgroundColor: pressed ? '#1B64DA' : '#3182F6',
+              className="active:opacity-80"
+              style={{
+                backgroundColor: C.primary,
                 borderRadius: 14,
                 paddingVertical: 16,
                 alignItems: 'center',
-              })}
+              }}
             >
               <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700' }}>이벤트 등록</Text>
             </Pressable>
-            <Pressable onPress={onMenuPress} style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 13, fontWeight: '500', color: '#8B95A1' }}>
+            <Pressable
+              onPress={onMenuPress}
+              className="active:opacity-60"
+              style={{ alignItems: 'center' }}
+            >
+              <Text
+                className="text-ink-3 dark:text-ink-3-dark"
+                style={{ fontSize: 13, fontWeight: '500' }}
+              >
                 카드 해지하기
               </Text>
             </Pressable>
@@ -396,21 +372,31 @@ export default function CardDetailScreen() {
           <>
             <Pressable
               onPress={onMenuPress}
+              className="bg-danger-soft dark:bg-danger-darkSoft active:opacity-80"
               style={{
-                backgroundColor: '#FFF1F0',
                 borderRadius: 14,
                 paddingVertical: 16,
                 alignItems: 'center',
               }}
             >
-              <Text style={{ color: '#FF4D4F', fontSize: 16, fontWeight: '700' }}>
+              <Text
+                className="text-danger dark:text-danger-dark"
+                style={{ fontSize: 16, fontWeight: '700' }}
+              >
                 해지 완료 기록
               </Text>
             </Pressable>
-            <Pressable onPress={() => restoreCancel(card.id)} style={{ alignItems: 'center' }}>
+            <Pressable
+              onPress={() => restoreCancel(card.id)}
+              className="active:opacity-60"
+              style={{ alignItems: 'center' }}
+            >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <RotateCcw size={14} color="#8B95A1" />
-                <Text style={{ fontSize: 13, fontWeight: '500', color: '#8B95A1' }}>
+                <RotateCcw size={14} color={C.ink3} />
+                <Text
+                  className="text-ink-3 dark:text-ink-3-dark"
+                  style={{ fontSize: 13, fontWeight: '500' }}
+                >
                   해지 예약 취소
                 </Text>
               </View>
@@ -419,8 +405,8 @@ export default function CardDetailScreen() {
         ) : (
           <Pressable
             onPress={() => restoreCancel(card.id)}
+            className="bg-surface dark:bg-surface-dark active:opacity-80"
             style={{
-              backgroundColor: '#F9FAFB',
               borderRadius: 14,
               paddingVertical: 16,
               alignItems: 'center',
@@ -429,8 +415,13 @@ export default function CardDetailScreen() {
               gap: 6,
             }}
           >
-            <RotateCcw size={16} color="#4E5968" />
-            <Text style={{ color: '#4E5968', fontSize: 16, fontWeight: '700' }}>해지 되돌리기</Text>
+            <RotateCcw size={16} color={C.ink2} />
+            <Text
+              className="text-ink-2 dark:text-ink-2-dark"
+              style={{ fontSize: 16, fontWeight: '700' }}
+            >
+              해지 되돌리기
+            </Text>
           </Pressable>
         )}
       </View>

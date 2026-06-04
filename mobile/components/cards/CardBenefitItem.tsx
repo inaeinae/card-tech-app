@@ -4,6 +4,8 @@ import { Trash2 } from 'lucide-react-native';
 import { Chip } from '@/components/ui/Chip';
 import { formatWon } from '@/lib/formatWon';
 import { DISCOUNT_METHOD_LABEL, type CardBenefit } from '@/types/models';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
 type Props = {
   benefit: Pick<
@@ -23,6 +25,8 @@ type Props = {
 };
 
 export function CardBenefitItem({ benefit, onDelete }: Props) {
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
   const headline = (() => {
     const parts: string[] = [];
     if (benefit.discount_pct !== null && benefit.discount_pct !== undefined) {
@@ -40,7 +44,7 @@ export function CardBenefitItem({ benefit, onDelete }: Props) {
       <View className="flex-row items-center gap-2">
         {benefit.category ? <Chip label={benefit.category} size="sm" /> : null}
         {benefit.overseas_only ? <Chip label="해외겸용 한정" size="sm" tone="overseas" /> : null}
-        <Text className="flex-1 text-body font-medium text-foreground dark:text-foreground-dark">
+        <Text className="flex-1 text-body font-medium text-ink dark:text-ink-dark">
           {benefit.title}
         </Text>
         {onDelete ? (
@@ -49,20 +53,21 @@ export function CardBenefitItem({ benefit, onDelete }: Props) {
             accessibilityRole="button"
             accessibilityLabel="혜택 삭제"
             hitSlop={8}
+            className="active:opacity-60"
           >
-            <Trash2 size={18} />
+            <Trash2 size={18} color={C.danger} />
           </Pressable>
         ) : null}
       </View>
 
       {headline ? (
-        <Text className="text-label text-muted dark:text-muted-dark">{headline}</Text>
+        <Text className="text-label text-ink-3 dark:text-ink-3-dark">{headline}</Text>
       ) : null}
 
       {/* 2행: 대상 가맹점 요약 */}
       {benefit.targets.length > 0 ? (
         <Text
-          className="text-label text-muted dark:text-muted-dark"
+          className="text-label text-ink-3 dark:text-ink-3-dark"
           numberOfLines={1}
           ellipsizeMode="tail"
         >
@@ -76,11 +81,11 @@ export function CardBenefitItem({ benefit, onDelete }: Props) {
       {/* 대상 구분 */}
       {benefit.targets.length > 0 ? (
         <View className="gap-1 border-t border-border dark:border-border-dark pt-2">
-          <Text className="text-caption text-muted dark:text-muted-dark">구분 · 대상</Text>
+          <Text className="text-caption text-ink-3 dark:text-ink-3-dark">구분 · 대상</Text>
           {benefit.targets.map((t) => (
             <Text
               key={t.id ?? `${t.group_label}-${t.sort_order}`}
-              className="text-label text-foreground dark:text-foreground-dark"
+              className="text-label text-ink dark:text-ink-dark"
             >
               • {t.group_label}: {t.merchants}
             </Text>
@@ -91,18 +96,18 @@ export function CardBenefitItem({ benefit, onDelete }: Props) {
       {/* 한도 */}
       {benefit.cap_tiers.length > 0 || benefit.monthly_cap_won !== null ? (
         <View className="gap-1 border-t border-border dark:border-border-dark pt-2">
-          <Text className="text-caption text-muted dark:text-muted-dark">한도</Text>
+          <Text className="text-caption text-ink-3 dark:text-ink-3-dark">한도</Text>
           {benefit.cap_tiers.length > 0 ? (
             benefit.cap_tiers.map((t) => (
               <Text
                 key={t.id ?? t.min_spend_won}
-                className="text-label text-foreground dark:text-foreground-dark"
+                className="text-label text-ink dark:text-ink-dark"
               >
                 • 전월 {formatWon(t.min_spend_won)}원↑ → 월 {formatWon(t.cap_won)}원
               </Text>
             ))
           ) : (
-            <Text className="text-label text-foreground dark:text-foreground-dark">
+            <Text className="text-label text-ink dark:text-ink-dark">
               • 월 {formatWon(benefit.monthly_cap_won)}원
               {benefit.min_spend_won !== null
                 ? ` (전월 ${formatWon(benefit.min_spend_won)}원↑)`
@@ -115,7 +120,7 @@ export function CardBenefitItem({ benefit, onDelete }: Props) {
       {/* 메모 */}
       {benefit.notes ? (
         <View className="border-t border-border dark:border-border-dark pt-2">
-          <Text className="text-caption text-muted dark:text-muted-dark">※ {benefit.notes}</Text>
+          <Text className="text-caption text-ink-3 dark:text-ink-3-dark">※ {benefit.notes}</Text>
         </View>
       ) : null}
     </View>

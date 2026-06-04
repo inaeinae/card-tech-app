@@ -10,21 +10,35 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { EVENT_STATUS_LABEL } from '@/types/models';
 import type { EventStatusHistory } from '@/types/models';
+import { Colors } from '@/constants/theme';
+import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 
-const STATUS_COLOR: Record<string, string> = {
-  registered: '#8B95A1',
-  applied: '#3182F6',
-  in_progress: '#F59E0B',
-  performance_done: '#F59E0B',
-  pending_payout: '#8B95A1',
-  paid: '#19D294',
-  cancelable: '#FF4D4F',
-  canceled: '#FF4D4F',
-};
+// 상태 도트 컬러 — 라이트/다크 별로 토큰화 (color-not-only 규칙은 라벨 텍스트로 충족)
+type ThemeC = (typeof Colors)[keyof typeof Colors];
+function getStatusDot(status: string, C: ThemeC): string {
+  switch (status) {
+    case 'applied':
+      return C.primary;
+    case 'in_progress':
+    case 'performance_done':
+      return C.warning;
+    case 'paid':
+      return C.accent;
+    case 'cancelable':
+    case 'canceled':
+      return C.danger;
+    case 'registered':
+    case 'pending_payout':
+    default:
+      return C.ink3;
+  }
+}
 
 export default function EventHistoryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const scheme = useResolvedColorScheme();
+  const C = Colors[scheme];
   const [history, setHistory] = useState<EventStatusHistory[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,31 +60,14 @@ export default function EventHistoryScreen() {
   return (
     <SafeAreaScreen>
       {/* 앱바 */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 8,
-          height: 56,
-          gap: 4,
-        }}
-      >
+      <View className="flex-row items-center px-2 h-14 gap-1">
         <Pressable
           onPress={() => router.back()}
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            backgroundColor: '#F9FAFB',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center active:opacity-80"
         >
-          <ChevronLeft size={20} color="#191F28" />
+          <ChevronLeft size={20} color={C.ink} />
         </Pressable>
-        <Text style={{ fontSize: 18, fontWeight: '700', color: '#191F28', marginLeft: 4 }}>
-          상태 이력
-        </Text>
+        <Text className="text-[18px] font-bold text-ink dark:text-ink-dark ml-1">상태 이력</Text>
       </View>
 
       {history.length === 0 ? (
@@ -78,69 +75,57 @@ export default function EventHistoryScreen() {
       ) : (
         <ScrollView contentContainerStyle={{ padding: 24 }}>
           {history.map((h, idx) => {
-            const dotColor = STATUS_COLOR[h.to_status] ?? '#8B95A1';
+            const dotColor = getStatusDot(h.to_status, C);
             const isLast = idx === history.length - 1;
             return (
-              <View key={h.id} style={{ flexDirection: 'row', gap: 16 }}>
+              <View key={h.id} className="flex-row gap-4">
                 {/* 타임라인 축 */}
-                <View style={{ alignItems: 'center', width: 20 }}>
+                <View className="items-center w-5">
                   <View
-                    style={{
-                      width: 12,
-                      height: 12,
-                      borderRadius: 6,
-                      backgroundColor: dotColor,
-                      marginTop: 4,
-                    }}
+                    className="w-3 h-3 rounded-full mt-1"
+                    style={{ backgroundColor: dotColor }}
                   />
                   {!isLast && (
-                    <View style={{ width: 2, flex: 1, backgroundColor: '#E5E8EB', marginTop: 4 }} />
+                    <View className="w-0.5 flex-1 mt-1 bg-border-strong dark:bg-border-strong-dark" />
                   )}
                 </View>
 
                 {/* 이력 내용 */}
-                <View style={{ flex: 1, paddingBottom: 24, gap: 4 }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <Text style={{ fontSize: 14, fontWeight: '700', color: '#191F28' }}>
+                <View className="flex-1 pb-6 gap-1">
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-label font-bold text-ink dark:text-ink-dark">
                       {EVENT_STATUS_LABEL[h.to_status]}
                     </Text>
                     <View
-                      style={{
-                        paddingHorizontal: 8,
-                        paddingVertical: 3,
-                        borderRadius: 999,
-                        backgroundColor: h.is_auto ? '#E8F2FE' : '#F2F4F6',
-                      }}
+                      className={`px-2 py-[3px] rounded-full ${
+                        h.is_auto
+                          ? 'bg-primary-soft dark:bg-primary-darkSoft'
+                          : 'bg-surface-2 dark:bg-surface-2-dark'
+                      }`}
                     >
                       <Text
-                        style={{
-                          fontSize: 11,
-                          fontWeight: '700',
-                          color: h.is_auto ? '#3182F6' : '#8B95A1',
-                        }}
+                        className={`text-[11px] font-bold ${
+                          h.is_auto
+                            ? 'text-primary dark:text-primary-dark'
+                            : 'text-ink-3 dark:text-ink-3-dark'
+                        }`}
                       >
                         {h.is_auto ? '자동' : '수동'}
                       </Text>
                     </View>
                   </View>
 
-                  <Text style={{ fontSize: 12, color: '#8B95A1' }}>
+                  <Text className="text-caption text-ink-3 dark:text-ink-3-dark">
                     {h.from_status
                       ? `${EVENT_STATUS_LABEL[h.from_status]} → ${EVENT_STATUS_LABEL[h.to_status]}`
                       : `등록 → ${EVENT_STATUS_LABEL[h.to_status]}`}
                   </Text>
 
                   {h.reason ? (
-                    <Text style={{ fontSize: 12, color: '#4E5968' }}>{h.reason}</Text>
+                    <Text className="text-caption text-ink-2 dark:text-ink-2-dark">{h.reason}</Text>
                   ) : null}
 
-                  <Text style={{ fontSize: 12, color: '#B0B8C1' }}>
+                  <Text className="text-caption text-ink-4 dark:text-ink-4-dark">
                     {new Date(h.changed_at).toLocaleDateString('ko-KR', {
                       year: 'numeric',
                       month: 'long',

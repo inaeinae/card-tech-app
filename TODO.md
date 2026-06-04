@@ -245,16 +245,38 @@
 - [x] mypage.tsx hex 18건 → NativeWind 토큰 + 다크 variant
 - [x] ThemeModeSheet 백드롭 토큰화
 - [x] 시뮬 라이트/다크 동작 확인 (dark:bg-bg-dark 패턴 정상 동작)
-- [ ] Pencil AC4EX 갱신 + MyPageDark 신규 — Pencil 앱 ⌘S 후 commit 별건
+- [x] Pencil AC4EX 갱신 + MyPageDark 신규 — AC4EX(라이트) 토큰화 + MyPageDark(`SBC1L`) 완료. 디스크 flush(⌘S) 후 commit 별건
 
-## Phase B (예정 sub-phase)
+## Phase B2. 3 탭 Pencil 1:1 (2026-05-22)
 
-- [ ] B2. 홈 / 캘린더 / 리포트 탭
-- [ ] B3. 카드 상세 / 수정 / 등록
-- [ ] B4. 이벤트 목록 / 상세 / 이력
-- [ ] B5. 위저드 5단 + 상태 변경 모달
-- [ ] B6. settings 3종 (신규 mockup 포함)
-- [ ] B7. (auth) login / onboarding 다크
+- [x] Pencil HomeDark/CalendarDark/ReportDark 신규
+- [x] (tabs)/index, calendar, report + EventListItem/EmptyHome hex → NativeWind 토큰 + dark variant
+- [x] Pressable 함수형 style → 객체 5곳 (RN 0.81 회귀)
+- [x] react-native-calendars theme prop 다크 적용 (Colors[scheme])
+- [x] 시뮬 다크 검증 (홈/캘린더/리포트)
+- [x] 라이트 모드 시각 검증 — 시뮬(iPhone 17, iOS 26.4) appearance light/dark 토글로 EmptyHome·cards/new 양방향 확인. automatic 테마 즉시 반영
+
+## Phase B3. 카드 상세/수정/등록 Pencil 1:1 (2026-06-03)
+
+- [x] Pencil CardDetailDark(`a9MTe`) + CardEditDark(`Zn9GA`) 신규 (디스크 flush 후속)
+- [x] cards/new + cards/[id]/edit dark variant 보강 (별칭 토큰 통일, lucide color)
+- [x] cards/[id]/index hex 37건 → 토큰 (30건 토큰화, 15건 브랜드/Hero 의도적 유지)
+- [x] Pressable 함수형 style → 객체 2곳
+- [x] cards/new 다크 시뮬 검증
+- [x] cards/[id]/index, edit 시뮬 검증 — local Supabase seed(카드 2/이벤트 4) 후 다크 렌더 확인. **버그 발견·수정:** Zustand v5 불안정 selector(.filter()/?? []) 무한 리렌더 → raw 선택+body 파생으로 수정 (commit c85b607)
+
+## Phase B (잔여 sub-phase)
+- [x] B4. 이벤트 목록 / 상세 / 이력 — 3파일 hex 67건 + _layout 다크 토큰화, 칩 정렬 fix (시뮬 검증 데이터 필요시 후속)
+- [x] B5. 위저드 5단 + 상태 변경 모달 — status-change 전면 다크 토큰화, _layout 헤더 Colors[scheme], 아이콘 hex 8건 토큰화 (시뮬 검증 데이터 필요시 후속)
+- [x] B6. settings 3종 다크 — notifications Colors[scheme] 전환, _layout 헤더 토큰화, profile/about 기존 대응 확인 (Pencil mockup 신규 생략: settings 는 inline 스타일 기반, Pencil 1:1 대상 아님)
+- [x] B7. (auth) login / onboarding 다크 — login/onboarding/dev-login 이미 dark 클래스 적용 확인. 부수 발견·수정: Button/Input/LoadingState/(tabs)탭바가 raw useColorScheme 사용해 수동 테마 override 무시하던 버그 → useResolvedColorScheme 교체 (ThemeToggle 은 미사용 stub, parallax/collapsible 은 미사용 scaffold — 보류)
+- [x] EmptyHomeDark Pencil mockup — EmptyHome(`QT7oC`) 복사 + 다크 토큰 오버라이드 → `Screen / EmptyHomeDark`(`jMs3t`) 신규. 디스크 flush(⌘S) 후 commit 별건
+- [x] 시뮬 라이트/다크 시각 검증 — iPhone 17 시뮬 appearance 토글로 EmptyHome(라/다), settings/about(다), settings/notifications 헤더(다), wizard benefit-form(다, Input/Button/X헤더), cards/new(라/다, Select/Input/RadioGroup) 확인. 데이터 의존 화면(이벤트 목록/상세·캘린더·리포트·카드 상세·status-change)은 로그인/Supabase 데이터 필요 — 후속
+- [x] Pressable pressed 효과 복원 — NativeWind active: variant 일괄 적용 (함수형 style 회피). 공용 컴포넌트 + 화면 전반 interactive Pressable active:opacity-(60|80)/active:bg, 함수형 잔존 3곳 static+active 전환. backdrop/container 의도적 제외
+- [x] AutoSuggestionBanner 다크 토큰화 — inline 라이트 고정 색 → NativeWind 다크(primary-soft/ink 토큰, Sparkles Colors[scheme])
+- [x] 데이터 의존 화면 시뮬 검증 — local seed 후 홈/리포트/캘린더(이벤트 dots)/이벤트 상세/status-change 모달/카드 상세 다크 전수 확인
+- [x] **Zustand v5 무한 리렌더 버그 수정** — cards/[id]/index·edit, wizard/step-card selector 안정화 + selectorStability 회귀 테스트 (commit c85b607)
+- [x] cards/[id]·edit 직접 진입 loadCards 부트스트랩 — effect 에 loadCards() 추가, 시뮬 재시작 후 직접 딥링크 렌더 확인 (commit 41ea304). step-card 는 기존 호출
 
 ## v2 이후 (범위 외 — 메모용)
 
