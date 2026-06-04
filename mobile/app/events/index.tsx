@@ -86,6 +86,8 @@ export default function EventListScreen() {
       <View className="flex-row items-center px-4 pt-2 pb-1 gap-2">
         <Pressable
           onPress={() => router.back()}
+          accessibilityRole="button"
+          accessibilityLabel="뒤로 가기"
           className="w-10 h-10 items-center justify-center active:opacity-60"
         >
           <ChevronLeft size={24} color={C.ink} />

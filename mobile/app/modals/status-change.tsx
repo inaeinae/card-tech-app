@@ -112,7 +112,11 @@ export default function StatusChangeModal() {
           )}
         </View>
 
-        <Pressable onPress={() => router.back()} className="items-center p-2 active:opacity-60">
+        <Pressable
+          onPress={() => router.back()}
+          accessibilityRole="button"
+          className="items-center p-2 active:opacity-60"
+        >
           <Text className="text-[15px] font-semibold text-ink-3 dark:text-ink-3-dark">취소</Text>
         </Pressable>
       </View>
