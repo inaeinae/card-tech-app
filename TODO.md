@@ -133,7 +133,7 @@
 - [x] cards/new, cards/[id]/edit, cards/[id]/index 통합 + 카드 메타 표시
 - [x] Pencil mockup 동기화 (CardNew/BenefitCell/Select/RadioGroup/ChipGrid/BenefitForm 라이트·다크)
 - [x] step-benefits 토큰 정리
-- [ ] v1.1: card_benefits.details jsonb 컬럼 drop + DraftCardBenefit.details 잔재 제거
+- [x] v1.1: card_benefits.details jsonb 컬럼 drop — 마이그레이션 `20260520000004` + pgTAP `card_benefit_drop_details.test.sql`, database.types 재생성, 테스트 mock 정리. (DraftCardBenefit.details 잔재는 정규화 시점에 이미 제거됨 — BenefitPayload/models 에 없음)
 - [ ] v1.1: 수동 QA 후 발견된 보강 항목
 
 ## Phase 6. 이벤트 위저드 + CRUD

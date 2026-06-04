@@ -76,8 +76,8 @@ describe('cardStore 확장', () => {
   it('loadCardBenefits 는 benefits 맵에 card_id 별로 저장', async () => {
     const order = jest.fn().mockResolvedValue({
       data: [
-        { id: 'b1', card_id: 'c1', title: '커피 10%', details: {} },
-        { id: 'b2', card_id: 'c1', title: '교통 5%', details: {} },
+        { id: 'b1', card_id: 'c1', title: '커피 10%' },
+        { id: 'b2', card_id: 'c1', title: '교통 5%' },
       ],
       error: null,
     });

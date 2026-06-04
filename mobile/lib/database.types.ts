@@ -174,7 +174,6 @@ export type Database = {
           card_id: string
           category: string | null
           created_at: string
-          details: Json
           discount_method: string | null
           discount_pct: number | null
           id: string
@@ -190,7 +189,6 @@ export type Database = {
           card_id: string
           category?: string | null
           created_at?: string
-          details?: Json
           discount_method?: string | null
           discount_pct?: number | null
           id?: string
@@ -206,7 +204,6 @@ export type Database = {
           card_id?: string
           category?: string | null
           created_at?: string
-          details?: Json
           discount_method?: string | null
           discount_pct?: number | null
           id?: string
