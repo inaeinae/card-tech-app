@@ -142,12 +142,16 @@ export default function CardDetailScreen() {
       <View className="flex-row items-center justify-between px-2 h-14">
         <Pressable
           onPress={() => router.back()}
+          accessibilityRole="button"
+          accessibilityLabel="뒤로 가기"
           className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center active:opacity-80"
         >
           <ChevronLeft size={20} color={C.ink} />
         </Pressable>
         <Pressable
           onPress={onMenuPress}
+          accessibilityRole="button"
+          accessibilityLabel="카드 메뉴"
           className="w-10 h-10 rounded-full bg-surface dark:bg-surface-dark items-center justify-center active:opacity-80"
         >
           <EllipsisVertical size={20} color={C.ink} />
@@ -345,6 +349,7 @@ export default function CardDetailScreen() {
           <>
             <Pressable
               onPress={startWizard}
+              accessibilityRole="button"
               className="active:opacity-80"
               style={{
                 backgroundColor: C.primary,
@@ -357,6 +362,7 @@ export default function CardDetailScreen() {
             </Pressable>
             <Pressable
               onPress={onMenuPress}
+              accessibilityRole="button"
               className="active:opacity-60"
               style={{ alignItems: 'center' }}
             >

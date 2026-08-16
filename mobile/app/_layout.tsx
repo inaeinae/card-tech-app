@@ -21,6 +21,7 @@ import {
 
 import { useResolvedColorScheme } from '@/hooks/use-resolved-color-scheme';
 import { useThemeStore } from '@/stores/themeStore';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AuthGate } from '@/components/auth/AuthGate';
 import { useAuthStore } from '@/stores/authStore';
 import { useNotificationStore } from '@/stores/notificationStore';
@@ -95,21 +96,23 @@ export default function RootLayout() {
     // SafeAreaProvider: 하위 SafeAreaView 가 정확한 inset 을 반환하도록 루트에서 래핑
     <SafeAreaProvider>
       <ThemeProvider value={resolvedColorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <AuthGate>
-          <Stack>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-            <Stack.Screen
-              name="modals/status-change"
-              options={{
-                presentation: 'transparentModal',
-                animation: 'slide_from_bottom',
-                headerShown: false,
-              }}
-            />
-          </Stack>
-        </AuthGate>
+        <ErrorBoundary>
+          <AuthGate>
+            <Stack>
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+              <Stack.Screen
+                name="modals/status-change"
+                options={{
+                  presentation: 'transparentModal',
+                  animation: 'slide_from_bottom',
+                  headerShown: false,
+                }}
+              />
+            </Stack>
+          </AuthGate>
+        </ErrorBoundary>
         <StatusBar style="auto" />
       </ThemeProvider>
     </SafeAreaProvider>

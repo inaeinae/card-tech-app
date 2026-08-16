@@ -222,12 +222,12 @@
 
 > **선행 조건:** Phase 1.2(`report-aggregate` 테스트/구현) / Phase 1.3(Supabase 원격 프로젝트 생성) / Phase 10(Edge Function `/report-aggregate` 연동)의 보류 항목은 Phase 13 진입 시 함께 처리한다. (사유: 원격 무료 티어 생성 선행 필요, CLAUDE.md 과금 회피 원칙)
 
-- [ ] 접근성 (VoiceOver 레이블, 최소 터치영역)
-- [ ] i18n 기반 (ko 고정, 구조만)
-- [ ] 에러 바운더리 + Sentry(무료 플랜) 연동 검토
+- [x] 접근성 (VoiceOver 레이블, 최소 터치영역) — Button 은 기존 44pt min-height + role/label/state 완비. 아이콘 전용 터치(뒤로가기 3·카드메뉴·닫기·EmptyHome) accessibilityLabel/Role 보강
+- [x] i18n 기반 (ko 고정, 구조만) — `lib/i18n.ts` (ko 사전 + `t()` 보간/누락키 가시화) + `i18n.test.ts` 5/5. 문구 점진 이관(강제 X)
+- [x] 에러 바운더리 + Sentry 연동 검토 — 전역 `components/ErrorBoundary.tsx`(class, ErrorState UI 복구) + `_layout` 래핑. Sentry 는 `onError` 훅만 열어두고 보류(계정/과금)
 - [ ] E2E 시나리오 (Detox 또는 Maestro — 무료 범위 확인)
-- [ ] 앱 아이콘 · 스플래시 제작
-- [ ] iOS TestFlight 내부 테스트
+- [x] 앱 아이콘 · 스플래시 제작 — `design/CardIcon.png`(라이트 3D 카드+₩ 배지) 기반. icon 1024 불투명/favicon/android adaptive 3종/splash 512 (라/다 대비 확인)
+- [ ] iOS TestFlight 내부 테스트 — Apple 개발자 계정 필요 → 보류
 - [ ] App Store 메타데이터 (스크린샷, 설명, 개인정보처리방침) — `mobile/app/settings/about.tsx` 의 `TERMS_URL` / `PRIVACY_URL` 확정 필요
 - [ ] Android 확장 (Play Console 준비) — v1.1
 
