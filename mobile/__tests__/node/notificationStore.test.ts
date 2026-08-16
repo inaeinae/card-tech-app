@@ -32,6 +32,14 @@ import { useNotificationStore } from '@/stores/notificationStore';
 import { cancelLocal, scheduleLocal, cancelAllLocal } from '@/lib/notifications/expoBridge';
 import { requestPermission } from '@/lib/notifications/permissions';
 
+// 오늘 기준 상대 날짜(YYYY-MM-DD). 고정 날짜를 쓰면 그 날짜가 지난 뒤
+// `withinWindow`(now ~ now+60일) 필터에 걸려 테스트가 뒤늦게 깨진다.
+function daysFromNow(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
 function ev(overrides: Partial<EventRow> = {}): EventRow {
   return {
     id: 'e1',
@@ -41,7 +49,7 @@ function ev(overrides: Partial<EventRow> = {}): EventRow {
     organizer: null,
     status: 'applied',
     apply_start: null,
-    apply_end: '2026-06-10',
+    apply_end: daysFromNow(20),
     use_start: null,
     use_end: null,
     payout_expected_at: null,
@@ -91,9 +99,25 @@ it('syncEventSchedule — 기존 row 삭제 + 새 row insert + OS 스케줄', as
   mockFromBuilder.delete.mockReturnThis();
   mockFromBuilder.eq.mockReturnThis();
   mockFromBuilder.insert.mockReturnThis();
-  mockFromBuilder.select.mockResolvedValueOnce({ data: [{ id: 's1', notification_id: 'os-old' }], error: null });
   mockFromBuilder.select.mockResolvedValueOnce({
-    data: [{ id: 's-new', kind: 'apply_deadline', fire_at: '2026-06-09T09:00:00', event_id: 'e1', user_id: 'u1', title: 't', body: 'b', canceled: false, delivered_at: null, created_at: '' }],
+    data: [{ id: 's1', notification_id: 'os-old' }],
+    error: null,
+  });
+  mockFromBuilder.select.mockResolvedValueOnce({
+    data: [
+      {
+        id: 's-new',
+        kind: 'apply_deadline',
+        fire_at: '2026-06-09T09:00:00',
+        event_id: 'e1',
+        user_id: 'u1',
+        title: 't',
+        body: 'b',
+        canceled: false,
+        delivered_at: null,
+        created_at: '',
+      },
+    ],
     error: null,
   });
 
@@ -108,7 +132,18 @@ it('syncEventSchedule — 기존 row 삭제 + 새 row insert + OS 스케줄', as
 it('cancelEventSchedule — DB update canceled=true + OS cancel 호출', async () => {
   useNotificationStore.setState({
     scheduled: [
-      { id: 's1', event_id: 'e1', kind: 'apply_deadline', fire_at: '2026-06-09T09:00:00', user_id: 'u1', title: 't', body: 'b', canceled: false, delivered_at: null, created_at: '' } as never,
+      {
+        id: 's1',
+        event_id: 'e1',
+        kind: 'apply_deadline',
+        fire_at: '2026-06-09T09:00:00',
+        user_id: 'u1',
+        title: 't',
+        body: 'b',
+        canceled: false,
+        delivered_at: null,
+        created_at: '',
+      } as never,
     ],
   });
   mockFromBuilder.update.mockReturnThis();
@@ -122,9 +157,42 @@ it('cancelEventSchedule — DB update canceled=true + OS cancel 호출', async (
 it('rescheduleAll — OS 큐 전부 비우고 60일 윈도우 재등록', async () => {
   useNotificationStore.setState({
     scheduled: [
-      { id: 's-near', event_id: 'e1', kind: 'apply_deadline', fire_at: '2026-06-09T09:00:00', user_id: 'u1', title: 't', body: 'b', canceled: false, delivered_at: null, created_at: '' } as never,
-      { id: 's-far', event_id: 'e2', kind: 'payout_upcoming', fire_at: '2026-12-01T09:00:00', user_id: 'u1', title: 't', body: 'b', canceled: false, delivered_at: null, created_at: '' } as never,
-      { id: 's-canceled', event_id: 'e3', kind: 'cancel_available', fire_at: '2026-06-01T09:00:00', user_id: 'u1', title: 't', body: 'b', canceled: true, delivered_at: null, created_at: '' } as never,
+      {
+        id: 's-near',
+        event_id: 'e1',
+        kind: 'apply_deadline',
+        fire_at: '2026-06-09T09:00:00',
+        user_id: 'u1',
+        title: 't',
+        body: 'b',
+        canceled: false,
+        delivered_at: null,
+        created_at: '',
+      } as never,
+      {
+        id: 's-far',
+        event_id: 'e2',
+        kind: 'payout_upcoming',
+        fire_at: '2026-12-01T09:00:00',
+        user_id: 'u1',
+        title: 't',
+        body: 'b',
+        canceled: false,
+        delivered_at: null,
+        created_at: '',
+      } as never,
+      {
+        id: 's-canceled',
+        event_id: 'e3',
+        kind: 'cancel_available',
+        fire_at: '2026-06-01T09:00:00',
+        user_id: 'u1',
+        title: 't',
+        body: 'b',
+        canceled: true,
+        delivered_at: null,
+        created_at: '',
+      } as never,
     ],
   });
 
